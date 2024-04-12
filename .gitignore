@@ -1,0 +1,11 @@
+# Environment Variables
+.env
+
+# Node Modules
+node_modules
+
+# HTTP test requests 
+requests.http
+
+# Package-lock
+package-lock.json
