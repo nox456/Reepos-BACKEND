@@ -28,7 +28,8 @@ export default class AuthService {
         return {
             userData,
             matchPassword,
-            user
+            user,
+            token
         };
     }
 }
