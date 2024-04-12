@@ -32,7 +32,10 @@ export default class AuthController {
         if (userAuthenticated.matchPassword) {
             return res.status(200).json({
                 message: "User Authenticated!",
-                data: userAuthenticated.user,
+                data: {
+                    user: userAuthenticated.user,
+                    token: userAuthenticated.token,
+                },
             });
         } else {
             return res.status(401).json({
