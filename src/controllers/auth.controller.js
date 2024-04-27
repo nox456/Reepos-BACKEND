@@ -1,4 +1,5 @@
 import AuthService from "../services/auth.service.js";
+import ErrorHandler from "../errors/errorHandler.js"
 
 export default class AuthController {
     static async signup(req, res) {
@@ -11,7 +12,7 @@ export default class AuthController {
             });
         } catch (e) {
             console.error(e);
-            return res.status(500).json({ message: "Internal Server Error" });
+            return new ErrorHandler(res).internalServer()
         }
         return res
             .status(200)
@@ -38,10 +39,7 @@ export default class AuthController {
                 },
             });
         } else {
-            return res.status(401).json({
-                message: "Password Incorrect!",
-                data: userAuthenticated.userData,
-            });
+            return new ErrorHandler(res).badRequest("Password Incorrect!", userAuthenticated.userData)
         }
     }
 }
