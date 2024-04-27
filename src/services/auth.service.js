@@ -11,6 +11,8 @@ export default class AuthService {
 
         const token = Auth.generateToken(user.id);
 
+        await Auth.createSession(user.id)
+
         return { user, token };
     }
     static async signinUser(userData) {
@@ -25,11 +27,27 @@ export default class AuthService {
 
         const token = Auth.generateToken(user.id)
 
+        const session = await Auth.checkSession(token)
+        if (!session) {
+            await Auth.createSession(user.id)
+        }
+
         return {
             userData,
             matchPassword,
             user,
             token
         };
+    }
+    static async signupUserWithSession(token) {
+        const session = await Auth.checkSession(token)
+
+        if (session) {
+            const user = await User.getById(session.user_id)
+
+            return user
+        } else {
+            return null
+        }
     }
 }

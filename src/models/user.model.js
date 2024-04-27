@@ -25,4 +25,14 @@ export default class User {
         }
         return user
     }
+    static async getById(id) {
+        let user
+        try {
+            const user_response = await db.query("SELECT * FROM users WHERE id = $1", [id])
+            user = user_response.rows[0]
+        } catch(e) {
+            console.error(e)
+        }
+        return user
+    }
 }
