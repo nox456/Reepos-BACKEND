@@ -35,4 +35,11 @@ export default class User {
         }
         return user
     }
+    static async delete(id) {
+        try {
+            await db.query("DELETE FROM users WHERE id = $1",[id])
+        } catch(e) {
+            console.error(e)
+        }
+    }
 }

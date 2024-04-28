@@ -39,7 +39,7 @@ export default class AuthController {
                 },
             });
         } else {
-            return new ErrorHandler(res).unauthorized("Password Incorrect!", userAuthenticated.userData)
+            return new ErrorHandler(res).unauthorized("Password Incorrect!", password)
         }
     }
     static async signinWithToken(req, res) {
