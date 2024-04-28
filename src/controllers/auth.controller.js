@@ -42,30 +42,27 @@ export default class AuthController {
             return new ErrorHandler(res).unauthorized("Password Incorrect!", userAuthenticated.userData)
         }
     }
-    static async signupSession(req, res) {
+    static async signinWithToken(req, res) {
         const { token } = req.body
 
-        let userAuthenticated
+        let user
         try {
-            const session = await AuthService.signupUserWithSession(token)
-            if (session) {
-                const { username, password } = session
-
-                userAuthenticated = await AuthService.signinUser({ username, password })
-
-                return res.status(200).json({
-                    message: "User Authenticated!",
-                    data: {
-                        user: userAuthenticated.user,
-                        token: userAuthenticated.token,
-                    },
-                });
-            } else {
-                return new ErrorHandler(res).unauthorized("User Unauthorized!",token)
-            }
-        } catch(e) {
+            user = await AuthService.signinUserWithToken(token)
+        } catch (e) {
             console.error(e)
             return new ErrorHandler(res).internalServer()
+        }
+        if (user) {
+            return res.status(200).json({
+                message: "User Authenticated!",
+                data: {
+                    user,
+                    token
+                },
+            });
+
+        } else {
+            return new ErrorHandler(res).unauthorized("User Unauthorized!", token)
         }
     }
 }

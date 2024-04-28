@@ -5,6 +5,6 @@ const router = Router()
 
 router.post("/signup",AuthController.signup)
 router.post("/signin", AuthController.signin)
-router.post("/signupSession", AuthController.signupSession)
+router.post("/signinToken", AuthController.signinWithToken)
 
 export default router
