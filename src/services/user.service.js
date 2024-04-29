@@ -18,4 +18,19 @@ export default class UserService {
         await User.delete(id)
         return { id }
     }
+    static async changeUsername(newUsername, userData) {
+        const { id, password } = userData
+
+        const userExists = await User.checkIfExistsById(id)
+
+        if (!userExists) return { userNotExists: true }
+
+        const user = await User.getById(id)
+
+        const matchPassword = await Auth.comparePassword(password,user.password)
+
+        if (!matchPassword) return { passwordNotMatch: true }
+
+        await User.changeUsername(newUsername, id)
+    }
 }
