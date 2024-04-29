@@ -51,22 +51,21 @@ export default class AuthController {
     static async signinWithToken(req, res) {
         const { token } = req.body
 
-        let user
+        let userAuthenticated
         try {
             user = await AuthService.signinUserWithToken(token)
         } catch (e) {
             console.error(e)
             return new ErrorHandler(res).internalServer()
         }
-        if (user) {
+        if (userAuthenticated) {
             return res.status(200).json({
                 message: "User Authenticated!",
                 data: {
-                    user,
+                    userAuthenticated,
                     token
                 },
             });
-
         } else {
             return new ErrorHandler(res).unauthorized("User Unauthorized!", token)
         }

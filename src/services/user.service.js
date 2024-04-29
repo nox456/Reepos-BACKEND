@@ -16,7 +16,6 @@ export default class UserService {
         if (!matchPassword) return { passwordNotMatch: true }
 
         await User.delete(id)
-        return { id }
     }
     static async changeUsername(newUsername, userData) {
         const { id, password } = userData

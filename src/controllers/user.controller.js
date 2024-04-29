@@ -4,19 +4,19 @@ import ErrorHandler from "../errors/errorHandler.js"
 export default class UserController {
     static async deleteUser(req, res) {
         const { id, password } = req.body
-        let userDeleted
+        let result
         try {
-            userDeleted = await UserService.deleteUser(id, password)
+            result = await UserService.deleteUser(id, password)
         } catch (e) {
             console.error(e)
             return new ErrorHandler(res).internalServer()
         }
-        if (userDeleted.userNotExists) {
+        if (result?.userNotExists) {
             return new ErrorHandler(res).notFound("User doesn't Exists!", id)
-        } else if (userDeleted.passwordNotMatch) {
+        } else if (result?.passwordNotMatch) {
             return new ErrorHandler(res).unauthorized("Password Incorrect!", password)
         } else {
-            return res.status(200).json({ message: "User deleted!", id: userDeleted.id })
+            return res.status(200).json({ message: "User deleted!", id})
         }
     }
     static async changeUsername(req, res) {
