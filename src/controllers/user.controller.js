@@ -8,12 +8,15 @@ export default class UserController {
         try {
             userDeleted = await UserService.deleteUser(id, password)
         } catch (e) {
+            console.error(e)
             return new ErrorHandler(res).internalServer()
         }
-        if (userDeleted.matchPassword) {
-            return res.status(200).json({ message: "User deleted!", id: userDeleted.id })
-        } else {
+        if (userDeleted.userNotExists) {
+            return new ErrorHandler(res).notFound("User doesn't Exists!", id)
+        } else if (userDeleted.passwordNotMatch) {
             return new ErrorHandler(res).unauthorized("Password Incorrect!", password)
+        } else {
+            return res.status(200).json({ message: "User deleted!", id: userDeleted.id })
         }
     }
 }

@@ -14,9 +14,13 @@ export default class AuthController {
             console.error(e);
             return new ErrorHandler(res).internalServer()
         }
-        return res
-            .status(200)
-            .json({ message: "User Registered!", data: userRegistered });
+        if (userRegistered.userExists) {
+            return new ErrorHandler(res).badRequest("User already Exists!", username)
+        } else {
+            return res
+                .status(200)
+                .json({ message: "User Registered!", data: userRegistered });
+        }
     }
     static async signin(req, res) {
         const { username, password } = req.body;
@@ -30,7 +34,11 @@ export default class AuthController {
             console.error(e);
             return new ErrorHandler(res).internalServer()
         }
-        if (userAuthenticated.matchPassword) {
+        if (userAuthenticated.userNotExists) {
+            return new ErrorHandler(res).badRequest("User doesn't Exists!", username)
+        } else if (userAuthenticated.passwordNotMatch) {
+            return new ErrorHandler(res).unauthorized("Password Incorrect!", password)
+        } else {
             return res.status(200).json({
                 message: "User Authenticated!",
                 data: {
@@ -38,8 +46,6 @@ export default class AuthController {
                     token: userAuthenticated.token,
                 },
             });
-        } else {
-            return new ErrorHandler(res).unauthorized("Password Incorrect!", password)
         }
     }
     static async signinWithToken(req, res) {

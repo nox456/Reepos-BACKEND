@@ -5,6 +5,10 @@ export default class AuthService {
     static async signupUser(userData) {
         const { username, password } = userData;
 
+        const userExists = await User.checkIfExistsByUsername(username)
+
+        if (userExists) return { userExists }
+
         const passwordEncrypted = await Auth.encryptPassword(password);
 
         const user = await User.save({ username, password: passwordEncrypted });
@@ -16,6 +20,10 @@ export default class AuthService {
     static async signinUser(userData) {
         const { username, password } = userData;
 
+        const userExists = await User.checkIfExistsByUsername(username)
+        
+        if (!userExists) return { userNotExists: true }
+
         const user = await User.getByUsername(username);
 
         const matchPassword = await Auth.comparePassword(
@@ -23,11 +31,12 @@ export default class AuthService {
             user.password
         );
 
+        if (!matchPassword) return { passwordNotMatch: true }
+
         const token = Auth.generateToken(user.id)
 
         return {
             userData,
-            matchPassword,
             user,
             token
         };
