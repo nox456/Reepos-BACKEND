@@ -44,6 +44,8 @@ export default class AuthService {
     static async signinUserWithToken(token) {
         const user_id = await Auth.validateToken(token)
 
+        if (!user_id) return { isUnauthorized: true }
+
         const user = await User.getById(user_id)
 
         return user
