@@ -1,4 +1,4 @@
-import db from "../database/connection.js";
+import db from "../connections/database.js";
 
 export default class User {
     static async save(data) {

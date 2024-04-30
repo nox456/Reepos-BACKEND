@@ -10,7 +10,15 @@ if (!process.env.DB_URL) {
 if (!process.env.SECRET) {
     throw new Error("Env var SECRET is not defined!")
 }
+if (!process.env.SUPABASE_URL) {
+    throw new Error("Env var SUPABASE_URL is not defined!")
+}
+if (!process.env.SUPABASE_KEY) {
+    throw new Error("Env var SUPABASE_KEY is not defined!")
+}
 export const HOST = process.env.HOST;
 export const PORT = process.env.PORT;
 export const DB_URL = process.env.DB_URL;
 export const SECRET = process.env.SECRET;
+export const SUPABASE_URL = process.env.SUPABASE_URL
+export const SUPABASE_KEY = process.env.SUPABASE_KEY
