@@ -26,10 +26,27 @@ export default class UserService {
 
         const user = await User.getById(id)
 
-        const matchPassword = await Auth.comparePassword(password,user.password)
+        const matchPassword = await Auth.comparePassword(password, user.password)
 
         if (!matchPassword) return { passwordNotMatch: true }
 
         await User.changeUsername(newUsername, id)
+    }
+    static async changePassword(newPassword, userData) {
+        const { id, password } = userData
+
+        const userExists = await User.checkIfExistsById(id)
+
+        if (!userExists) return { userNotExists: true }
+
+        const user = await User.getById(id)
+
+        const matchPassword = await Auth.comparePassword(password, user.password)
+
+        if (!matchPassword) return { passwordNotMatch: true }
+
+        const encryptedPassword = await Auth.encryptPassword(newPassword)
+
+        await User.changePassword(encryptedPassword, id)
     }
 }
