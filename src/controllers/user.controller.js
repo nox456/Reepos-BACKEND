@@ -53,4 +53,19 @@ export default class UserController {
             return res.status(200).json({ message: "Password Modified!", data: newPassword })
         }
     }
+    static async changeDescription(req, res) {
+        const { newDescription, id } = req.body
+        let result
+        try {
+            result = await UserService.changeDescription(newDescription, id)
+        } catch (e) {
+            console.error(e)
+            return new ErrorHandler(res).internalServer()
+        }
+        if (result?.userNotExists) {
+            return new ErrorHandler(res).notFound("User doesn't Exists", id)
+        } else {
+            return res.status(200).json({ message: "Description Modified!", data: newDescription })
+        }
+    }
 }

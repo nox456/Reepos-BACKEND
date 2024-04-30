@@ -49,4 +49,11 @@ export default class UserService {
 
         await User.changePassword(encryptedPassword, id)
     }
+    static async changeDescription(newDescription, id) {
+        const userExists = await User.checkIfExistsById(id)
+
+        if (!userExists) return { userNotExists: true }
+
+        await User.changeDescription(newDescription, id)
+    }
 }

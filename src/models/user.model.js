@@ -72,7 +72,14 @@ export default class User {
     static async changePassword(newPassword, id) {
         try {
             await db.query("UPDATE users SET password = $1 WHERE id = $2", [newPassword, id])
-        } catch(e) {
+        } catch (e) {
+            console.error(e)
+        }
+    }
+    static async changeDescription(newDescription, id) {
+        try {
+            await db.query("UPDATE users SET description = $1 WHERE id = $2", [newDescription, id])
+        } catch (e) {
             console.error(e)
         }
     }
