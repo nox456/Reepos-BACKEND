@@ -7,10 +7,15 @@ console.clear();
 const app = express();
 
 // Middlewares
+app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
 app.use(morgan)
 
 // Routes
+app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*")
+    next()
+})
 app.use(routes)
 
 // Start Server
