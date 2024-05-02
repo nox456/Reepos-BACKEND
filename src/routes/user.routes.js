@@ -8,6 +8,6 @@ router.delete("/delete", UserController.deleteUser)
 router.put("/change-username", UserController.changeUsername)
 router.put("/change-password", UserController.changePassword)
 router.put("/change-description", UserController.changeDescription)
-router.post("/upload-image", MulterController.uploadImage, (req, res) => res.status(200).json({ message: "Image Uploaded!", image: req.file }))
+router.post("/upload-image", MulterController.uploadImage, UserController.storeImage)
 
 export default router

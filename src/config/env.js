@@ -16,9 +16,13 @@ if (!process.env.SUPABASE_URL) {
 if (!process.env.SUPABASE_KEY) {
     throw new Error("Env var SUPABASE_KEY is not defined!")
 }
+if (!process.env.SUPABASE_IMAGE_BUCKET) {
+    throw new Error("Env var SUPABASE_IMAGE_BUCKET is not defined!")
+}
 export const HOST = process.env.HOST;
 export const PORT = process.env.PORT;
 export const DB_URL = process.env.DB_URL;
 export const SECRET = process.env.SECRET;
 export const SUPABASE_URL = process.env.SUPABASE_URL
 export const SUPABASE_KEY = process.env.SUPABASE_KEY
+export const SUPABASE_IMAGE_BUCKET = process.env.SUPABASE_IMAGE_BUCKET

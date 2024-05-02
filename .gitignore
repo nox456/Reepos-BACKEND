@@ -9,3 +9,6 @@ requests.http
 
 # Package-lock
 package-lock.json
+
+# Temp Uploads
+src/temp

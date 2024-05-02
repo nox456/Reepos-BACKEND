@@ -56,4 +56,12 @@ export default class UserService {
 
         await User.changeDescription(newDescription, id)
     }
+    static async changeImage(image, id) {
+        const userExists = await User.checkIfExistsById(id)
+
+        if (!userExists) return { userNotExists: true }
+
+        const imageUrl = await User.changeImage(image, id)
+        return { imageUrl }
+    }
 }

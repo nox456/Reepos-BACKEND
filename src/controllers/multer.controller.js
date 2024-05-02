@@ -4,16 +4,7 @@ import { fileURLToPath } from "url"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-const imageStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        return cb(null, join(__dirname, "..", "temp", "images"))
-    },
-    filename: (req, file, cb) => {
-        const { user_id } = req.body
-        const ext = extname(file.originalname)
-        return cb(null, `${user_id}${ext}`)
-    }
-})
+const imageStorage =  multer.memoryStorage()
 
 export default class MulterController {
     static uploadImage = multer({

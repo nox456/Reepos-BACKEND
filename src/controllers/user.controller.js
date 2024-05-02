@@ -68,4 +68,20 @@ export default class UserController {
             return res.status(200).json({ message: "Description Modified!", data: newDescription })
         }
     }
+    static async storeImage(req, res) {
+        const { file } = req
+        const { user_id } = req.body
+        let result
+        try {
+            result = await UserService.changeImage(file, user_id)
+        } catch (e) {
+            console.error(e)
+            return new ErrorHandler(res).internalServer()
+        }
+        if (result?.userNotExists) {
+            return new ErrorHandler(res).notFound("User doesn't Exists", user_id)
+        } else {
+            return res.status(200).json({ message: "Image Modified!", data: result.imageUrl })
+        }
+    }
 }

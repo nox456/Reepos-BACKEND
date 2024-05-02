@@ -1,4 +1,7 @@
 import db from "../connections/database.js";
+import { SUPABASE_IMAGE_BUCKET } from "../config/env.js"
+import supabase from "../connections/supabase.js"
+import { extname } from "path"
 
 export default class User {
     static async save(data) {
@@ -82,5 +85,17 @@ export default class User {
         } catch (e) {
             console.error(e)
         }
+    }
+    static async changeImage(image, id) {
+        const ext = extname(image.originalname)
+        let imageUrl
+        try {
+            const imageUploaded = await supabase.storage.from(SUPABASE_IMAGE_BUCKET).upload(`users-images/${id}${ext}`,image.buffer)
+            imageUrl = supabase.storage.from(SUPABASE_IMAGE_BUCKET).getPublicUrl(imageUploaded.data.path)
+            await db.query("UPDATE users SET img = $1 WHERE id = $2", [imageUrl.data.publicUrl, id])
+        } catch (e) {
+            console.error(e)
+        }
+        return imageUrl.data.publicUrl
     }
 }
