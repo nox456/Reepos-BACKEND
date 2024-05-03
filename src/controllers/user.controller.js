@@ -84,4 +84,19 @@ export default class UserController {
             return res.status(200).json({ message: "Image Modified!", data: result.imageUrl })
         }
     }
+    static async followUser(req, res) {
+        const { userFollowerId, userFollowedId } = req.body
+        let result
+        try {
+            result = await UserService.followUser(userFollowedId, userFollowerId)
+        } catch (e) {
+            console.error(e)
+            return new ErrorHandler(res).internalServer()
+        }
+        if (result.userNotExists) {
+            return new ErrorHandler(res).notFound("User doesn't Exists!", userFollowedId)
+        } else {
+            return res.status(200).json({ message: "User Followed!", data: userFollowedId })
+        }
+    }
 }

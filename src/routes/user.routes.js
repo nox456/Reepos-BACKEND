@@ -9,5 +9,6 @@ router.put("/change-username", UserController.changeUsername)
 router.put("/change-password", UserController.changePassword)
 router.put("/change-description", UserController.changeDescription)
 router.post("/upload-image", MulterController.uploadImage, UserController.storeImage)
+router.post("/follow-user", UserController.followUser)
 
 export default router

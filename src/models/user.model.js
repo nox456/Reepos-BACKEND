@@ -90,12 +90,34 @@ export default class User {
         const ext = extname(image.originalname)
         let imageUrl
         try {
-            const imageUploaded = await supabase.storage.from(SUPABASE_IMAGE_BUCKET).upload(`users-images/${id}${ext}`,image.buffer)
+            const imageUploaded = await supabase.storage.from(SUPABASE_IMAGE_BUCKET).upload(`users-images/${id}${ext}`, image.buffer)
             imageUrl = supabase.storage.from(SUPABASE_IMAGE_BUCKET).getPublicUrl(imageUploaded.data.path)
             await db.query("UPDATE users SET img = $1 WHERE id = $2", [imageUrl.data.publicUrl, id])
         } catch (e) {
             console.error(e)
         }
         return imageUrl.data.publicUrl
+    }
+    static async addFollowedUser(userFollowedId, userFollowerId) {
+        let userFollowed
+        try {
+            const users_followed_response = await db.query("SELECT followed FROM users WHERE id = $1", [userFollowerId])
+            const users_followed = users_followed_response.rows[0].followed
+            users_followed.push(userFollowedId)
+            userFollowed = await db.query("UPDATE users SET followed = $1 WHERE id = $2 RETURNING *", [users_followed, userFollowerId])
+        } catch (e) {
+            console.error(e)
+        }
+        return userFollowed.rows[0]
+    }
+    static async addFollowerUser(userFollowerId, userFollowedId) {
+        try {
+            const user_followers_response = await db.query("SELECT followers FROM users WHERE id = $1", [userFollowedId])
+            const user_followers = user_followers_response.rows[0].followers
+            user_followers.push(userFollowerId)
+            await db.query("UPDATE users SET followers = $1 WHERE id = $2 RETURNING *", [user_followers, userFollowedId])
+        } catch (e) {
+            console.error(e)
+        }
     }
 }

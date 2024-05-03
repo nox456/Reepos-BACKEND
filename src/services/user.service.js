@@ -64,4 +64,14 @@ export default class UserService {
         const imageUrl = await User.changeImage(image, id)
         return { imageUrl }
     }
+    static async followUser(userFollowedId, userFollowerId) {
+        const userExists = await User.checkIfExistsById(userFollowerId)
+
+        if (!userExists) return { userNotExists: true }
+
+        const userFollowed = await User.addFollowedUser(userFollowedId, userFollowerId)
+        await User.addFollowerUser(userFollowerId, userFollowedId)
+
+        return { userFollowed }
+    }
 }
