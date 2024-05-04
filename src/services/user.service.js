@@ -23,9 +23,7 @@ export default class UserService {
 
         await User.delete(id)
     }
-    static async changeUsername(newUsername, userData) {
-        const { id, password } = userData
-
+    static async changeUsername(newUsername, id, password) {
         const username_validation_error = await User.validateUsername(newUsername)
         if (username_validation_error) return username_validation_error
 
@@ -47,9 +45,7 @@ export default class UserService {
 
         await User.changeUsername(newUsername, id)
     }
-    static async changePassword(newPassword, userData) {
-        const { id, password } = userData
-
+    static async changePassword(newPassword, id, password) {
         const newPassword_validation_error = await User.validatePassword(newPassword)
         if (newPassword_validation_error) return newPassword_validation_error
 

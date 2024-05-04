@@ -22,35 +22,39 @@ export default class UserController {
         }
     }
     static async changeUsername(req, res) {
-        const { newUsername, userData } = req.body
+        const { newUsername, id, password } = req.body
         let result
         try {
-            result = await UserService.changeUsername(newUsername, userData)
+            result = await UserService.changeUsername(newUsername, id, password)
         } catch (e) {
             console.error(e)
             return new ErrorHandler(res).internalServer()
         }
-        if (result?.userNotExists) {
-            return new ErrorHandler(res).notFound("User doesn't Exists!", userData.id)
+        if (result?.validationError) {
+            return new ErrorHandler(res).badRequest(result.validationError), result.validationField
+        } else if (result?.userNotExists) {
+            return new ErrorHandler(res).notFound("User doesn't Exists!", id)
         } else if (result?.passwordNotMatch) {
-            return new ErrorHandler(res).unauthorized("Password Incorrect!", userData.password)
+            return new ErrorHandler(res).unauthorized("Password Incorrect!", password)
         } else {
             return res.status(200).json({ message: "Username Modified!", data: newUsername })
         }
     }
     static async changePassword(req, res) {
-        const { newPassword, userData } = req.body
+        const { newPassword, id, password } = req.body
         let result
         try {
-            result = await UserService.changePassword(newPassword, userData)
+            result = await UserService.changePassword(newPassword, id, password)
         } catch (e) {
             console.error(e)
             return new ErrorHandler(res).internalServer()
         }
-        if (result?.userNotExists) {
-            return new ErrorHandler(res).notFound("User doesn't Exists!", userData.id)
+        if (result?.validationError) {
+            return new ErrorHandler(res).badRequest(result.validationError, result.validationField)
+        } else if (result?.userNotExists) {
+            return new ErrorHandler(res).notFound("User doesn't Exists!", id)
         } else if (result?.passwordNotMatch) {
-            return new ErrorHandler(res).unauthorized("Password Incorrect!", userData.password)
+            return new ErrorHandler(res).unauthorized("Password Incorrect!", password)
         } else {
             return res.status(200).json({ message: "Password Modified!", data: newPassword })
         }
@@ -64,7 +68,9 @@ export default class UserController {
             console.error(e)
             return new ErrorHandler(res).internalServer()
         }
-        if (result?.userNotExists) {
+        if (result?.validationError) {
+            return new ErrorHandler(res).badRequest(result.validationError,result.validationField)
+        } else if (result?.userNotExists) {
             return new ErrorHandler(res).notFound("User doesn't Exists", id)
         } else {
             return res.status(200).json({ message: "Description Modified!", data: newDescription })
@@ -95,7 +101,9 @@ export default class UserController {
             console.error(e)
             return new ErrorHandler(res).internalServer()
         }
-        if (result.userNotExists) {
+        if (result?.validationError) {
+            return new ErrorHandler(res).badRequest(result.validationError,result.validationField)
+        } else if (result.userNotExists) {
             return new ErrorHandler(res).notFound("User doesn't Exists!", userFollowedId)
         } else {
             return res.status(200).json({ message: "User Followed!", data: userFollowedId })
