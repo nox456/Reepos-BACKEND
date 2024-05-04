@@ -7,11 +7,17 @@ export default class AuthService {
 
         const username_validation = await User.validation.username.safeParseAsync(username)
 
-        if (!username_validation.success) return { validationError: username_validation.error.issues[0].message, validationField: username }
+        if (!username_validation.success) return {
+            validationError: username_validation.error.issues[0].message,
+            validationField: username
+        }
 
         const password_validation = await User.validation.password.safeParseAsync(password)
 
-        if (!password_validation.success) return { validationError: password_validation.error.issues[0].message, validationField: password }
+        if (!password_validation.success) return {
+            validationError: password_validation.error.issues[0].message,
+            validationField: password
+        }
 
         const userExists = await User.checkIfExistsByUsername(username)
 
@@ -28,6 +34,19 @@ export default class AuthService {
     static async signinUser(userData) {
         const { username, password } = userData;
 
+        const username_validation = await User.validation.username.safeParseAsync(username)
+
+        if (!username_validation.success) return {
+            validationError: username_validation.error.issues[0].message,
+            validationField: username
+        }
+
+        const password_validation = await User.validation.password.safeParseAsync(password)
+
+        if (!password_validation.success) return {
+            validationError: password_validation.error.issues[0].message,
+            validationField: password
+        }
         const userExists = await User.checkIfExistsByUsername(username)
 
         if (!userExists) return { userNotExists: true }

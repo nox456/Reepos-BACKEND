@@ -13,8 +13,10 @@ export default class User {
         password: z
             .string({ invalid_type_error: "Password must be a string!", required_error: "Password required!" })
             .min(1, { message: "Password required!" }),
-        description: z.string().max(150),
-        img: z.string()
+        description: z
+            .string({ invalid_type_error: "Description must be a string!", required_error: "Description required!" })
+            .max(150, { message: "Description must be less than 150 characters" }),
+        img: z.string({ invalid_type_error: "Image must be a string!", required_error: "Image required!" })
     }
     static async save(data) {
         const { username, password } = data;

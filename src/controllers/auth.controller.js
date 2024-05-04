@@ -36,7 +36,9 @@ export default class AuthController {
             console.error(e);
             return new ErrorHandler(res).internalServer()
         }
-        if (userAuthenticated.userNotExists) {
+        if (userAuthenticated.validationError) {
+            return new ErrorHandler(res).badRequest(userAuthenticated.validationError, userAuthenticated.validationField)
+        } else if (userAuthenticated.userNotExists) {
             return new ErrorHandler(res).badRequest("User doesn't Exists!", username)
         } else if (userAuthenticated.passwordNotMatch) {
             return new ErrorHandler(res).unauthorized("Password Incorrect!", password)
