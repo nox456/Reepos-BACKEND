@@ -5,23 +5,6 @@ import { extname } from "path"
 import { z } from "zod"
 
 export default class User {
-    static validation = {
-        id: z
-            .string({ invalid_type_error: "ID must be a string!", required_error: "ID required!" })
-            .uuid({ message: "ID must be a UUID" }),
-        username: z
-            .string({ invalid_type_error: "Username must be a string!", required_error: "Username required!" })
-            .min(3, { message: "Username must be 3 or more characters" })
-            .max(15, { message: "Username must be less than 15 characters" }),
-        password: z
-            .string({ invalid_type_error: "Password must be a string!", required_error: "Password required!" })
-            .min(1, { message: "Password required!" }),
-        description: z
-            .string({ invalid_type_error: "Description must be a string!", required_error: "Description required!" })
-            .max(150, { message: "Description must be less than 150 characters" }),
-        img: z.string({ invalid_type_error: "Image must be a string!", required_error: "Image required!" }),
-        token: z.string({ invalid_type_error: "Token must be a string!", required_error: "Token required!" })
-    }
     static async save(data) {
         const { username, password } = data;
         let user;
@@ -136,6 +119,75 @@ export default class User {
             await db.query("UPDATE users SET followers = $1 WHERE id = $2 RETURNING *", [user_followers, userFollowedId])
         } catch (e) {
             console.error(e)
+        }
+    }
+    static async validateId(id) {
+        const schema = z
+            .string({ invalid_type_error: "ID must be a string!", required_error: "ID required!" })
+            .uuid({ message: "ID must be a UUID" })
+        const validation = await schema.safeParseAsync(id)
+        if (!validation.success) {
+            return {
+                validationError: validation.error.issues[0].message,
+                validationField: id
+            }
+        }
+    }
+    static async validateUsername(username) {
+        const schema = z
+            .string({ invalid_type_error: "Username must be a string!", required_error: "Username required!" })
+            .min(3, { message: "Username must be 3 or more characters" })
+            .max(15, { message: "Username must be less than 15 characters" })
+        const validation = await schema.safeParseAsync(username)
+        if (!validation.success) {
+            return {
+                validationError: validation.error.issues[0].message,
+                validationField: username
+            }
+        }
+    }
+    static async validatePassword(password) {
+        const schema = z
+            .string({ invalid_type_error: "Password must be a string!", required_error: "Password required!" })
+            .min(1, { message: "Password required!" })
+        const validation = await schema.safeParseAsync(password)
+        if (!validation.success) {
+            return {
+                validationError: validation.error.issues[0].message,
+                validationField: password
+            }
+        }
+    }
+    static async validateDescription(description) {
+        const schema = z
+            .string({ invalid_type_error: "Description must be a string!", required_error: "Description required!" })
+            .max(150, { message: "Description must be less than 150 characters" })
+        const validation = await schema.safeParseAsync(description)
+        if (!validation.success) {
+            return {
+                validationError: validation.error.issues[0].message,
+                validationField: description
+            }
+        }
+    }
+    static async validateImage(image) {
+        const schema = z.string({ invalid_type_error: "Image must be a string!", required_error: "Image required!" })
+        const validation = await schema.safeParseAsync(image)
+        if (!validation.success) {
+            return {
+                validationError: validation.error.issues[0].message,
+                validationField: image
+            }
+        }
+    }
+    static async validateToken(token) {
+        const schema = z.string({ invalid_type_error: "Token must be a string!", required_error: "Token required!" })
+        const validation = await schema.safeParseAsync(token)
+        if (!validation.success) {
+            return {
+                validationError: validation.error.issues[0].message,
+                validationField: token
+            }
         }
     }
 }

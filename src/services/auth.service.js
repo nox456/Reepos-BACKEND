@@ -5,19 +5,11 @@ export default class AuthService {
     static async signupUser(userData) {
         const { username, password } = userData;
 
-        const username_validation = await User.validation.username.safeParseAsync(username)
+        const username_validation_error = await User.validateUsername(username)
+        if (username_validation_error) return username_validation_error
 
-        if (!username_validation.success) return {
-            validationError: username_validation.error.issues[0].message,
-            validationField: username
-        }
-
-        const password_validation = await User.validation.password.safeParseAsync(password)
-
-        if (!password_validation.success) return {
-            validationError: password_validation.error.issues[0].message,
-            validationField: password
-        }
+        const password_validation_error = await User.validatePassword(password)
+        if (password_validation_error) return password_validation_error
 
         const userExists = await User.checkIfExistsByUsername(username)
 
@@ -34,19 +26,12 @@ export default class AuthService {
     static async signinUser(userData) {
         const { username, password } = userData;
 
-        const username_validation = await User.validation.username.safeParseAsync(username)
+        const username_validation_error = await User.validateUsername(username)
+        if (username_validation_error) return username_validation_error
 
-        if (!username_validation.success) return {
-            validationError: username_validation.error.issues[0].message,
-            validationField: username
-        }
+        const password_validation_error = await User.validatePassword(password)
+        if (password_validation_error) return password_validation_error
 
-        const password_validation = await User.validation.password.safeParseAsync(password)
-
-        if (!password_validation.success) return {
-            validationError: password_validation.error.issues[0].message,
-            validationField: password
-        }
         const userExists = await User.checkIfExistsByUsername(username)
 
         if (!userExists) return { userNotExists: true }
@@ -69,12 +54,8 @@ export default class AuthService {
         };
     }
     static async signinUserWithToken(token) {
-        const token_validation = await User.validation.token.safeParseAsync(token)
-
-        if (!token_validation.success) return {
-            validationError: token_validation.error.issues[0].message,
-            validationField: token
-        }
+        const token_validation_error = await User.validateToken(token)
+        if (token_validation_error) return token_validation_error
 
         const user_id = await Auth.validateToken(token)
 
