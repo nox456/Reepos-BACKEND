@@ -69,6 +69,13 @@ export default class AuthService {
         };
     }
     static async signinUserWithToken(token) {
+        const token_validation = await User.validation.token.safeParseAsync(token)
+
+        if (!token_validation.success) return {
+            validationError: token_validation.error.issues[0].message,
+            validationField: token
+        }
+
         const user_id = await Auth.validateToken(token)
 
         if (!user_id) return { isUnauthorized: true }

@@ -6,6 +6,9 @@ import { z } from "zod"
 
 export default class User {
     static validation = {
+        id: z
+            .string({ invalid_type_error: "ID must be a string!", required_error: "ID required!" })
+            .uuid({ message: "ID must be a UUID" }),
         username: z
             .string({ invalid_type_error: "Username must be a string!", required_error: "Username required!" })
             .min(3, { message: "Username must be 3 or more characters" })
@@ -16,7 +19,8 @@ export default class User {
         description: z
             .string({ invalid_type_error: "Description must be a string!", required_error: "Description required!" })
             .max(150, { message: "Description must be less than 150 characters" }),
-        img: z.string({ invalid_type_error: "Image must be a string!", required_error: "Image required!" })
+        img: z.string({ invalid_type_error: "Image must be a string!", required_error: "Image required!" }),
+        token: z.string({ invalid_type_error: "Token must be a string!", required_error: "Token required!" })
     }
     static async save(data) {
         const { username, password } = data;

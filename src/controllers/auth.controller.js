@@ -62,7 +62,9 @@ export default class AuthController {
             console.error(e)
             return new ErrorHandler(res).internalServer()
         }
-        if (user.isUnauthorized) {
+        if (user.validationError) {
+            return new ErrorHandler(res).badRequest(user.validationError, user.validationField)
+        } else if (user.isUnauthorized) {
             return new ErrorHandler(res).unauthorized("User Unauthorized!", token)
         } else {
             return res.status(200).json({
