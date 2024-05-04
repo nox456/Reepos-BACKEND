@@ -14,7 +14,9 @@ export default class AuthController {
             console.error(e);
             return new ErrorHandler(res).internalServer()
         }
-        if (userRegistered.userExists) {
+        if (userRegistered.validationError) {
+            return new ErrorHandler(res).badRequest(userRegistered.validationError, userRegistered.validationField)
+        } else if (userRegistered.userExists) {
             return new ErrorHandler(res).badRequest("User already Exists!", username)
         } else {
             return res

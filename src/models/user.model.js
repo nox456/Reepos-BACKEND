@@ -2,8 +2,20 @@ import db from "../connections/database.js";
 import { SUPABASE_IMAGE_BUCKET } from "../config/env.js"
 import supabase from "../connections/supabase.js"
 import { extname } from "path"
+import { z } from "zod"
 
 export default class User {
+    static validation = {
+        username: z
+            .string({ invalid_type_error: "Username must be a string!", required_error: "Username required!" })
+            .min(3, { message: "Username must be 3 or more characters" })
+            .max(15, { message: "Username must be less than 15 characters" }),
+        password: z
+            .string({ invalid_type_error: "Password must be a string!", required_error: "Password required!" })
+            .min(1, { message: "Password required!" }),
+        description: z.string().max(150),
+        img: z.string()
+    }
     static async save(data) {
         const { username, password } = data;
         let user;
