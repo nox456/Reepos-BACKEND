@@ -11,7 +11,9 @@ export default class UserController {
             console.error(e)
             return new ErrorHandler(res).internalServer()
         }
-        if (result?.userNotExists) {
+        if (result?.validationError) {
+            return new ErrorHandler(res).badRequest(result.validationError, result.validationField)
+        } else if (result?.userNotExists) {
             return new ErrorHandler(res).notFound("User doesn't Exists!", id)
         } else if (result?.passwordNotMatch) {
             return new ErrorHandler(res).unauthorized("Password Incorrect!", password)

@@ -3,6 +3,19 @@ import Auth from "../models/auth.model.js"
 
 export default class UserService {
     static async deleteUser(id, password) {
+        const id_validation = await User.validation.id.safeParseAsync(id)
+
+        if (!id_validation.success) return {
+            validationError: id_validation.error.issues[0].message,
+            validationField: id
+        }
+
+        const password_validation = await User.validation.password.safeParseAsync(password)
+
+        if (!password_validation.success) return {
+            validationError: password_validation.error.issues[0].message,
+            validationField: password
+        }
         const userExists = await User.checkIfExistsById(id)
 
         if (!userExists) return { userNotExists: true }
