@@ -26,6 +26,15 @@ export default class UserService {
     static async changeUsername(newUsername, userData) {
         const { id, password } = userData
 
+        const username_validation_error = await User.validateUsername(newUsername)
+        if (username_validation_error) return username_validation_error
+
+        const id_validation_error = await User.validateId(id)
+        if (id_validation_error) return id_validation_error
+
+        const password_validation_error = await User.validatePassword(password)
+        if (password_validation_error) return password_validation_error
+
         const userExists = await User.checkIfExistsById(id)
 
         if (!userExists) return { userNotExists: true }
@@ -40,6 +49,15 @@ export default class UserService {
     }
     static async changePassword(newPassword, userData) {
         const { id, password } = userData
+
+        const newPassword_validation_error = await User.validatePassword(newPassword)
+        if (newPassword_validation_error) return newPassword_validation_error
+
+        const id_validation_error = await User.validateId(id)
+        if (id_validation_error) return id_validation_error
+
+        const password_validation_error = await User.validatePassword(password)
+        if (password_validation_error) return password_validation_error
 
         const userExists = await User.checkIfExistsById(id)
 
@@ -56,6 +74,13 @@ export default class UserService {
         await User.changePassword(encryptedPassword, id)
     }
     static async changeDescription(newDescription, id) {
+
+        const id_validation_error = await User.validateId(id)
+        if (id_validation_error) return id_validation_error
+
+        const description_validation_error = await User.validateDescription(newDescription)
+        if (description_validation_error) return description_validation_error
+
         const userExists = await User.checkIfExistsById(id)
 
         if (!userExists) return { userNotExists: true }
@@ -63,6 +88,12 @@ export default class UserService {
         await User.changeDescription(newDescription, id)
     }
     static async changeImage(image, id) {
+        const id_validation_error = await User.validateId(id)
+        if (id_validation_error) return id_validation_error
+
+        const image_validation_error = await User.validateImage(image)
+        if (image_validation_error) return image_validation_error
+
         const userExists = await User.checkIfExistsById(id)
 
         if (!userExists) return { userNotExists: true }
@@ -71,6 +102,12 @@ export default class UserService {
         return { imageUrl }
     }
     static async followUser(userFollowedId, userFollowerId) {
+        const userFollowerId_validation_error = await User.validateId(userFollowerId)
+        if (userFollowerId_validation_error) return userFollowerId_validation_error
+
+        const userFollowedId_validation_error = await User.validateId(userFollowedId)
+        if (userFollowedId_validation_error) return userFollowedId_validation_error
+
         const userExists = await User.checkIfExistsById(userFollowerId)
 
         if (!userExists) return { userNotExists: true }
