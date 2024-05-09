@@ -69,7 +69,7 @@ export default class UserController {
             return new ErrorHandler(res).internalServer()
         }
         if (result?.validationError) {
-            return new ErrorHandler(res).badRequest(result.validationError,result.validationField)
+            return new ErrorHandler(res).badRequest(result.validationError, result.validationField)
         } else if (result?.userNotExists) {
             return new ErrorHandler(res).notFound("User doesn't Exists", id)
         } else {
@@ -102,11 +102,28 @@ export default class UserController {
             return new ErrorHandler(res).internalServer()
         }
         if (result?.validationError) {
-            return new ErrorHandler(res).badRequest(result.validationError,result.validationField)
+            return new ErrorHandler(res).badRequest(result.validationError, result.validationField)
         } else if (result.userNotExists) {
             return new ErrorHandler(res).notFound("User doesn't Exists!", userFollowedId)
         } else {
             return res.status(200).json({ message: "User Followed!", data: userFollowedId })
+        }
+    }
+    static async search(req, res) {
+        const { username } = req.query
+        let result
+        try {
+            result = await UserService.search(username)
+        } catch (e) {
+            console.error(e)
+            return new ErrorHandler(res).internalServer()
+        }
+        if (result.validationError) {
+            return new ErrorHandler(res).badRequest(result.validationError, result.validationField)
+        } else if (result.length == 0) {
+            return new ErrorHandler(res).notFound("Users not founded!", username)
+        } else {
+            return res.status(200).json({ message: "Users founded!", data: result })
         }
     }
 }

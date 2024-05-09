@@ -113,4 +113,11 @@ export default class UserService {
 
         return { userFollowed }
     }
+    static async search(username) {
+        const username_validation_error = await User.validateUsername(username)
+        if (username_validation_error) return username_validation_error
+
+        const users = await User.search(username)
+        return users
+    }
 }
