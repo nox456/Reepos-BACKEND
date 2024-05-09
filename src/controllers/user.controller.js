@@ -126,4 +126,23 @@ export default class UserController {
             return res.status(200).json({ message: "Users founded!", data: result })
         }
     }
+    static async getFollowers(req, res) {
+        const { id } = req.query
+        let result
+        try {
+            result = await UserService.getFollowers(id)
+        } catch (e) {
+            console.error(e)
+            return new ErrorHandler(res).internalServer()
+        }
+        if (result.validationError) {
+            return new ErrorHandler(res).badRequest(result.validationError, result.validationField)
+        } else if (result.userNotExists) {
+            return new ErrorHandler(res).notFound("User doesn't exists!", id)
+        } else if (result.length == 0) {
+            return new ErrorHandler(res).notFound("User doesn't have followers!", id)
+        } else {
+            return res.status(200).json({ message: "Followers Founded!", data: result })
+        }
+    }
 }
