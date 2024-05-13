@@ -127,10 +127,10 @@ export default class UserController {
         }
     }
     static async getFollowers(req, res) {
-        const { id } = req.query
+        const { id,username } = req.query
         let result
         try {
-            result = await UserService.getFollowers(id)
+            result = await UserService.getFollowers(id,username)
         } catch (e) {
             console.error(e)
             return new ErrorHandler(res).internalServer()

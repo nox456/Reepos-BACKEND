@@ -120,14 +120,19 @@ export default class UserService {
         const users = await User.search(username)
         return users
     }
-    static async getFollowers(user_id) {
+    static async getFollowers(user_id,username) {
         const id_validation_error = await User.validateId(user_id)
         if (id_validation_error) return id_validation_error
+
+        if (username) {
+            const username_validation_error = await User.validateUsername(username)
+            if (username_validation_error) return username_validation_error
+        }
 
         const userExists = await User.checkIfExistsById(user_id)
         if (!userExists) return { userNotExists: true }
 
-        const followers = await User.getFollowers(user_id)
+        const followers = await User.getFollowers(user_id,username)
         return followers
     }
 }

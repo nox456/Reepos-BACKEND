@@ -3,7 +3,7 @@ import { SUPABASE_IMAGE_BUCKET } from "../config/env.js"
 import supabase from "../connections/supabase.js"
 import { extname } from "path"
 import { z } from "zod"
-import {SEARCH_USERS, USER_FOLLOWERS} from "./queries.js"
+import { SEARCH_USERS, USER_FOLLOWERS } from "./queries.js"
 
 export default class User {
     static async save(data) {
@@ -192,21 +192,28 @@ export default class User {
         }
     }
     static async search(username) {
-        let usersFounded        
+        let usersFounded
         try {
             const users_response = await db.query(SEARCH_USERS, [`%${username}%`])
             usersFounded = users_response.rows
-        } catch(e) {
+        } catch (e) {
             console.error(e)
         }
         return usersFounded
     }
-    static async getFollowers(user_id) {
+    static async getFollowers(user_id, username) {
         let followers
         try {
             const users_response = await db.query(USER_FOLLOWERS, [user_id])
-            followers = users_response.rows[0].followers
-        } catch(e) {
+            if (username) {
+                followers = users_response.rows[0].followers.filter((follower) => {
+                    return follower.username.toLowerCase().includes(username.toLowerCase())
+                }
+                )
+            } else {
+                followers = users_response.rows[0].followers
+            }
+        } catch (e) {
             console.error(e)
         }
         if (!followers[0].username) return []
