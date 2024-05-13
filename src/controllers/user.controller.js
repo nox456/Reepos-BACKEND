@@ -1,5 +1,5 @@
 import UserService from "../services/user.service.js"
-import ErrorHandler from "../errors/errorHandler.js"
+import ErrorHandler from "../lib/errorHandler.js"
 
 export default class UserController {
     static async deleteUser(req, res) {

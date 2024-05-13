@@ -1,5 +1,6 @@
 import AuthService from "../services/auth.service.js";
-import ErrorHandler from "../errors/errorHandler.js"
+import ErrorHandler from "../lib/errorHandler.js"
+import ResponseHandler from "../lib/responseHandler.js"
 
 export default class AuthController {
     static async signup(req, res) {
@@ -19,9 +20,7 @@ export default class AuthController {
         } else if (userRegistered.userExists) {
             return new ErrorHandler(res).badRequest("User already Exists!", username)
         } else {
-            return res
-                .status(200)
-                .json({ message: "User Registered!", data: userRegistered });
+            return ResponseHandler.userRegistered(userRegistered, res)
         }
     }
     static async signin(req, res) {
@@ -43,13 +42,7 @@ export default class AuthController {
         } else if (userAuthenticated.passwordNotMatch) {
             return new ErrorHandler(res).unauthorized("Password Incorrect!", password)
         } else {
-            return res.status(200).json({
-                message: "User Authenticated!",
-                data: {
-                    user: userAuthenticated.user,
-                    token: userAuthenticated.token,
-                },
-            });
+            return ResponseHandler.userAuthenticated({ user: userAuthenticated.user, token: userAuthenticated.token }, res)
         }
     }
     static async signinWithToken(req, res) {
@@ -67,13 +60,7 @@ export default class AuthController {
         } else if (user.isUnauthorized) {
             return new ErrorHandler(res).unauthorized("User Unauthorized!", token)
         } else {
-            return res.status(200).json({
-                message: "User Authenticated!",
-                data: {
-                    user,
-                    token
-                },
-            });
+            return ResponseHandler.userAuthenticated({ user, token }, res)
         }
     }
 }
