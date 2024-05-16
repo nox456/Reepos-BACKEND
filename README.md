@@ -67,7 +67,7 @@ Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos H
 <table>
     <th>Método</th>
     <th>Endpoint</th>
-    <th>Body</th>
+    <th>Body / Query</th>
     <th>Descripción</th>
     <tr>
         <td><code>DELETE</code></td>
@@ -104,5 +104,23 @@ Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos H
         <td><code>/follow-user</code></td>
         <td><code>{ "userFollowerId": "string", "userFollowedId": "string" }</code></td>
         <td>Seguir a un usuario</td>
+    </tr>
+    <tr>
+        <td><code>GET</code></td>
+        <td><code>/search</code></td>
+        <td><code>?username="string"</code></td>
+        <td>Buscar usuarios por nombre de usuario</td>
+    </tr>
+    <tr>
+        <td><code>GET</code></td>
+        <td><code>/followers</code></td>
+        <td><code>?id="string"</code></td>
+        <td>Obtener seguidores de un usuario</td>
+    </tr>
+    <tr>
+        <td><code>GET</code></td>
+        <td><code>/profile</code></td>
+        <td><code>?id="string"</code></td>
+        <td>Obtener información sobre el perfil del usuario</td>
     </tr>
 </table>
