@@ -1,5 +1,6 @@
 import UserService from "../services/user.service.js"
 import ErrorHandler from "../lib/errorHandler.js"
+import ResponseHandler from "../lib/responseHandler.js"
 
 export default class UserController {
     static async deleteUser(req, res) {
@@ -18,7 +19,7 @@ export default class UserController {
         } else if (result?.passwordNotMatch) {
             return new ErrorHandler(res).unauthorized("Password Incorrect!", password)
         } else {
-            return res.status(200).json({ message: "User deleted!", id })
+            return ResponseHandler.ok("User Deleted!", id, res)
         }
     }
     static async changeUsername(req, res) {
@@ -37,7 +38,7 @@ export default class UserController {
         } else if (result?.passwordNotMatch) {
             return new ErrorHandler(res).unauthorized("Password Incorrect!", password)
         } else {
-            return res.status(200).json({ message: "Username Modified!", data: newUsername })
+            return ResponseHandler.ok("Username Modified!", newUsername, res)
         }
     }
     static async changePassword(req, res) {
@@ -56,7 +57,7 @@ export default class UserController {
         } else if (result?.passwordNotMatch) {
             return new ErrorHandler(res).unauthorized("Password Incorrect!", password)
         } else {
-            return res.status(200).json({ message: "Password Modified!", data: newPassword })
+            return ResponseHandler.ok("Password Modified!", newPassword, res)
         }
     }
     static async changeDescription(req, res) {
@@ -73,7 +74,7 @@ export default class UserController {
         } else if (result?.userNotExists) {
             return new ErrorHandler(res).notFound("User doesn't Exists", id)
         } else {
-            return res.status(200).json({ message: "Description Modified!", data: newDescription })
+            return ResponseHandler.ok("Description Modified!", newDescription, res)
         }
     }
     static async storeImage(req, res) {
@@ -89,7 +90,7 @@ export default class UserController {
         if (result?.userNotExists) {
             return new ErrorHandler(res).notFound("User doesn't Exists", user_id)
         } else {
-            return res.status(200).json({ message: "Image Modified!", data: result.imageUrl })
+            return ResponseHandler.ok("Image Modified!", result.imageUrl, res)
         }
     }
     static async followUser(req, res) {
@@ -106,7 +107,7 @@ export default class UserController {
         } else if (result.userNotExists) {
             return new ErrorHandler(res).notFound("User doesn't Exists!", userFollowedId)
         } else {
-            return res.status(200).json({ message: "User Followed!", data: userFollowedId })
+            return ResponseHandler.ok("User Followed!", userFollowedId, res)
         }
     }
     static async search(req, res) {
@@ -123,14 +124,14 @@ export default class UserController {
         } else if (result.length == 0) {
             return new ErrorHandler(res).notFound("Users not founded!", username)
         } else {
-            return res.status(200).json({ message: "Users founded!", data: result })
+            return ResponseHandler.ok("Users Founded!", result, res)
         }
     }
     static async getFollowers(req, res) {
-        const { id,username } = req.query
+        const { id, username } = req.query
         let result
         try {
-            result = await UserService.getFollowers(id,username)
+            result = await UserService.getFollowers(id, username)
         } catch (e) {
             console.error(e)
             return new ErrorHandler(res).internalServer()
@@ -142,7 +143,7 @@ export default class UserController {
         } else if (result.length == 0) {
             return new ErrorHandler(res).notFound("User doesn't have followers!", id)
         } else {
-            return res.status(200).json({ message: "Followers Founded!", data: result })
+            return ResponseHandler.ok("Followers Founded!", result, res)
         }
     }
 }

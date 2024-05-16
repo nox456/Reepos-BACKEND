@@ -20,7 +20,7 @@ export default class AuthController {
         } else if (userRegistered.userExists) {
             return new ErrorHandler(res).badRequest("User already Exists!", username)
         } else {
-            return ResponseHandler.userRegistered(userRegistered, res)
+            return ResponseHandler.ok("User Registered!", userRegistered, res)
         }
     }
     static async signin(req, res) {
@@ -42,7 +42,7 @@ export default class AuthController {
         } else if (userAuthenticated.passwordNotMatch) {
             return new ErrorHandler(res).unauthorized("Password Incorrect!", password)
         } else {
-            return ResponseHandler.userAuthenticated({ user: userAuthenticated.user, token: userAuthenticated.token }, res)
+            return ResponseHandler.ok("User Authenticated!", { user: userAuthenticated.user, token: userAuthenticated.token }, res)
         }
     }
     static async signinWithToken(req, res) {
@@ -60,7 +60,7 @@ export default class AuthController {
         } else if (user.isUnauthorized) {
             return new ErrorHandler(res).unauthorized("User Unauthorized!", token)
         } else {
-            return ResponseHandler.userAuthenticated({ user, token }, res)
+            return ResponseHandler.ok("User Authenticated!", { user: userAuthenticated.user, token: userAuthenticated.token }, res)
         }
     }
 }
