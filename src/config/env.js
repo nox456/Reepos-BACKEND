@@ -1,3 +1,4 @@
+// Throw errors when a needed env var doesn't exists
 if (!process.env.HOST) {
     throw new Error("Env var HOST is not defined!");
 }

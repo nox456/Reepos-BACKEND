@@ -2,7 +2,9 @@ import UserService from "../services/user.service.js"
 import ErrorHandler from "../lib/errorHandler.js"
 import ResponseHandler from "../lib/responseHandler.js"
 
+// Class used in 'user.routes.js' that contains request handlers
 export default class UserController {
+    // Delete a existing user with password
     static async deleteUser(req, res) {
         const { id, password } = req.body
         let result
@@ -12,6 +14,7 @@ export default class UserController {
             console.error(e)
             return new ErrorHandler(res).internalServer()
         }
+        // Send response depending on validations
         if (result?.validationError) {
             return new ErrorHandler(res).badRequest(result.validationError, result.validationField)
         } else if (result?.userNotExists) {
@@ -22,6 +25,7 @@ export default class UserController {
             return ResponseHandler.ok("User Deleted!", id, res)
         }
     }
+    // Change username of a existing user
     static async changeUsername(req, res) {
         const { newUsername, id, password } = req.body
         let result
@@ -31,6 +35,7 @@ export default class UserController {
             console.error(e)
             return new ErrorHandler(res).internalServer()
         }
+        // Send response depending on validations
         if (result?.validationError) {
             return new ErrorHandler(res).badRequest(result.validationError), result.validationField
         } else if (result?.userNotExists) {
@@ -41,6 +46,7 @@ export default class UserController {
             return ResponseHandler.ok("Username Modified!", newUsername, res)
         }
     }
+    // Change password of a existing user
     static async changePassword(req, res) {
         const { newPassword, id, password } = req.body
         let result
@@ -50,6 +56,7 @@ export default class UserController {
             console.error(e)
             return new ErrorHandler(res).internalServer()
         }
+        // Send response depending on validations
         if (result?.validationError) {
             return new ErrorHandler(res).badRequest(result.validationError, result.validationField)
         } else if (result?.userNotExists) {
@@ -60,6 +67,7 @@ export default class UserController {
             return ResponseHandler.ok("Password Modified!", newPassword, res)
         }
     }
+    // Change description of a existing user
     static async changeDescription(req, res) {
         const { newDescription, id } = req.body
         let result
@@ -69,6 +77,7 @@ export default class UserController {
             console.error(e)
             return new ErrorHandler(res).internalServer()
         }
+        // Send response depending on validations
         if (result?.validationError) {
             return new ErrorHandler(res).badRequest(result.validationError, result.validationField)
         } else if (result?.userNotExists) {
@@ -77,6 +86,7 @@ export default class UserController {
             return ResponseHandler.ok("Description Modified!", newDescription, res)
         }
     }
+    // Change image url of a existing user
     static async storeImage(req, res) {
         const { file } = req
         const { user_id } = req.body
@@ -87,12 +97,14 @@ export default class UserController {
             console.error(e)
             return new ErrorHandler(res).internalServer()
         }
+        // Send response depending on validations
         if (result?.userNotExists) {
             return new ErrorHandler(res).notFound("User doesn't Exists", user_id)
         } else {
             return ResponseHandler.ok("Image Modified!", result.imageUrl, res)
         }
     }
+    // Add the id of a user follower in followers field of a user followed
     static async followUser(req, res) {
         const { userFollowerId, userFollowedId } = req.body
         let result
@@ -102,6 +114,7 @@ export default class UserController {
             console.error(e)
             return new ErrorHandler(res).internalServer()
         }
+        // Send response depending on validations
         if (result?.validationError) {
             return new ErrorHandler(res).badRequest(result.validationError, result.validationField)
         } else if (result.userNotExists) {
@@ -110,6 +123,7 @@ export default class UserController {
             return ResponseHandler.ok("User Followed!", userFollowedId, res)
         }
     }
+    // Get users by username
     static async search(req, res) {
         const { username } = req.query
         let result
@@ -119,6 +133,7 @@ export default class UserController {
             console.error(e)
             return new ErrorHandler(res).internalServer()
         }
+        // Send response depending on validations
         if (result.validationError) {
             return new ErrorHandler(res).badRequest(result.validationError, result.validationField)
         } else if (result.length == 0) {
@@ -127,6 +142,7 @@ export default class UserController {
             return ResponseHandler.ok("Users Founded!", result, res)
         }
     }
+    // Get user's followers by ID
     static async getFollowers(req, res) {
         const { id, username } = req.query
         let result
@@ -136,6 +152,7 @@ export default class UserController {
             console.error(e)
             return new ErrorHandler(res).internalServer()
         }
+        // Send response depending on validations
         if (result.validationError) {
             return new ErrorHandler(res).badRequest(result.validationError, result.validationField)
         } else if (result.userNotExists) {
@@ -146,6 +163,7 @@ export default class UserController {
             return ResponseHandler.ok("Followers Founded!", result, res)
         }
     }
+    // Get profile info of a existing user by ID
     static async getProfileInfo(req,res) {
         const { id } = req.query
         let result
@@ -155,6 +173,7 @@ export default class UserController {
             console.error(e)
             return new ErrorHandler(res).internalServer()
         }
+        // Send response depending on validations
         if (result.validationError) {
             return new ErrorHandler(res).badRequest(result.validationError, result.validationField)
         } else if (result.userNotExists) {

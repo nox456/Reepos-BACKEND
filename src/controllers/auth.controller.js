@@ -2,7 +2,9 @@ import AuthService from "../services/auth.service.js";
 import ErrorHandler from "../lib/errorHandler.js"
 import ResponseHandler from "../lib/responseHandler.js"
 
+// Class used in 'auth.routes.js' that contains request handlers
 export default class AuthController {
+    // Register (create) a new user
     static async signup(req, res) {
         const { username, password } = req.body;
         let userRegistered;
@@ -15,6 +17,7 @@ export default class AuthController {
             console.error(e);
             return new ErrorHandler(res).internalServer()
         }
+        // Send response depending on validations 
         if (userRegistered.validationError) {
             return new ErrorHandler(res).badRequest(userRegistered.validationError, userRegistered.validationField)
         } else if (userRegistered.userExists) {
@@ -23,6 +26,7 @@ export default class AuthController {
             return ResponseHandler.ok("User Registered!", userRegistered, res)
         }
     }
+    // Loggin (authenticate) a existing user with credentials (username and password)
     static async signin(req, res) {
         const { username, password } = req.body;
         let userAuthenticated;
@@ -35,6 +39,7 @@ export default class AuthController {
             console.error(e);
             return new ErrorHandler(res).internalServer()
         }
+        // Send response depending on validations 
         if (userAuthenticated.validationError) {
             return new ErrorHandler(res).badRequest(userAuthenticated.validationError, userAuthenticated.validationField)
         } else if (userAuthenticated.userNotExists) {
@@ -45,6 +50,7 @@ export default class AuthController {
             return ResponseHandler.ok("User Authenticated!", { user: userAuthenticated.user, token: userAuthenticated.token }, res)
         }
     }
+    // Loggin (authenticate) a existing user with JWT token
     static async signinWithToken(req, res) {
         const { token } = req.body
 
@@ -55,6 +61,7 @@ export default class AuthController {
             console.error(e)
             return new ErrorHandler(res).internalServer()
         }
+        // Send response depending on validations 
         if (user.validationError) {
             return new ErrorHandler(res).badRequest(user.validationError, user.validationField)
         } else if (user.isUnauthorized) {

@@ -1,6 +1,7 @@
 import pg from "pg";
 import { DB_URL } from "../config/env.js";
 
+// Global database object
 const db = new pg.Pool({
     connectionString: DB_URL,
 });
