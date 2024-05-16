@@ -146,4 +146,21 @@ export default class UserController {
             return ResponseHandler.ok("Followers Founded!", result, res)
         }
     }
+    static async getProfileInfo(req,res) {
+        const { id } = req.query
+        let result
+        try {
+            result = await UserService.getProfileInfo(id)
+        } catch(e) {
+            console.error(e)
+            return new ErrorHandler(res).internalServer()
+        }
+        if (result.validationError) {
+            return new ErrorHandler(res).badRequest(result.validationError, result.validationField)
+        } else if (result.userNotExists) {
+            return new ErrorHandler(res).notFound("User doesn't exists!", id)
+        } else {
+            return ResponseHandler.ok("Profile Info", result, res)
+        }
+    }
 }

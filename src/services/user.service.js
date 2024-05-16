@@ -135,4 +135,14 @@ export default class UserService {
         const followers = await User.getFollowers(user_id,username)
         return followers
     }
+    static async getProfileInfo(user_id) {
+        const id_validation_error = await User.validateId(user_id)
+        if (id_validation_error) return id_validation_error
+
+        const userExists = await User.checkIfExistsById(user_id)
+        if (!userExists) return { userNotExists: true }
+        
+        const profileInfo = await User.getProfileInfo(user_id)
+        return profileInfo
+    }
 }

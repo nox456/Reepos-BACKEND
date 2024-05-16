@@ -12,5 +12,6 @@ router.post("/upload-image", MulterController.uploadImage, UserController.storeI
 router.post("/follow-user", UserController.followUser)
 router.get("/search", UserController.search)
 router.get("/followers", UserController.getFollowers)
+router.get("/profile", UserController.getProfileInfo)
 
 export default router
