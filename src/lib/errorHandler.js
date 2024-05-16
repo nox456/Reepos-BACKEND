@@ -1,3 +1,4 @@
+// Send response with error status code, data and message
 export default class ErrorHandler {
     constructor(response) {
         this.response = response
