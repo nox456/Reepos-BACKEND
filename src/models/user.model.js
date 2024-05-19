@@ -5,7 +5,9 @@ import { extname } from "path"
 import { z } from "zod"
 import { PROFILE_INFO, SEARCH_USERS, USER_FOLLOWERS } from "./queries.js"
 
+// Class used in 'user.service.js' that contains queries to database
 export default class User {
+    // Create a user in database with username and password
     static async save(data) {
         const { username, password } = data;
         let user;
@@ -20,6 +22,7 @@ export default class User {
         }
         return user;
     }
+    // Get a user by username field
     static async getByUsername(username) {
         let user
         try {
@@ -30,6 +33,7 @@ export default class User {
         }
         return user
     }
+    // Get a user by id field
     static async getById(id) {
         let user
         try {
@@ -40,6 +44,7 @@ export default class User {
         }
         return user
     }
+    // Delete a user by id field
     static async delete(id) {
         try {
             await db.query("DELETE FROM users WHERE id = $1", [id])
@@ -47,6 +52,7 @@ export default class User {
             console.error(e)
         }
     }
+    // Check if a user exists by id field
     static async checkIfExistsById(id) {
         let usersExists
         try {
@@ -57,6 +63,7 @@ export default class User {
         }
         return usersExists
     }
+    // Check if a user exists by username field
     static async checkIfExistsByUsername(username) {
         let usersExists
         try {
@@ -67,6 +74,7 @@ export default class User {
         }
         return usersExists
     }
+    // Update username field by id field
     static async changeUsername(newUsername, id) {
         try {
             await db.query("UPDATE users SET username = $1 WHERE id = $2", [newUsername, id])
@@ -74,6 +82,7 @@ export default class User {
             console.error(e)
         }
     }
+    // Update password field by id field
     static async changePassword(newPassword, id) {
         try {
             await db.query("UPDATE users SET password = $1 WHERE id = $2", [newPassword, id])
@@ -81,6 +90,7 @@ export default class User {
             console.error(e)
         }
     }
+    // Update description field by id field
     static async changeDescription(newDescription, id) {
         try {
             await db.query("UPDATE users SET description = $1 WHERE id = $2", [newDescription, id])
@@ -88,6 +98,7 @@ export default class User {
             console.error(e)
         }
     }
+    // Update image field by id field
     static async changeImage(image, id) {
         const ext = extname(image.originalname)
         let imageUrl
@@ -100,6 +111,7 @@ export default class User {
         }
         return imageUrl.data.publicUrl
     }
+    // Add a user id in followers field of another user
     static async addFollowedUser(userFollowedId, userFollowerId) {
         let userFollowed
         try {
@@ -112,6 +124,7 @@ export default class User {
         }
         return userFollowed.rows[0]
     }
+    // Add a user id in followed field of another user
     static async addFollowerUser(userFollowerId, userFollowedId) {
         try {
             const user_followers_response = await db.query("SELECT followers FROM users WHERE id = $1", [userFollowedId])
@@ -122,6 +135,7 @@ export default class User {
             console.error(e)
         }
     }
+    // Validate input of id field
     static async validateId(id) {
         const schema = z
             .string({ invalid_type_error: "ID must be a string!", required_error: "ID required!" })
@@ -134,6 +148,7 @@ export default class User {
             }
         }
     }
+    // Validate input of username field
     static async validateUsername(username) {
         const schema = z
             .string({ invalid_type_error: "Username must be a string!", required_error: "Username required!" })
@@ -147,6 +162,7 @@ export default class User {
             }
         }
     }
+    // Validate input of password field
     static async validatePassword(password) {
         const schema = z
             .string({ invalid_type_error: "Password must be a string!", required_error: "Password required!" })
@@ -159,6 +175,7 @@ export default class User {
             }
         }
     }
+    // Validate input of description field
     static async validateDescription(description) {
         const schema = z
             .string({ invalid_type_error: "Description must be a string!", required_error: "Description required!" })
@@ -171,6 +188,7 @@ export default class User {
             }
         }
     }
+    // Validate input of image field
     static async validateImage(image) {
         const schema = z.string({ invalid_type_error: "Image must be a string!", required_error: "Image required!" })
         const validation = await schema.safeParseAsync(image)
@@ -181,6 +199,7 @@ export default class User {
             }
         }
     }
+    // Validate input of token field
     static async validateToken(token) {
         const schema = z.string({ invalid_type_error: "Token must be a string!", required_error: "Token required!" })
         const validation = await schema.safeParseAsync(token)
@@ -191,6 +210,7 @@ export default class User {
             }
         }
     }
+    // Get users by username field
     static async search(username) {
         let usersFounded
         try {
@@ -201,6 +221,7 @@ export default class User {
         }
         return usersFounded
     }
+    // Get followers field of a user by id field
     static async getFollowers(user_id, username) {
         let followers
         try {
@@ -220,6 +241,7 @@ export default class User {
 
         return followers
     }
+    // Get profile info of a user by id
     static async getProfileInfo(user_id) {
         let profileInfo
         try {
