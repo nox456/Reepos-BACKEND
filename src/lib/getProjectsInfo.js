@@ -1,7 +1,11 @@
 import simpleGit from "simple-git";
+import { dirname, join } from "path"
+import { fileURLToPath } from "url"
 
-export default async function projectInfo(projecPath) {
-    const git = simpleGit(projecPath)
+const __dirname = dirname(fileURLToPath(import.meta.url))
+
+export default async function projectInfo(projectName) {
+    const git = simpleGit(join(__dirname, "../temp", projectName))
     const commits = await git.log({
         format: { title: "%s", content: "%b", hash: "%H", author: "%an", created_at: "%ad" }
     })
