@@ -9,6 +9,10 @@ export default async function projectInfo(projectName) {
     const commits = await git.log({
         format: { title: "%s", content: "%b", hash: "%H", author: "%an", created_at: "%ad" }
     })
+    for (const commit of commits.all) {
+        const branchesResult = await git.branch(['--contains', commit.hash])
+        commit.branches = Object.keys(branchesResult.branches)
+    }
     const contributors = await git.log({
         format: { name: "%an" }
     })
@@ -52,7 +56,7 @@ export default async function projectInfo(projectName) {
         }
     }
     return {
-        commits,
+        commits: commits.all,
         contributors: [...new Set(contributors.all.map((c => c.name)))],
         branches: branches.all.map((b) => {
             return {
