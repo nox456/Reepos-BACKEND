@@ -1,4 +1,4 @@
-import db from "../connections/database";
+import db from "../connections/database.js";
 
 export default class Commit_Branch {
     static async save(commit,branch) {

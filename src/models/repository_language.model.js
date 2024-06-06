@@ -1,4 +1,4 @@
-import db from "../connections/database";
+import db from "../connections/database.js";
 
 export default class Repository_Language {
     static async save(repository, language) {
