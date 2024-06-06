@@ -46,13 +46,16 @@ export default async function projectInfo(projectName) {
     const modifications = []
 
     for (const commit of commits.all) {
-        const diff = await git.diffSummary([commit.hash, '--name-status'])
-        for (const file of diff.files) {
-            modifications.push({
-                commit: commit.hash,
-                type: file.status,
-                file: file.file
-            })
+        const resultRaw = await git.show([commit.hash, "--pretty=format:", '--name-status'])
+        const files = resultRaw.split("\n").map((f) => f.split("\t"))
+        for (const file of files) {
+            if (file[0] == "A" || file[0] == "M" || file[0] == "D" ) {
+                modifications.push({
+                    commit: commit.hash,
+                    type: file[0],
+                    file: file[1]
+                })
+            }
         }
     }
     return {
