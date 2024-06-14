@@ -77,4 +77,7 @@ export default class RepositoryService {
         }
         return repoSaved
     }
+    static async uploadRepository(projectName) {
+        await Repository.upload(projectName)
+    }
 }

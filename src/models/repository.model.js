@@ -1,4 +1,7 @@
 import db from "../connections/database.js";
+import supabase from "../connections/supabase.js"
+import { SUPABASE_PROJECT_BUCKET } from "../config/env.js"
+import getProjectsFiles from "../lib/getProjectsFiles.js"
 
 export default class Repository {
     // Create a repository in database
@@ -13,5 +16,11 @@ export default class Repository {
             console.error(e)
         }
         return repoSaved
+    }
+    static async upload(projectName) {
+        const files = await getProjectsFiles(projectName)
+        for (const file of files) {
+            await supabase.storage.from(SUPABASE_PROJECT_BUCKET).upload(`${projectName}/${file.path}`, file.buffer)
+        }
     }
 }

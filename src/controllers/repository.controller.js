@@ -14,4 +14,14 @@ export default class RepositoryController {
         }
         return ResponseHandler.ok("Created Repository!", repoSaved, res)
     }
+    static async upload(req, res) {
+        const { projectName } = req.body
+        try {
+            await RepositoryService.uploadRepository(projectName)
+        } catch(e) {
+            console.error(e)
+            return new ErrorHandler(res).internalServer()
+        }
+        return ResponseHandler.ok("Repository Uploaded!", projectName, res)
+    }
 }
