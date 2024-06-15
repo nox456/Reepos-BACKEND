@@ -22,6 +22,7 @@ Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos H
 
 - **[Auth](#auth)**
 - **[Users](#users)**
+- **[Repositories](#repositories)**
 
 ### Auth
 
@@ -122,5 +123,30 @@ Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos H
         <td><code>/profile</code></td>
         <td><code>?id="string"</code></td>
         <td>Obtener información sobre el perfil del usuario</td>
+    </tr>
+</table>
+
+---
+
+### Repositories
+
+**URL base:** `/repositories/`
+
+<table>
+    <th>Método</th>
+    <th>Endpoint</th>
+    <th>Body / Query</th>
+    <th>Descripción</th>
+    <tr>
+        <td><code>POST</code></td>        
+        <td><code>/create</code></td>
+        <td><code>{ "repoData": { "name": "string", "description": "string", "user_owner": "string", "languages": "string[]" }, "projecName": "string" }</code></td>
+        <td>Registrar información del repositorio</td>
+    </tr>
+    <tr>
+        <td><code>POST</code></td>
+        <td><code>/upload</code></td>
+        <td><code>{ "projectName": "string" }</code></td>
+        <td>Subir archivos del repositorio a la nube (Supabase)</td>
     </tr>
 </table>
