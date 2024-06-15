@@ -23,11 +23,16 @@ export default class AuthController {
         } else if (userRegistered.userExists) {
             return new ErrorHandler(res).badRequest("User already Exists!", username)
         } else {
+            res.cookie("token", userRegistered.token, { httpOnly: true, secure: true })
             return ResponseHandler.ok("User Registered!", userRegistered, res)
         }
     }
     // Loggin (authenticate) a existing user with credentials (username and password)
     static async signin(req, res) {
+        const { token } = req.cookies
+        if (token) {
+            return ResponseHandler.ok("User Authenticated!", token, res)
+        }
         const { username, password } = req.body;
         let userAuthenticated;
         try {
@@ -47,27 +52,25 @@ export default class AuthController {
         } else if (userAuthenticated.passwordNotMatch) {
             return new ErrorHandler(res).unauthorized("Password Incorrect!", password)
         } else {
+            res.cookie("token", userAuthenticated.token, { httpOnly: true, secure: true })
             return ResponseHandler.ok("User Authenticated!", { user: userAuthenticated.user, token: userAuthenticated.token }, res)
         }
     }
-    // Loggin (authenticate) a existing user with JWT token
-    static async signinWithToken(req, res) {
-        const { token } = req.body
-
-        let user
+    // Check if a user is authenticated
+    static async isAuthenticated(req, res, next) {
+        const { token } = req.cookies
+        let result
         try {
-            user = await AuthService.signinUserWithToken(token)
+            result = await AuthService.verifyToken(token)
         } catch (e) {
             console.error(e)
             return new ErrorHandler(res).internalServer()
         }
-        // Send response depending on validations 
-        if (user.validationError) {
-            return new ErrorHandler(res).badRequest(user.validationError, user.validationField)
-        } else if (user.isUnauthorized) {
-            return new ErrorHandler(res).unauthorized("User Unauthorized!", token)
-        } else {
-            return ResponseHandler.ok("User Authenticated!", { user: userAuthenticated.user, token: userAuthenticated.token }, res)
+        if (result.validationError) {
+            return new ErrorHandler(res).badRequest(result.validationError, result.validationField)
+        } else if (result == false) {
+            return new ErrorHandler(res).unauthorized("Invalid Token!", token)
         }
+        next()
     }
 }

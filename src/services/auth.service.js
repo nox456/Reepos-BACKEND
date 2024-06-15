@@ -56,17 +56,9 @@ export default class AuthService {
             token
         };
     }
-    // Signin a user by JWT token
-    static async signinUserWithToken(token) {
-        const token_validation_error = await User.validateToken(token)
-        if (token_validation_error) return token_validation_error
-
-        const user_id = await Auth.validateToken(token)
-
-        if (!user_id) return { isUnauthorized: true }
-
-        const user = await User.getById(user_id)
-
-        return user
+    // Verify token's user
+    static async verifyToken(token) {
+        const token_validated = await Auth.validateToken(token)
+        return token_validated
     }
 }

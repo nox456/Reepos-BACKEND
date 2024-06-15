@@ -1,6 +1,7 @@
 import bcryptjs from "bcryptjs";
 import { SECRET } from "../config/env.js";
 import jwt from "jsonwebtoken";
+import { z } from "zod"
 
 // Class used in 'auth.service.js' that contains functions related with auth services
 export default class Auth {
@@ -17,9 +18,23 @@ export default class Auth {
     // Compare a password sended by requests with a password storeed in database
     static async comparePassword(requestPassword, storedPassword) {
         return await bcryptjs.compare(requestPassword, storedPassword)
-    }
-    // Validate Token and get the value
+    } 
+    // Validate input of token field
     static async validateToken(token) {
-        return jwt.verify(token,SECRET)
+        const schema = z.string({ required_error: "Token required!" })
+        const validation = await schema.safeParseAsync(token)
+        if (!validation.success) {
+            return {
+                validationError: validation.error.issues[0].message,
+                validationField: token
+            }
+        }
+        return jwt.verify(token,SECRET, (err,encoded) => {
+            if (err) {
+                return false
+            } else {
+                return encoded
+            }
+        })
     }
 }
