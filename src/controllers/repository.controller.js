@@ -16,12 +16,19 @@ export default class RepositoryController {
     }
     static async upload(req, res) {
         const { projectName } = req.body
+        let result
         try {
-            await RepositoryService.uploadRepository(projectName)
-        } catch(e) {
+            result = await RepositoryService.uploadRepository(projectName)
+        } catch (e) {
             console.error(e)
             return new ErrorHandler(res).internalServer()
         }
-        return ResponseHandler.ok("Repository Uploaded!", projectName, res)
+        if (result?.validationError) {
+            return new ErrorHandler(res).badRequest(result.validationError, result.validationField)
+        } else if (result?.projectNotExists) {
+            return new ErrorHandler(res).notFound("Project doesn't Exists", projectName)
+        } else {
+            return ResponseHandler.ok("Repository Uploaded!", projectName, res)
+        }
     }
 }

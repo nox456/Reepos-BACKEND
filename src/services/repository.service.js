@@ -9,7 +9,7 @@ import Repository_Language from "../models/repository_language.model.js";
 import projectInfo from "../lib/getProjectsInfo.js"
 
 export default class RepositoryService {
-    // Create a repostory with their commits, contributors, files, branches, languages and modifications
+    // Create a repository with their commits, contributors, files, branches, languages and modifications
     static async createRepository(repoData, projectName) {
         const { commits, files, branches, contributors, modifications } = await projectInfo(projectName)
         const { name, description, user_owner, languages } = repoData
@@ -77,7 +77,14 @@ export default class RepositoryService {
         }
         return repoSaved
     }
+    // Upload a repository to cloud storage (supabase)
     static async uploadRepository(projectName) {
+        const projectName_validation_error = await Repository.validateProjectName(projectName)
+        if (projectName_validation_error) return projectName_validation_error
+
+        const projectExists = await Repository.checkIfExists(projectName)
+        if (!projectExists) return { projectNotExists: true }
+
         await Repository.upload(projectName)
     }
 }
