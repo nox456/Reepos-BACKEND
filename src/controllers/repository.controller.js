@@ -28,7 +28,7 @@ export default class RepositoryController {
         } else if (result?.projectNotExists) {
             return new ErrorHandler(res).notFound("Project doesn't Exists", projectName)
         } else {
-            return ResponseHandler.ok("Repository Uploaded!", projectName, res)
+            return ResponseHandler.ok("Repository Uploaded to Cloud!", projectName, res)
         }
     }
 }
