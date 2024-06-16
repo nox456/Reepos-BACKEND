@@ -21,7 +21,7 @@ export default class AuthController {
         if (userRegistered.validationError) {
             return new ErrorHandler(res).badRequest(userRegistered.validationError, userRegistered.validationField)
         } else if (userRegistered.userExists) {
-            return new ErrorHandler(res).badRequest("User already Exists!", username)
+            return new ErrorHandler(res).forbidden("User already exists!", username)
         } else {
             res.cookie("token", userRegistered.token, { httpOnly: true, secure: true })
             return ResponseHandler.ok("User Registered!", userRegistered, res)
@@ -44,9 +44,9 @@ export default class AuthController {
         if (userAuthenticated.validationError) {
             return new ErrorHandler(res).badRequest(userAuthenticated.validationError, userAuthenticated.validationField)
         } else if (userAuthenticated.userNotExists) {
-            return new ErrorHandler(res).badRequest("User doesn't Exists!", username)
+            return new ErrorHandler(res).notFound("User doesn't Exists!", username)
         } else if (userAuthenticated.passwordNotMatch) {
-            return new ErrorHandler(res).unauthorized("Password Incorrect!", password)
+            return new ErrorHandler(res).forbidden("Password Incorrect!", password)
         } else {
             res.cookie("token", userAuthenticated.token, { httpOnly: true, secure: true })
             return ResponseHandler.ok("User Authenticated!", { user: userAuthenticated.user, token: userAuthenticated.token }, res)
