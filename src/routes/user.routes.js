@@ -1,16 +1,11 @@
 import UserController from "../controllers/user.controller.js"
 import MulterController from "../controllers/multer.controller.js"
-import AuthController from "../controllers/auth.controller.js"
 import { Router } from "express"
 
 const router = Router()
 
 // Search users by username field
 router.get("/search", UserController.search)
-
-// Validate JWT token (middleware)
-router.use(AuthController.isAuthenticated)
-
 // Delete user by id and password
 router.delete("/delete", UserController.deleteUser)
 // Update username field of a user by id and password

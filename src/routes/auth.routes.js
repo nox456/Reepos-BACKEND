@@ -7,5 +7,7 @@ const router = Router()
 router.post("/signup", AuthController.signup)
 // Signin a user with username and password
 router.post("/signin", AuthController.signin)
+// Check if user is authenticated with JWT Token
+router.get("/is-authenticated", AuthController.isAuthenticated)
 
 export default router

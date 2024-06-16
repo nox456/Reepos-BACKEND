@@ -29,10 +29,6 @@ export default class AuthController {
     }
     // Loggin (authenticate) a existing user with credentials (username and password)
     static async signin(req, res) {
-        const { token } = req.cookies
-        if (token) {
-            return ResponseHandler.ok("User Authenticated!", token, res)
-        }
         const { username, password } = req.body;
         let userAuthenticated;
         try {
@@ -57,7 +53,7 @@ export default class AuthController {
         }
     }
     // Check if a user is authenticated
-    static async isAuthenticated(req, res, next) {
+    static async isAuthenticated(req, res) {
         const { token } = req.cookies
         let result
         try {
@@ -71,6 +67,6 @@ export default class AuthController {
         } else if (result == false) {
             return new ErrorHandler(res).unauthorized("Invalid Token!", token)
         }
-        next()
+        return ResponseHandler.ok("User Authenticated!", token, res)
     }
 }
