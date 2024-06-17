@@ -1,6 +1,7 @@
 import RepositoryService from "../services/repository.service.js";
 import ErrorHandler from "../lib/errorHandler.js"
 import ResponseHandler from "../lib/responseHandler.js"
+import MulterController from "../controllers/multer.controller.js"
 
 export default class RepositoryController {
     static async create(req, res) {
@@ -14,7 +15,7 @@ export default class RepositoryController {
         }
         return ResponseHandler.ok("Created Repository!", repoSaved, res)
     }
-    static async upload(req, res) {
+    static async uploadCloud(req, res) {
         const { projectName } = req.body
         let result
         try {

@@ -2,6 +2,8 @@ import multer from "multer"
 import { extname, join, dirname } from "path"
 import { mkdir } from "fs/promises"
 import { fileURLToPath } from "url"
+import ErrorHandler from "../lib/errorHandler.js"
+import ResponseHandler from "../lib/responseHandler.js"
 
 const reposPath = join(dirname(fileURLToPath(import.meta.url)), "../temp")
 
@@ -10,12 +12,14 @@ const imageStorage = multer.memoryStorage()
 const repoStorage = multer.diskStorage({
     destination: async (req, file, cb) => {
         const { path, projectName } = req.body
+
+        if (!path) return cb("Path required!")
+        if (!projectName) return cb("Project Name required!")
+
         await mkdir(join(reposPath, projectName, path), { recursive: true })
         return cb(null, join(reposPath, projectName, path))
     },
-    filename: (req, file, cb) => {
-        return cb(null, file.originalname)
-    }
+    filename: (req, file, cb) => cb(null, file.originalname)
 })
 
 // Class used in 'user.routes.js' that contains middlewares to upload images
@@ -33,7 +37,15 @@ export default class MulterController {
             }
         }
     }).single("user_image")
-    static uploadRepository = multer({
-        storage: repoStorage
-    }).single("file")
+    static uploadRepository(req, res) {
+        multer({
+            storage: repoStorage
+        }).single("file")(req, res, err => {
+            const { projectName } = req.body
+            if (err) {
+                return new ErrorHandler(res).badRequest(err, null)
+            }
+            return ResponseHandler.ok("Project Uploaded to Backend", projectName, res)
+        })
+    }
 }
