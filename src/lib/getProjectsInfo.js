@@ -20,14 +20,13 @@ export default async function projectInfo(projectName) {
 
     const filesRaw = await git.raw('ls-tree', '-r', '--name-only', 'HEAD')
 
-    const filesPath = filesRaw.split("\n")
+    const filesPath = filesRaw.split("\n").filter(f => f != "")
 
     const files = []
 
     for (const path of filesPath) {
         const sizeText = await git.raw('ls-tree', '-r', '--format=%(objectsize)', 'HEAD', path == "" ? "." : path)
         const sizeBytes = parseInt(sizeText.slice(0, sizeText.lastIndexOf("\\")))
-
         let size
         if (sizeBytes >= 1000000) {
             size = `${(sizeBytes / 1024 / 1024).toFixed(1)} MB`

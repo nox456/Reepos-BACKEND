@@ -15,4 +15,7 @@ export default class ErrorHandler {
     internalServer() {
         return this.response.status(500).json({ message: "Internal Server Error", status: 500 })
     }
+    forbidden(message,data) {
+        return this.response.status(403).json({ status: 403, message, data  })
+    }
 }

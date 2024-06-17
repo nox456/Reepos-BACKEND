@@ -20,7 +20,7 @@ export default class UserController {
         } else if (result?.userNotExists) {
             return new ErrorHandler(res).notFound("User doesn't Exists!", id)
         } else if (result?.passwordNotMatch) {
-            return new ErrorHandler(res).unauthorized("Password Incorrect!", password)
+            return new ErrorHandler(res).forbidden("Password Incorrect!", password)
         } else {
             return ResponseHandler.ok("User Deleted!", id, res)
         }
@@ -41,7 +41,7 @@ export default class UserController {
         } else if (result?.userNotExists) {
             return new ErrorHandler(res).notFound("User doesn't Exists!", id)
         } else if (result?.passwordNotMatch) {
-            return new ErrorHandler(res).unauthorized("Password Incorrect!", password)
+            return new ErrorHandler(res).forbidden("Password Incorrect!", password)
         } else {
             return ResponseHandler.ok("Username Modified!", newUsername, res)
         }
@@ -62,7 +62,7 @@ export default class UserController {
         } else if (result?.userNotExists) {
             return new ErrorHandler(res).notFound("User doesn't Exists!", id)
         } else if (result?.passwordNotMatch) {
-            return new ErrorHandler(res).unauthorized("Password Incorrect!", password)
+            return new ErrorHandler(res).forbidden("Password Incorrect!", password)
         } else {
             return ResponseHandler.ok("Password Modified!", newPassword, res)
         }

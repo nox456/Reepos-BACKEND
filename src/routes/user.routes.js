@@ -4,6 +4,8 @@ import { Router } from "express"
 
 const router = Router()
 
+// Search users by username field
+router.get("/search", UserController.search)
 // Delete user by id and password
 router.delete("/delete", UserController.deleteUser)
 // Update username field of a user by id and password
@@ -16,8 +18,6 @@ router.put("/change-description", UserController.changeDescription)
 router.post("/upload-image", MulterController.uploadImage, UserController.storeImage)
 // Follow a user by id
 router.post("/follow-user", UserController.followUser)
-// Search users by username field
-router.get("/search", UserController.search)
 // Search followers of a user by id field
 router.get("/followers", UserController.getFollowers)
 // Get profile info of a user by id field
