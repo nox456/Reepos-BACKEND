@@ -199,17 +199,6 @@ export default class User {
             }
         }
     }
-    // Validate input of token field
-    static async validateToken(token) {
-        const schema = z.string({ invalid_type_error: "Token must be a string!", required_error: "Token required!" })
-        const validation = await schema.safeParseAsync(token)
-        if (!validation.success) {
-            return {
-                validationError: validation.error.issues[0].message,
-                validationField: token
-            }
-        }
-    }
     // Get users by username field
     static async search(username) {
         let usersFounded
