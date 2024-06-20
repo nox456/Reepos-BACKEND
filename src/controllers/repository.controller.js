@@ -42,6 +42,8 @@ export default class RepositoryController {
         }
         if (result?.validationError) {
             return new ErrorHandler(res).badRequest(result.validationError, result.validationField)
+        } else if (result?.repoNotExists) {
+            return new ErrorHandler(res).notFound("Repository doesn't exists!",projectName)
         } else if (result.length == 0) {
             return new ErrorHandler(res).notFound("Files not found!", projectName)
         }

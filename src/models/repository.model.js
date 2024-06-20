@@ -46,10 +46,22 @@ export default class Repository {
         }
     }
     // Check if project exists in 'temp' dir
-    static async checkIfExists(projectName) {
+    static async checkIfExistsInBackend(projectName) {
         const projects = await readdir(projectsPath)
         return projects.includes(projectName)
     }
+    // Check if project exists in database
+    static async checkIfExistsInDb(repoName) {
+        let exists
+        try {
+            const result = await db.query("SELECT count(*) FROM repositories WHERE name = $1", [repoName])
+            exists = result.rows[0].count > 0
+        } catch(e) {
+            console.error(e)
+        }
+        return exists
+    }
+    // Get files from a repository stored in database
     static async getFiles(projectName) {
         let files
         try {

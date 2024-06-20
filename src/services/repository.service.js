@@ -82,14 +82,19 @@ export default class RepositoryService {
         const projectName_validation_error = await Repository.validateProjectName(projectName)
         if (projectName_validation_error) return projectName_validation_error
 
-        const projectExists = await Repository.checkIfExists(projectName)
+        const projectExists = await Repository.checkIfExistsInBackend(projectName)
         if (!projectExists) return { projectNotExists: true }
 
         await Repository.upload(projectName)
     }
+    // Get files from a repository stored in database
     static async getFiles(projectName) {
         const projectName_validation_error = await Repository.validateProjectName(projectName)
         if (projectName_validation_error) return projectName_validation_error
+
+        const exists = await Repository.checkIfExistsInDb(projectName)
+        
+        if (!exists) return { repoNotExists: true }
 
         const files = await Repository.getFiles(projectName)
         return files
