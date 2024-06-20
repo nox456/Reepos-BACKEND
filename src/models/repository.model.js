@@ -6,6 +6,7 @@ import { z } from "zod"
 import { readdir } from "fs/promises"
 import { join, dirname } from "path"
 import { fileURLToPath } from "url"
+import { REPOSITORIES_FILES } from "./queries.js";
 
 const projectsPath = join(dirname(fileURLToPath(import.meta.url)), "../temp")
 
@@ -48,5 +49,17 @@ export default class Repository {
     static async checkIfExists(projectName) {
         const projects = await readdir(projectsPath)
         return projects.includes(projectName)
+    }
+    static async getFiles(projectName) {
+        let files
+        try {
+            const result_id = await db.query("SELECT id FROM repositories WHERE name = $1", [projectName])
+            const id = result_id.rows[0].id
+            const result_files = await db.query(REPOSITORIES_FILES, [id])
+            files = result_files.rows
+        } catch(e) {
+            console.error(e)
+        }
+        return files
     }
 }

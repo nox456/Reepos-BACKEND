@@ -10,5 +10,7 @@ router.post("/create", RepositoryController.create)
 router.post("/upload-cloud", RepositoryController.uploadCloud)
 // Upload a repository to backend
 router.post("/upload-backend", MulterController.uploadRepository)
+// Get files of repository from cloud
+router.get("/get-files", RepositoryController.getFiles)
 
 export default router

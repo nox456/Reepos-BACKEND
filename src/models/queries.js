@@ -52,3 +52,21 @@ GROUP BY
 	users.img,
 	users.followers,
 	users.followed;`
+
+export const REPOSITORIES_FILES = `SELECT
+        json_build_object(
+                'file_name',file.name,
+                'file_size',file.size,
+                'last_commit_title',last_commit.title,
+                'last_edited_date',last_commit.created_at
+        ) as file
+FROM (
+    SELECT
+        f.name, f.size,f.id
+    FROM repositories
+    LEFT OUTER JOIN files f
+    ON f.repo = repositories.id
+    WHERE repositories.id = $1
+) as file,
+    LATERAL (SELECT c.title, c.created_at FROM modifications LEFT OUTER JOIN commits c ON c.id = modifications.commit WHERE modifications.file = file.id ORDER BY c.created_at DESC LIMIT 1) as last_commit WHERE file.size != 'N/A'
+`

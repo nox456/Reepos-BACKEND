@@ -37,7 +37,7 @@ export default class RepositoryService {
         const commitsSaved = []
         for (const commit of commits) {
             const contributor = contributorsSaved.find((c) => c.name == commit.author).id
-            const commitSaved = await Commit.save({ title: commit, content: commit.content, hash: commit.hash, author: contributor, created_at: commit.created_at, repo: repoSaved.id })
+            const commitSaved = await Commit.save({ title: commit.title, content: commit.content, hash: commit.hash, author: contributor, created_at: commit.created_at, repo: repoSaved.id })
 
             commitsSaved.push(commitSaved)
 
@@ -86,5 +86,12 @@ export default class RepositoryService {
         if (!projectExists) return { projectNotExists: true }
 
         await Repository.upload(projectName)
+    }
+    static async getFiles(projectName) {
+        const projectName_validation_error = await Repository.validateProjectName(projectName)
+        if (projectName_validation_error) return projectName_validation_error
+
+        const files = await Repository.getFiles(projectName)
+        return files
     }
 }
