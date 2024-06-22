@@ -55,6 +55,7 @@ GROUP BY
 
 export const REPOSITORIES_FILES = `SELECT
         json_build_object(
+                'file_id',file.id,
                 'file_name',file.name,
                 'file_size',file.size,
                 'last_commit_title',last_commit.title,
