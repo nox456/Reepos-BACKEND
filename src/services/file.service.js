@@ -5,8 +5,12 @@ export default class FileService {
         const id_validation_error = await File.validateId(id)
         if (id_validation_error) return id_validation_error
 
-        const exists = await File.checkIfExistsById(id)
-        if (!exists) return { fileNotExists: true }
+        const existsInDb = await File.checkIfExistsInDb(id)
+        if (!existsInDb) return { fileNotExistsDb: true }
+
+        const existsInCloud = await File.checkIfExistsInCloud(projecName,id)
+        if (!existsInCloud) return { fileNotExistsCloud: true }
+
 
         const fileUrl = await File.download(id,projecName)
         return fileUrl

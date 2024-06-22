@@ -14,8 +14,10 @@ export default class FileController {
         }
         if (result?.validationError) {
             return new ErrorHandler(res).badRequest(result.validationError,result.validationField)
-        } else if (result?.fileNotExists) {
-            return new ErrorHandler(res).notFound("File doesn't exists!", id)
+        } else if (result?.fileNotExistsDb) {
+            return new ErrorHandler(res).notFound("File doesn't exists in database!", id)
+        } else if (result?.fileNotExistsCloud) {
+            return new ErrorHandler(res).notFound("File doesn't exists in cloud!", id)
         }
         return ResponseHandler.ok("File founded!", result, res)
     }
