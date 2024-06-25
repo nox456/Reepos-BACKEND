@@ -99,4 +99,18 @@ export default class RepositoryService {
         const files = await Repository.getFiles(projectName)
         return files
     }
+    static async download(projectName) {
+        const projectName_validation_error = await Repository.validateProjectName(projectName)
+        if (projectName_validation_error) return projectName_validation_error
+
+        const exists = await Repository.checkIfExistsInDb(projectName)
+        
+        if (!exists) return { repoNotExists: true }
+
+        const files = await Repository.getFiles(projectName)
+
+        const urls = await Repository.getFilesUrls(projectName,files)
+
+        return urls
+    }
 }

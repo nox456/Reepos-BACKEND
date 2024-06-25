@@ -54,19 +54,28 @@ GROUP BY
 	users.followed;`
 
 export const REPOSITORIES_FILES = `SELECT
+<<<<<<< Updated upstream
         json_build_object(
                 'file_name',file.name,
                 'file_size',file.size,
                 'last_commit_title',last_commit.title,
                 'last_edited_date',last_commit.created_at
         ) as file
+=======
+file.id,
+file.name,
+file.size,
+file.path,
+last_commit.last_commit_title,
+last_commit.last_commit_created_at
+>>>>>>> Stashed changes
 FROM (
     SELECT
-        f.name, f.size,f.id
+        f.name, f.size,f.id, f.path
     FROM repositories
     LEFT OUTER JOIN files f
     ON f.repo = repositories.id
     WHERE repositories.id = $1
 ) as file,
-    LATERAL (SELECT c.title, c.created_at FROM modifications LEFT OUTER JOIN commits c ON c.id = modifications.commit WHERE modifications.file = file.id ORDER BY c.created_at DESC LIMIT 1) as last_commit WHERE file.size != 'N/A'
+    LATERAL (SELECT c.title as last_commit_title, c.created_at as last_commit_created_at FROM modifications LEFT OUTER JOIN commits c ON c.id = modifications.commit WHERE modifications.file = file.id ORDER BY c.created_at DESC LIMIT 1) as last_commit WHERE file.size != 'N/A'
 `

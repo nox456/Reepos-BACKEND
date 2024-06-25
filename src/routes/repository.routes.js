@@ -13,4 +13,6 @@ router.post("/upload-backend", MulterController.uploadRepository)
 // Get files of repository from cloud
 router.get("/get-files", RepositoryController.getFiles)
 
+router.get("/download", RepositoryController.download)
+
 export default router

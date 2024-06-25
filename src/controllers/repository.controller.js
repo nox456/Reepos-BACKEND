@@ -49,4 +49,22 @@ export default class RepositoryController {
         }
         return ResponseHandler.ok("Files founded!", result, res)
     }
+    static async download(req,res) {
+        const { projectName } = req.query
+        let result
+        try {
+            result = await RepositoryService.download(projectName)
+        } catch(e) {
+            console.error()
+            return new ErrorHandler(res).internalServer()
+        }
+        if (result?.validationError) {
+            return new ErrorHandler(res).badRequest(result.validationError, result.validationField)
+        } else if (result?.repoNotExists) {
+            return new ErrorHandler(res).notFound("Repository doesn't exists!",projectName)
+        } else if (result.length == 0) {
+            return new ErrorHandler(res).notFound("Files not found!", projectName)
+        }
+        return ResponseHandler.ok("Project downloaded!",result,res)
+    }
 }
