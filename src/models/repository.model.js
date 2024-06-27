@@ -85,20 +85,30 @@ export default class Repository {
         }
         return files;
     }
+    // Get cloud public urls of files
     static async getFilesUrls(projectName, files) {
         const urls = [];
         try {
             for (const file of files) {
                 const url = supabase.storage
                     .from(SUPABASE_PROJECT_BUCKET)
-                    .getPublicUrl(`${projectName}/${file.path}`, {
-                        download: file.name,
-                    }).data.publicUrl;
+                    .getPublicUrl(`${projectName}/${file.path}`).data.publicUrl;
                 urls.push(url);
             }
         } catch (e) {
             console.error(e);
         }
         return urls;
+    }
+    // Check if a repository is stored in cloud (supabase)
+    static async checkIfExistsInCloud(projectName) {
+        let projects
+        try {
+            const result = await supabase.storage.from(SUPABASE_PROJECT_BUCKET).list()
+            projects = result.data.map((p) => p.name)
+        } catch(e) {
+            console.error(e)
+        }
+        return projects.includes(projectName)
     }
 }

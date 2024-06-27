@@ -7,7 +7,7 @@ export const SEARCH_USERS = `SELECT
                                 FULL OUTER JOIN repositories repos
                                 ON users.id = repos.user_owner
                                 WHERE users.username ILIKE $1
-                                GROUP BY users.username,users.img,users.followers`
+                                GROUP BY users.username,users.img,users.followers`;
 export const USER_FOLLOWERS = `SELECT
 	                                 follower.user_name,
 	                                 array_agg(json_build_object(
@@ -34,7 +34,7 @@ export const USER_FOLLOWERS = `SELECT
                                  		fllwers.followers,
                                  		usrs.username
                                  ) as follower 
-                                 GROUP BY follower.user_name`
+                                 GROUP BY follower.user_name`;
 export const PROFILE_INFO = `SELECT
 	users.username as user_name,
 	users.description as user_description,
@@ -51,24 +51,15 @@ GROUP BY
 	users.description,
 	users.img,
 	users.followers,
-	users.followed;`
+	users.followed;`;
 
 export const REPOSITORIES_FILES = `SELECT
-<<<<<<< Updated upstream
-        json_build_object(
-                'file_name',file.name,
-                'file_size',file.size,
-                'last_commit_title',last_commit.title,
-                'last_edited_date',last_commit.created_at
-        ) as file
-=======
-file.id,
-file.name,
-file.size,
-file.path,
-last_commit.last_commit_title,
-last_commit.last_commit_created_at
->>>>>>> Stashed changes
+            file.id,
+            file.name,
+            file.size,
+            file.path,
+            last_commit.last_commit_title,
+            last_commit.last_commit_created_at
 FROM (
     SELECT
         f.name, f.size,f.id, f.path
@@ -78,4 +69,4 @@ FROM (
     WHERE repositories.id = $1
 ) as file,
     LATERAL (SELECT c.title as last_commit_title, c.created_at as last_commit_created_at FROM modifications LEFT OUTER JOIN commits c ON c.id = modifications.commit WHERE modifications.file = file.id ORDER BY c.created_at DESC LIMIT 1) as last_commit WHERE file.size != 'N/A'
-`
+`;
