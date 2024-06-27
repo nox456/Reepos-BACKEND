@@ -12,6 +12,8 @@ incluye API, **Autenticación con JWT** y conexión con la **base de datos**.
 - **[JWT](https://jwt.io/)** - Autenticación con Tokens
 - **[Supabase](https://supabase.com)** - Almacenamiento en la Nube
 - **[Zod](https://zod.dev/)** - Validación de datos
+- **[Simple-Git](https://www.npmjs.com/package/simple-git)** - Operaciones internas con Git
+- **[Achiver](https://www.npmjs.com/package/archiver)** - Compresión en formato ZIP
 
 # Documentación de la API 📔
 
@@ -23,6 +25,7 @@ Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos H
 - **[Auth](#auth)**
 - **[Users](#users)**
 - **[Repositories](#repositories)**
+- **[Files](#files)**
 
 ### Auth
 
@@ -148,5 +151,26 @@ Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos H
         <td><code>/upload</code></td>
         <td><code>{ "projectName": "string" }</code></td>
         <td>Subir archivos del repositorio a la nube (Supabase)</td>
+    </tr>
+    <tr>
+        <td><code>GET</code></td>
+        <td><code>/download</code></td>
+        <td><code>?projectName="string"</code></td>
+        <td>Obtener la url pública de un repositorio comprimido en zip</td>
+    </tr>
+</table>
+
+### Files
+
+<table>
+    <th>Método</th>
+    <th>Endpoint</th>
+    <th>Body / Query</th>
+    <th>Descripción</th>
+    <tr>
+        <td><code>GET</code></td>
+        <td><code>/download</code></td>
+        <td><code>?id="string"&projectName="string"</code></td>
+        <td>Obtener url pública de un archivo</td>
     </tr>
 </table>
