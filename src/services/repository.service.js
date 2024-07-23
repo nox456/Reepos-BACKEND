@@ -6,14 +6,14 @@ import Contributor from "../models/contributor.model.js";
 import Modification from "../models/modification.model.js";
 import Commit_Branch from "../models/commit_branch.model.js";
 import Repository_Language from "../models/repository_language.model.js";
-import projectInfo from "../lib/getProjectsInfo.js";
+import repoInfo from "../lib/getReposInfo.js";
 import downloadFiles from "../lib/downloadFiles.js";
 
 export default class RepositoryService {
     // Create a repository with their commits, contributors, files, branches, languages and modifications
-    static async createRepository(repoData, projectName) {
+    static async createRepository(repoData, repoName) {
         const { commits, files, branches, contributors, modifications } =
-            await projectInfo(projectName);
+            await repoInfo(repoName);
         const { name, description, user_owner, languages } = repoData;
         // Create repository in database
         const repoSaved = await Repository.save({
@@ -138,49 +138,49 @@ export default class RepositoryService {
         return repoSaved;
     }
     // Upload a repository to cloud storage (supabase)
-    static async uploadRepository(projectName) {
-        const projectName_validation_error =
-            await Repository.validateProjectName(projectName);
-        if (projectName_validation_error) return projectName_validation_error;
+    static async uploadRepository(repoName) {
+        const repoName_validation_error =
+            await Repository.validateRepoName(repoName);
+        if (repoName_validation_error) return repoName_validation_error;
 
-        const projectExists =
-            await Repository.checkIfExistsInBackend(projectName);
-        if (!projectExists) return { projectNotExists: true };
+        const repoExists =
+            await Repository.checkIfExistsInBackend(repoName);
+        if (!repoExists) return { repoNotExists: true };
 
-        await Repository.upload(projectName);
+        await Repository.upload(repoName);
     }
     // Get files from a repository stored in database
-    static async getFiles(projectName) {
-        const projectName_validation_error =
-            await Repository.validateProjectName(projectName);
-        if (projectName_validation_error) return projectName_validation_error;
+    static async getFiles(repoName) {
+        const repoName_validation_error =
+            await Repository.validateRepoName(repoName);
+        if (repoName_validation_error) return repoName_validation_error;
 
-        const exists = await Repository.checkIfExistsInDb(projectName);
+        const exists = await Repository.checkIfExistsInDb(repoName);
 
         if (!exists) return { repoNotExists: true };
 
-        const files = await Repository.getFiles(projectName);
+        const files = await Repository.getFiles(repoName);
         return files;
     }
     // Generate a zip file of a repository
-    static async download(projectName) {
-        const projectName_validation_error =
-            await Repository.validateProjectName(projectName);
-        if (projectName_validation_error) return projectName_validation_error;
+    static async download(repoName) {
+        const repoName_validation_error =
+            await Repository.validateRepoName(repoName);
+        if (repoName_validation_error) return repoName_validation_error;
 
-        const existsDb = await Repository.checkIfExistsInDb(projectName);
+        const existsDb = await Repository.checkIfExistsInDb(repoName);
 
         if (!existsDb) return { repoNotExistsDb: true };
 
-        const existsCloud = await Repository.checkIfExistsInCloud(projectName);
+        const existsCloud = await Repository.checkIfExistsInCloud(repoName);
 
         if (!existsCloud) return { repoNotExistsCloud: true };
 
-        const files = await Repository.getFiles(projectName);
+        const files = await Repository.getFiles(repoName);
 
-        const urls = await Repository.getFilesUrls(projectName, files);
+        const urls = await Repository.getFilesUrls(repoName, files);
 
-        const zip_file = await downloadFiles(urls, projectName);
+        const zip_file = await downloadFiles(urls, repoName);
         return zip_file;
     }
 }

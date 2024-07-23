@@ -1,6 +1,6 @@
 import db from "../connections/database.js";
 import supabase from "../connections/supabase.js";
-import { SUPABASE_PROJECT_BUCKET } from "../config/env.js";
+import { SUPABASE_REPOSITORY_BUCKET } from "../config/env.js";
 import { z } from "zod";
 
 export default class File {
@@ -18,7 +18,7 @@ export default class File {
         }
         return fileSaved;
     }
-    static async download(id, projectName) {
+    static async download(id, repoName) {
         let fileUrl;
         try {
             const path_result = await db.query(
@@ -27,8 +27,8 @@ export default class File {
             );
             const { path, name } = path_result.rows[0];
             fileUrl = supabase.storage
-                .from(SUPABASE_PROJECT_BUCKET)
-                .getPublicUrl(`${projectName}/${path}`, { download: name });
+                .from(SUPABASE_REPOSITORY_BUCKET)
+                .getPublicUrl(`${repoName}/${path}`, { download: name });
         } catch (e) {
             console.error(e);
         }
@@ -62,7 +62,7 @@ export default class File {
         }
         return exists;
     }
-    static async checkIfExistsInCloud(projectName, file_id) {
+    static async checkIfExistsInCloud(repoName, file_id) {
         let exists;
         try {
             const result_file = await db.query(
@@ -71,9 +71,9 @@ export default class File {
             );
             const { name, path } = result_file.rows[0];
             const files = await supabase.storage
-                .from(SUPABASE_PROJECT_BUCKET)
+                .from(SUPABASE_REPOSITORY_BUCKET)
                 .list(
-                    `${projectName}/${path.slice(0, path.lastIndexOf("/"))}`,
+                    `${repoName}/${path.slice(0, path.lastIndexOf("/"))}`,
                     { search: name },
                 );
             exists = files.data.length > 0;

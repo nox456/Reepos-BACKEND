@@ -11,13 +11,13 @@ const reposPath = join(dirname(fileURLToPath(import.meta.url)), "../temp")
 const imageStorage = multer.memoryStorage()
 const repoStorage = multer.diskStorage({
     destination: async (req, file, cb) => {
-        const { path, projectName } = req.body
+        const { path, repoName } = req.body
 
         if (!path) return cb("Path required!")
-        if (!projectName) return cb("Project Name required!")
+        if (!repoName) return cb("Repository Name required!")
 
-        await mkdir(join(reposPath, projectName, path), { recursive: true })
-        return cb(null, join(reposPath, projectName, path))
+        await mkdir(join(reposPath, repoName, path), { recursive: true })
+        return cb(null, join(reposPath, repoName, path))
     },
     filename: (req, file, cb) => cb(null, file.originalname)
 })
@@ -41,11 +41,11 @@ export default class MulterController {
         multer({
             storage: repoStorage
         }).single("file")(req, res, err => {
-            const { projectName } = req.body
+            const { repoName } = req.body
             if (err) {
                 return new ErrorHandler(res).badRequest(err, null)
             }
-            return ResponseHandler.ok("Project Uploaded to Backend", projectName, res)
+            return ResponseHandler.ok("Repository Uploaded to Backend", repoName, res)
         })
     }
 }

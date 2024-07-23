@@ -4,8 +4,8 @@ import { fileURLToPath } from "url"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-export default async function projectInfo(projectName) {
-    const git = simpleGit(join(__dirname, "../temp", projectName))
+export default async function repoInfo(repoName) {
+    const git = simpleGit(join(__dirname, "../temp", repoName))
     const commits = await git.log({
         format: { title: "%s", content: "%b", hash: "%H", author: "%an", created_at: "%ad" }
     })

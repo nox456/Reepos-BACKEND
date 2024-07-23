@@ -9,8 +9,8 @@ const downloadsDir = join(
 );
 
 // Generate a zip file with the content of a repository
-export default async function downloadFiles(urls, projectName) {
-    const zip = createWriteStream(join(downloadsDir, `${projectName}.zip`));
+export default async function downloadFiles(urls, repoName) {
+    const zip = createWriteStream(join(downloadsDir, `${repoName}.zip`));
     const archive = archiver("zip", { zlib: { level: 5 } });
 
     archive.pipe(zip);
@@ -19,10 +19,10 @@ export default async function downloadFiles(urls, projectName) {
         const res = await fetch(url);
         const content = await res.text();
         const name = url.slice(url.lastIndexOf("/") + 1);
-        const path = url.slice(url.lastIndexOf(projectName), url.indexOf(name));
+        const path = url.slice(url.lastIndexOf(repoName), url.indexOf(name));
 
         archive.append(content, { name, prefix: path });
     }
     archive.finalize();
-    return `${projectName}.zip`;
+    return `${repoName}.zip`;
 }

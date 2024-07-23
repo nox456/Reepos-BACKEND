@@ -4,12 +4,12 @@ import ResponseHandler from "../lib/responseHandler.js";
 
 export default class RepositoryController {
     static async create(req, res) {
-        const { repoData, projectName } = req.body;
+        const { repoData, repoName } = req.body;
         let repoSaved;
         try {
             repoSaved = await RepositoryService.createRepository(
                 repoData,
-                projectName,
+                repoName,
             );
         } catch (e) {
             console.error(e);
@@ -18,10 +18,10 @@ export default class RepositoryController {
         return ResponseHandler.ok("Created Repository!", repoSaved, res);
     }
     static async uploadCloud(req, res) {
-        const { projectName } = req.body;
+        const { repoName } = req.body;
         let result;
         try {
-            result = await RepositoryService.uploadRepository(projectName);
+            result = await RepositoryService.uploadRepository(repoName);
         } catch (e) {
             console.error(e);
             return new ErrorHandler(res).internalServer();
@@ -31,24 +31,24 @@ export default class RepositoryController {
                 result.validationError,
                 result.validationField,
             );
-        } else if (result?.projectNotExists) {
+        } else if (result?.repoNotExists) {
             return new ErrorHandler(res).notFound(
-                "Project doesn't Exists",
-                projectName,
+                "Repository doesn't Exists",
+                repoName,
             );
         } else {
             return ResponseHandler.ok(
                 "Repository Uploaded to Cloud!",
-                projectName,
+                repoName,
                 res,
             );
         }
     }
     static async getFiles(req, res) {
-        const { projectName } = req.body;
+        const { repoName } = req.body;
         let result;
         try {
-            result = await RepositoryService.getFiles(projectName);
+            result = await RepositoryService.getFiles(repoName);
         } catch (e) {
             console.error(e);
             return new ErrorHandler(res).internalServer();
@@ -61,21 +61,21 @@ export default class RepositoryController {
         } else if (result?.repoNotExists) {
             return new ErrorHandler(res).notFound(
                 "Repository doesn't exists!",
-                projectName,
+                repoName,
             );
         } else if (result.length == 0) {
             return new ErrorHandler(res).notFound(
                 "Files not found!",
-                projectName,
+                repoName,
             );
         }
         return ResponseHandler.ok("Files founded!", result, res);
     }
     static async download(req, res) {
-        const { projectName } = req.query;
+        const { repoName } = req.query;
         let result;
         try {
-            result = await RepositoryService.download(projectName);
+            result = await RepositoryService.download(repoName);
         } catch (e) {
             console.error();
             return new ErrorHandler(res).internalServer();
@@ -88,14 +88,14 @@ export default class RepositoryController {
         } else if (result?.repoNotExistsDb) {
             return new ErrorHandler(res).notFound(
                 "Repository doesn't exists in database!",
-                projectName,
+                repoName,
             );
         } else if (result?.repoNotExistsCloud) {
             return new ErrorHandler(res).notFound(
                 "Repository doesn't exists in cloud!",
-                projectName,
+                repoName,
             );
         }
-        return ResponseHandler.ok("Project downloaded!", result, res);
+        return ResponseHandler.ok("Repository downloaded!", result, res);
     }
 }

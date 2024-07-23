@@ -149,13 +149,13 @@ Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos H
     <tr>
         <td><code>POST</code></td>
         <td><code>/upload</code></td>
-        <td><code>{ "projectName": "string" }</code></td>
+        <td><code>{ "repoName": "string" }</code></td>
         <td>Subir archivos del repositorio a la nube (Supabase)</td>
     </tr>
     <tr>
         <td><code>GET</code></td>
         <td><code>/download</code></td>
-        <td><code>?projectName="string"</code></td>
+        <td><code>?repoName="string"</code></td>
         <td>Obtener la url pública de un repositorio comprimido en zip</td>
     </tr>
 </table>
@@ -170,7 +170,7 @@ Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos H
     <tr>
         <td><code>GET</code></td>
         <td><code>/download</code></td>
-        <td><code>?id="string"&projectName="string"</code></td>
+        <td><code>?id="string"&repoName="string"</code></td>
         <td>Obtener url pública de un archivo</td>
     </tr>
 </table>
