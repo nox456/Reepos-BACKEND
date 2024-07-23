@@ -2,7 +2,7 @@
 
 # Introducción 🚀
 
-Este es el repositorio del backend del proyecto **Repos** (una **webapp** basada en [Github](https://github.com)) que 
+Este es el repositorio del backend del proyecto **Reepos** (una **webapp** basada en [Github](https://github.com)) que 
 incluye API, **Autenticación con JWT** y conexión con la **base de datos**.
 
 ## Tecnologías 💻️
