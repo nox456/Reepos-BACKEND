@@ -9,7 +9,7 @@ const reposPath = join(dirname(fileURLToPath(import.meta.url)), "../temp")
 
 // Store buffer image in memory
 const imageStorage = multer.memoryStorage()
-const repoStorage = multer.diskStorage({
+const fileStorage = multer.diskStorage({
     destination: async (req, file, cb) => {
         const { path, repoName } = req.body
 
@@ -37,15 +37,14 @@ export default class MulterController {
             }
         }
     }).single("user_image")
-    static uploadRepository(req, res) {
+    static uploadFile(req, res) {
         multer({
-            storage: repoStorage
+            storage: fileStorage
         }).single("file")(req, res, err => {
-            const { repoName } = req.body
             if (err) {
                 return new ErrorHandler(res).badRequest(err, null)
             }
-            return ResponseHandler.ok("Repository Uploaded to Backend", repoName, res)
+            return ResponseHandler.ok("File Uploaded to Backend", req.file.originalname, res)
         })
     }
 }
