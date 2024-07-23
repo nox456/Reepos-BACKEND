@@ -1,5 +1,5 @@
 {
-  "name": "repos_backend",
+  "name": "reepos_backend",
   "version": "1.0.0",
   "description": "api/server of repos app",
   "main": "src/index.js",

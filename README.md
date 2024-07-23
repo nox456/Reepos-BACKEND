@@ -1,4 +1,4 @@
-<h1 align="center">Repos Backend</h1>
+<h1 align="center">Reepos Backend</h1>
 
 # Introducción 🚀
 
