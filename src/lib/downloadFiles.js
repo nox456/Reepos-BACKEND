@@ -17,7 +17,9 @@ export default async function downloadFiles(urls, repoName) {
 
     for (const url of urls) {
         const res = await fetch(url);
-        const content = await res.text();
+        const res_blob = await res.blob()
+        const res_buffer = await res_blob.arrayBuffer()
+        const content = Buffer.from(res_buffer)
         const name = url.slice(url.lastIndexOf("/") + 1);
         const path = url.slice(url.lastIndexOf(repoName), url.indexOf(name));
 
