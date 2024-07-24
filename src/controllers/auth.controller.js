@@ -1,6 +1,7 @@
 import AuthService from "../services/auth.service.js";
-import ErrorHandler from "../lib/errorHandler.js"
-import ResponseHandler from "../lib/responseHandler.js"
+import ErrorHandler from "../lib/errorHandler.js";
+import ResponseHandler from "../lib/responseHandler.js";
+import { COOKIES_SAMESITE, COOKIES_SECURE } from "../config/env.js";
 
 // Class used in 'auth.routes.js' that contains request handlers
 export default class AuthController {
@@ -15,16 +16,26 @@ export default class AuthController {
             });
         } catch (e) {
             console.error(e);
-            return new ErrorHandler(res).internalServer()
+            return new ErrorHandler(res).internalServer();
         }
-        // Send response depending on validations 
+        // Send response depending on validations
         if (userRegistered.validationError) {
-            return new ErrorHandler(res).badRequest(userRegistered.validationError, userRegistered.validationField)
+            return new ErrorHandler(res).badRequest(
+                userRegistered.validationError,
+                userRegistered.validationField,
+            );
         } else if (userRegistered.userExists) {
-            return new ErrorHandler(res).forbidden("User already exists!", username)
+            return new ErrorHandler(res).forbidden(
+                "User already exists!",
+                username,
+            );
         } else {
-            res.cookie("token", userRegistered.token, { httpOnly: true, secure: true })
-            return ResponseHandler.ok("User Registered!", userRegistered, res)
+            res.cookie("token", userRegistered.token, {
+                httpOnly: true,
+                secure: COOKIES_SECURE === "true",
+                sameSite: COOKIES_SAMESITE
+            });
+            return ResponseHandler.ok("User Registered!", userRegistered, res);
         }
     }
     // Loggin (authenticate) a existing user with credentials (username and password)
@@ -38,35 +49,58 @@ export default class AuthController {
             });
         } catch (e) {
             console.error(e);
-            return new ErrorHandler(res).internalServer()
+            return new ErrorHandler(res).internalServer();
         }
-        // Send response depending on validations 
+        // Send response depending on validations
         if (userAuthenticated.validationError) {
-            return new ErrorHandler(res).badRequest(userAuthenticated.validationError, userAuthenticated.validationField)
+            return new ErrorHandler(res).badRequest(
+                userAuthenticated.validationError,
+                userAuthenticated.validationField,
+            );
         } else if (userAuthenticated.userNotExists) {
-            return new ErrorHandler(res).notFound("User doesn't Exists!", username)
+            return new ErrorHandler(res).notFound(
+                "User doesn't Exists!",
+                username,
+            );
         } else if (userAuthenticated.passwordNotMatch) {
-            return new ErrorHandler(res).forbidden("Password Incorrect!", password)
+            return new ErrorHandler(res).forbidden(
+                "Password Incorrect!",
+                password,
+            );
         } else {
-            res.cookie("token", userAuthenticated.token, { httpOnly: true, secure: true })
-            return ResponseHandler.ok("User Authenticated!", { user: userAuthenticated.user, token: userAuthenticated.token }, res)
+            res.cookie("token", userAuthenticated.token, {
+                httpOnly: true,
+                secure: COOKIES_SECURE === "true",
+                sameSite: COOKIES_SAMESITE
+            });
+            return ResponseHandler.ok(
+                "User Authenticated!",
+                {
+                    user: userAuthenticated.user,
+                    token: userAuthenticated.token,
+                },
+                res,
+            );
         }
     }
     // Check if a user is authenticated
     static async isAuthenticated(req, res) {
-        const { token } = req.cookies
-        let result
+        const { token } = req.cookies;
+        let result;
         try {
-            result = await AuthService.verifyToken(token)
+            result = await AuthService.verifyToken(token);
         } catch (e) {
-            console.error(e)
-            return new ErrorHandler(res).internalServer()
+            console.error(e);
+            return new ErrorHandler(res).internalServer();
         }
         if (result.validationError) {
-            return new ErrorHandler(res).badRequest(result.validationError, result.validationField)
+            return new ErrorHandler(res).badRequest(
+                result.validationError,
+                result.validationField,
+            );
         } else if (result == false) {
-            return new ErrorHandler(res).unauthorized("Invalid Token!", token)
+            return new ErrorHandler(res).unauthorized("Invalid Token!", token);
         }
-        return ResponseHandler.ok("User Authenticated!", token, res)
+        return ResponseHandler.ok("User Authenticated!", token, res);
     }
 }
