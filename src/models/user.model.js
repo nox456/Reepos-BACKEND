@@ -188,17 +188,6 @@ export default class User {
             }
         }
     }
-    // Validate input of image field
-    static async validateImage(image) {
-        const schema = z.string({ invalid_type_error: "Image must be a string!", required_error: "Image required!" })
-        const validation = await schema.safeParseAsync(image)
-        if (!validation.success) {
-            return {
-                validationError: validation.error.issues[0].message,
-                validationField: image
-            }
-        }
-    }
     // Get users by username field
     static async search(username) {
         let usersFounded
