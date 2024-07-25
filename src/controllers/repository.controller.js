@@ -4,16 +4,20 @@ import ResponseHandler from "../lib/responseHandler.js";
 
 export default class RepositoryController {
     static async create(req, res) {
-        const { repoData, repoName } = req.body;
+        const { token } = req.cookies
+        const { repoData } = req.body;
         let repoSaved;
         try {
             repoSaved = await RepositoryService.createRepository(
                 repoData,
-                repoName,
+                token
             );
         } catch (e) {
             console.error(e);
             return new ErrorHandler(res).internalServer();
+        }
+        if (repoSaved.validationError) {
+            return new ErrorHandler(res).badRequest(repoSaved.validationError,repoSaved.validationField)
         }
         return ResponseHandler.ok("Created Repository!", repoSaved, res);
     }

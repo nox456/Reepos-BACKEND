@@ -6,20 +6,26 @@ import Contributor from "../models/contributor.model.js";
 import Modification from "../models/modification.model.js";
 import Commit_Branch from "../models/commit_branch.model.js";
 import Repository_Language from "../models/repository_language.model.js";
+import Auth from "../models/auth.model.js"
 import repoInfo from "../lib/getReposInfo.js";
 import downloadFiles from "../lib/downloadFiles.js";
 
 export default class RepositoryService {
     // Create a repository with their commits, contributors, files, branches, languages and modifications
-    static async createRepository(repoData, repoName) {
+    static async createRepository(repoData, token) {
+        const { name, description, languages } = repoData;
+
         const { commits, files, branches, contributors, modifications } =
-            await repoInfo(repoName);
-        const { name, description, user_owner, languages } = repoData;
+            await repoInfo(name);
+
+        const token_result = await Auth.validateToken(token)
+        if (token_result.validationError) return token_result
+
         // Create repository in database
         const repoSaved = await Repository.save({
             name,
             description,
-            user_owner,
+            user_owner: token_result,
         });
 
         // Relate languages with repository
