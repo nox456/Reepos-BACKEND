@@ -33,7 +33,6 @@ export default class Auth {
             }
         })
         return {
-            success: error && !data ? false : true,
             error,
             data
         }

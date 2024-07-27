@@ -60,6 +60,10 @@ export default class AuthService {
     // Verify token's user
     static async verifyToken(token) {
         const token_validation = await Auth.validateToken(token)
-        return token_validation
+        return {
+            success: !token_validation.error && token_validation.data,
+            data: token_validation.data,
+            error: token_validation.error
+        }
     }
 }
