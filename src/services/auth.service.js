@@ -1,5 +1,6 @@
 import User from "../models/user.model.js";
 import Auth from "../models/auth.model.js";
+import jwt from "jsonwebtoken"
 
 // Class used in 'auth.controller.js' that contains validations and queries of models
 export default class AuthService {
@@ -58,7 +59,7 @@ export default class AuthService {
     }
     // Verify token's user
     static async verifyToken(token) {
-        const token_validated = await Auth.validateToken(token)
-        return token_validated
+        const token_validation = await Auth.validateToken(token)
+        return token_validation
     }
 }

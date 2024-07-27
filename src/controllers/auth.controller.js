@@ -93,14 +93,13 @@ export default class AuthController {
             console.error(e);
             return new ErrorHandler(res).internalServer();
         }
-        if (result.validationError) {
+        if (!result.success) {
             return new ErrorHandler(res).badRequest(
-                result.validationError,
-                result.validationField,
+                result.error.validationError,
+                result.error.validationField,
             );
-        } else if (result == false) {
-            return new ErrorHandler(res).unauthorized("Invalid Token!", token);
+        } else {
+            return ResponseHandler.ok("User Authenticated!", null, res);
         }
-        return ResponseHandler.ok("User Authenticated!", token, res);
     }
 }
