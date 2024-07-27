@@ -24,10 +24,7 @@ export default class Auth {
         let data = null
         jwt.verify(token,SECRET, (err,encoded) => {
             if (err) {
-                error = {
-                    validationError: err.message,
-                    validationField: "token"
-                }
+                error = err.message
             } else {
                 data = encoded
             }

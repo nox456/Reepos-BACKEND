@@ -8,9 +8,9 @@ export default class AuthController {
     // Register (create) a new user
     static async signup(req, res) {
         const { username, password } = req.body;
-        let userRegistered;
+        let result;
         try {
-            userRegistered = await AuthService.signupUser({
+            result = await AuthService.signupUser({
                 username,
                 password,
             });
@@ -19,31 +19,23 @@ export default class AuthController {
             return new ErrorHandler(res).internalServer();
         }
         // Send response depending on validations
-        if (userRegistered.validationError) {
-            return new ErrorHandler(res).badRequest(
-                userRegistered.validationError,
-                userRegistered.validationField,
-            );
-        } else if (userRegistered.userExists) {
-            return new ErrorHandler(res).forbidden(
-                "User already exists!",
-                username,
-            );
+        if (!result.success) {
+            return new ErrorHandler(res).badRequest(result.error.message, null);
         } else {
-            res.cookie("token", userRegistered.token, {
+            res.cookie("token", result.data, {
                 httpOnly: true,
                 secure: COOKIES_SECURE === "true",
-                sameSite: COOKIES_SAMESITE
+                sameSite: COOKIES_SAMESITE,
             });
-            return ResponseHandler.ok("User Registered!", userRegistered, res);
+            return ResponseHandler.ok("User Registered!", null, res);
         }
     }
     // Loggin (authenticate) a existing user with credentials (username and password)
     static async signin(req, res) {
         const { username, password } = req.body;
-        let userAuthenticated;
+        let result;
         try {
-            userAuthenticated = await AuthService.signinUser({
+            result = await AuthService.signinUser({
                 username,
                 password,
             });
@@ -52,38 +44,25 @@ export default class AuthController {
             return new ErrorHandler(res).internalServer();
         }
         // Send response depending on validations
-        if (userAuthenticated.validationError) {
-            return new ErrorHandler(res).badRequest(
-                userAuthenticated.validationError,
-                userAuthenticated.validationField,
-            );
-        } else if (userAuthenticated.userNotExists) {
-            return new ErrorHandler(res).notFound(
-                "User doesn't Exists!",
-                username,
-            );
-        } else if (userAuthenticated.passwordNotMatch) {
-            return new ErrorHandler(res).forbidden(
-                "Password Incorrect!",
-                password,
-            );
+        if (!result.success) {
+            if (result.error.type == "validation")
+                return new ErrorHandler(res).badRequest(result.error.message, null);
+
+            if (result.error.type == "not found")
+                return new ErrorHandler(res).notFound(result.error.message, null);
+
+            if (result.error.type == "forbidden")
+                return new ErrorHandler(res).forbidden(result.error.message, null);
         } else {
-            res.cookie("token", userAuthenticated.token, {
+            res.cookie("token", result.data, {
                 httpOnly: true,
                 secure: COOKIES_SECURE === "true",
-                sameSite: COOKIES_SAMESITE
+                sameSite: COOKIES_SAMESITE,
             });
-            return ResponseHandler.ok(
-                "User Authenticated!",
-                {
-                    user: userAuthenticated.user,
-                    token: userAuthenticated.token,
-                },
-                res,
-            );
+            return ResponseHandler.ok("User Authenticated!", null, res);
         }
     }
-    // Check if a user is authenticated
+    // Check if a user is authenticated by token
     static async isAuthenticated(req, res) {
         const { token } = req.cookies;
         let result;
@@ -95,8 +74,8 @@ export default class AuthController {
         }
         if (!result.success) {
             return new ErrorHandler(res).badRequest(
-                result.error.validationError,
-                result.error.validationField,
+                result.error.message,
+                null
             );
         } else {
             return ResponseHandler.ok("User Authenticated!", null, res);
