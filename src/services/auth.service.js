@@ -23,7 +23,7 @@ export default class AuthService {
 
         const token = Auth.generateToken(user.id);
 
-        return { user, token };
+        return { token };
     }
     // Signin a user by username and password
     static async signinUser(userData) {
@@ -51,8 +51,6 @@ export default class AuthService {
         const token = Auth.generateToken(user.id)
 
         return {
-            userData,
-            user,
             token
         };
     }

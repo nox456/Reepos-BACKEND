@@ -13,7 +13,7 @@ export default class User {
         let user;
         try {
             const user_response = await db.query(
-                "INSERT INTO users VALUES (DEFAULT,$1,$2,DEFAULT,DEFAULT,DEFAULT,DEFAULT,DEFAULT) RETURNING *",
+                "INSERT INTO users VALUES (DEFAULT,$1,$2,DEFAULT,DEFAULT,DEFAULT,DEFAULT,DEFAULT) RETURNING id",
                 [username, password]
             );
             user = user_response.rows[0];

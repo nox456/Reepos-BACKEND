@@ -8,9 +8,9 @@ export default class AuthController {
     // Register (create) a new user
     static async signup(req, res) {
         const { username, password } = req.body;
-        let userRegistered;
+        let result;
         try {
-            userRegistered = await AuthService.signupUser({
+            result = await AuthService.signupUser({
                 username,
                 password,
             });
@@ -19,31 +19,31 @@ export default class AuthController {
             return new ErrorHandler(res).internalServer();
         }
         // Send response depending on validations
-        if (userRegistered.validationError) {
+        if (result.validationError) {
             return new ErrorHandler(res).badRequest(
                 userRegistered.validationError,
                 userRegistered.validationField,
             );
-        } else if (userRegistered.userExists) {
+        } else if (result.userExists) {
             return new ErrorHandler(res).forbidden(
                 "User already exists!",
                 username,
             );
         } else {
-            res.cookie("token", userRegistered.token, {
+            res.cookie("token", result.token, {
                 httpOnly: true,
                 secure: COOKIES_SECURE === "true",
                 sameSite: COOKIES_SAMESITE
             });
-            return ResponseHandler.ok("User Registered!", userRegistered, res);
+            return ResponseHandler.ok("User Registered!", null, res);
         }
     }
     // Loggin (authenticate) a existing user with credentials (username and password)
     static async signin(req, res) {
         const { username, password } = req.body;
-        let userAuthenticated;
+        let result;
         try {
-            userAuthenticated = await AuthService.signinUser({
+            result = await AuthService.signinUser({
                 username,
                 password,
             });
@@ -52,33 +52,30 @@ export default class AuthController {
             return new ErrorHandler(res).internalServer();
         }
         // Send response depending on validations
-        if (userAuthenticated.validationError) {
+        if (result.validationError) {
             return new ErrorHandler(res).badRequest(
                 userAuthenticated.validationError,
                 userAuthenticated.validationField,
             );
-        } else if (userAuthenticated.userNotExists) {
+        } else if (result.userNotExists) {
             return new ErrorHandler(res).notFound(
                 "User doesn't Exists!",
                 username,
             );
-        } else if (userAuthenticated.passwordNotMatch) {
+        } else if (result.passwordNotMatch) {
             return new ErrorHandler(res).forbidden(
                 "Password Incorrect!",
                 password,
             );
         } else {
-            res.cookie("token", userAuthenticated.token, {
+            res.cookie("token", result.token, {
                 httpOnly: true,
                 secure: COOKIES_SECURE === "true",
                 sameSite: COOKIES_SAMESITE
             });
             return ResponseHandler.ok(
                 "User Authenticated!",
-                {
-                    user: userAuthenticated.user,
-                    token: userAuthenticated.token,
-                },
+                null,
                 res,
             );
         }
