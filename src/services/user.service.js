@@ -16,20 +16,20 @@ export default class UserService {
         }
 
         const id_validation = await User.validateId(token_validation.data)
-        if (id_validation) return {
+        if (id_validation.error) return {
             success: false,
             error: {
-                message: id_validation.validationError,
+                message: id_validation.error,
                 type: "validation"
             },
             data: null
         }
 
         const password_validation = await User.validatePassword(password)
-        if (password_validation) return {
+        if (password_validation.error) return {
             success: false,
             error: {
-                message: password_validation.validationError,
+                message: password_validation.error,
                 type: "forbidden"
             },
             data: null
@@ -81,30 +81,30 @@ export default class UserService {
         }
 
         const username_validation = await User.validateUsername(newUsername)
-        if (username_validation) return {
+        if (username_validation.error) return {
             success: false,
             error: {
-                message: username_validation.validationError,
+                message: username_validation.error,
                 type: "validation"
             },
             data: null
         }
 
         const id_validation = await User.validateId(token_validation.data)
-        if (id_validation) return {
+        if (id_validation.error) return {
             success: false,
             error: {
-                message: id_validation.validationError,
+                message: id_validation.error,
                 type: "validation"
             },
             data: null
         }
 
         const password_validation = await User.validatePassword(password)
-        if (password_validation) return {
+        if (password_validation.error) return {
             success: false,
             error: {
-                message: password_validation.validationError,
+                message: password_validation.error,
                 type: "validation"
             },
             data: null
@@ -154,30 +154,30 @@ export default class UserService {
         }
 
         const newPassword_validation = await User.validatePassword(newPassword)
-        if (newPassword_validation) return {
+        if (newPassword_validation.error) return {
             success: false,
             error: {
-                message: newPassword_validation.validationError,
+                message: newPassword_validation.error,
                 type: "validation"
             },
             data: null
         }
 
         const id_validation = await User.validateId(token_validation.data)
-        if (id_validation) return {
+        if (id_validation.error) return {
             success: false,
             error: {
-                message: id_validation.validationError,
+                message: id_validation.error,
                 type: "validation"
             },
             data: null
         }
 
         const password_validation = await User.validatePassword(password)
-        if (password_validation) return {
+        if (password_validation.error) return {
             success: false,
             error: {
-                message: password_validation.validationError,
+                message: password_validation.error,
                 type: "validation"
             },
             data: null
@@ -229,20 +229,20 @@ export default class UserService {
         }
 
         const id_validation = await User.validateId(token_validation.data)
-        if (id_validation) return {
+        if (id_validation.error) return {
             success: false,
             error: {
-                message: id_validation.validationError,
+                message: id_validation.error,
                 type: "validation"
             },
             data: null
         }
 
         const description_validation = await User.validateDescription(newDescription)
-        if (description_validation) return {
+        if (description_validation.error) return {
             success: false,
             error: {
-                message: description_validation.validationError,
+                message: description_validation.error,
                 type: "validation"
             },
             data: null
@@ -279,10 +279,10 @@ export default class UserService {
         }
 
         const id_validation = await User.validateId(token_validation.data)
-        if (id_validation) return {
+        if (id_validation.error) return {
             success: false,
             error: {
-                message: id_validation.validationError,
+                message: id_validation.error,
                 type: "validation"
             },
             data: null
@@ -319,20 +319,20 @@ export default class UserService {
         }
 
         const userFollowerId_validation = await User.validateId(token_validation.data)
-        if (userFollowerId_validation) return {
+        if (userFollowerId_validation.error) return {
             success: false,
             error: {
-                message: userFollowerId_validation.validationError,
+                message: userFollowedId_validation.error,
                 type: "validation"
             },
             data: null
         }
 
         const userFollowedId_validation = await User.validateId(userFollowedId)
-        if (userFollowedId_validation) return {
+        if (userFollowedId_validation.error) return {
             success: false,
             error: {
-                message: userFollowedId_validation.validationError,
+                message: userFollowedId_validation.error,
                 type: "validation"
             },
             data: null
@@ -360,10 +360,10 @@ export default class UserService {
     // Get users by username field
     static async search(username) {
         const username_validation = await User.validateUsername(username)
-        if (username_validation) return {
+        if (username_validation.error) return {
             success: false,
             error: {
-                message: username_validation.validationError,
+                message: username_validation.error,
                 type: "validation"
             },
             data: null
@@ -389,10 +389,10 @@ export default class UserService {
         }
 
         const id_validation = await User.validateId(token_validation.data)
-        if (id_validation) return {
+        if (id_validation.error) return {
             success: false,
             error: {
-                message: id_validation.validationError,
+                message: id_validation.error,
                 type: "validation"
             },
             data: null
@@ -400,10 +400,10 @@ export default class UserService {
 
         if (username) {
             const username_validation = await User.validateUsername(username)
-            if (username_validation) return {
+            if (username_validation.error) return {
                 success: false,
                 error: {
-                    message: username_validation.validationError,
+                    message: username_validation.error,
                     type: "validation"
                 },
                 data: null
@@ -440,10 +440,10 @@ export default class UserService {
         }
 
         const id_validation = await User.validateId(token_validation.data)
-        if (id_validation) return {
+        if (id_validation.error) return {
             success: false,
             error: {
-                message: id_validation.validationError,
+                message: id_validation.error,
                 type: "validation"
             },
             data: null
