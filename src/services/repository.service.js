@@ -15,17 +15,34 @@ export default class RepositoryService {
     static async createRepository(repoData, token) {
         const { name, description, languages } = repoData;
 
+        const repoName_validation = await Repository.validateRepoName(name)
+        if (repoName_validation) return {
+            success: false,
+            error: {
+                message: repoName_validation.validationError,
+                type: "validation"
+            },
+            data: null
+        }
+
         const { commits, files, branches, contributors, modifications } =
             await repoInfo(name);
 
-        const token_result = await Auth.validateToken(token)
-        if (token_result.validationError) return token_result
+        const token_validation = await Auth.validateToken(token)
+        if (token_validation.error) return {
+            success: false,
+            error: {
+                message: token_validation.error,
+                type: "validation"
+            },
+            data: null
+        }
 
         // Create repository in database
         const repoSaved = await Repository.save({
             name,
             description,
-            user_owner: token_result,
+            user_owner: token_validation.data,
         });
 
         // Relate languages with repository
@@ -141,52 +158,118 @@ export default class RepositoryService {
                 }),
             );
         }
-        return repoSaved;
+        return {
+            success: true,
+            error: null,
+            data: null
+        };
     }
     // Upload a repository to cloud storage (supabase)
     static async uploadRepository(repoName) {
-        const repoName_validation_error =
+        const repoName_validation =
             await Repository.validateRepoName(repoName);
-        if (repoName_validation_error) return repoName_validation_error;
+        if (repoName_validation) return {
+            success: false,
+            error: {
+                message: repoName_validation.validationError,
+                type: "validation"
+            },
+            data: null
+        };
 
         const repoExists =
             await Repository.checkIfExistsInBackend(repoName);
-        if (!repoExists) return { repoNotExists: true };
+        if (!repoExists) return {
+            success: false,
+            error: {
+                message: "Repository doesn't exists in server!",
+                type: "not found"
+            },
+            data: null
+        };
 
         await Repository.upload(repoName);
+        return {
+            success: true,
+            error: null,
+            data: null
+        }
     }
     // Get files from a repository stored in database
     static async getFiles(repoName) {
-        const repoName_validation_error =
+        const repoName_validation =
             await Repository.validateRepoName(repoName);
-        if (repoName_validation_error) return repoName_validation_error;
+        if (repoName_validation) return {
+            success: false,
+            error: {
+                message: repoName_validation.validationError,
+                type: "validation"
+            },
+            data: null
+        };
 
         const exists = await Repository.checkIfExistsInDb(repoName);
 
-        if (!exists) return { repoNotExists: true };
+        if (!exists) return {
+            success: false,
+            error: {
+                message: "Repository doesn't exists in database!",
+                type: "not found"
+            },
+            data: null
+        };
 
         const files = await Repository.getFiles(repoName);
-        return files;
+        return {
+            success: true,
+            error: null,
+            data: files
+        };
     }
     // Generate a zip file of a repository
     static async download(repoName) {
-        const repoName_validation_error =
+        const repoName_validation =
             await Repository.validateRepoName(repoName);
-        if (repoName_validation_error) return repoName_validation_error;
+        if (repoName_validation) return {
+            success: false,
+            error: {
+                message: repoName_validation.validationError,
+                type: "validation"
+            },
+            data: null
+        };
 
         const existsDb = await Repository.checkIfExistsInDb(repoName);
 
-        if (!existsDb) return { repoNotExistsDb: true };
+        if (!existsDb) return {
+            success: false,
+            error: {
+                message: "Repository doesn't exists in database!",
+                type: "not found"
+            },
+            data: null
+        };
 
         const existsCloud = await Repository.checkIfExistsInCloud(repoName);
 
-        if (!existsCloud) return { repoNotExistsCloud: true };
+        if (!existsCloud) return {
+            success: false,
+            error: {
+                message: "Repository doesn't exists in cloud storage!",
+                type: "not found"
+            },
+            data: null
+        };
 
         const files = await Repository.getFiles(repoName);
 
         const urls = await Repository.getFilesUrls(repoName, files);
 
         const zip_file = await downloadFiles(urls, repoName);
-        return zip_file;
+        return {
+            success: true,
+            error: null,
+            data: zip_file
+        };
     }
 }

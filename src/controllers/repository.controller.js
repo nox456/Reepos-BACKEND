@@ -4,22 +4,20 @@ import ResponseHandler from "../lib/responseHandler.js";
 
 export default class RepositoryController {
     static async create(req, res) {
-        const { token } = req.cookies
+        const { token } = req.cookies;
         const { repoData } = req.body;
-        let repoSaved;
+        let result;
         try {
-            repoSaved = await RepositoryService.createRepository(
-                repoData,
-                token
-            );
+            result = await RepositoryService.createRepository(repoData, token);
         } catch (e) {
             console.error(e);
             return new ErrorHandler(res).internalServer();
         }
-        if (repoSaved.validationError) {
-            return new ErrorHandler(res).badRequest(repoSaved.validationError,repoSaved.validationField)
+        if (!result.success) {
+            return new ErrorHandler(res).badRequest(result.error.message, null);
+        } else {
+            return ResponseHandler.ok("Created Repository!", null, res);
         }
-        return ResponseHandler.ok("Created Repository!", repoSaved, res);
     }
     static async uploadCloud(req, res) {
         const { repoName } = req.body;
@@ -30,20 +28,21 @@ export default class RepositoryController {
             console.error(e);
             return new ErrorHandler(res).internalServer();
         }
-        if (result?.validationError) {
-            return new ErrorHandler(res).badRequest(
-                result.validationError,
-                result.validationField,
-            );
-        } else if (result?.repoNotExists) {
-            return new ErrorHandler(res).notFound(
-                "Repository doesn't Exists",
-                repoName,
-            );
+        if (!result.success) {
+            if (result.error.type == "validation")
+                return new ErrorHandler(res).badRequest(
+                    result.error.message,
+                    null,
+                );
+            if (result.error.type == "not found")
+                return new ErrorHandler(res).notFound(
+                    result.error.message,
+                    null,
+                );
         } else {
             return ResponseHandler.ok(
                 "Repository Uploaded to Cloud!",
-                repoName,
+                null,
                 res,
             );
         }
@@ -57,23 +56,20 @@ export default class RepositoryController {
             console.error(e);
             return new ErrorHandler(res).internalServer();
         }
-        if (result?.validationError) {
-            return new ErrorHandler(res).badRequest(
-                result.validationError,
-                result.validationField,
-            );
-        } else if (result?.repoNotExists) {
-            return new ErrorHandler(res).notFound(
-                "Repository doesn't exists!",
-                repoName,
-            );
-        } else if (result.length == 0) {
-            return new ErrorHandler(res).notFound(
-                "Files not found!",
-                repoName,
-            );
+        if (!result.success) {
+            if (result.error.type == "validation")
+                return new ErrorHandler(res).badRequest(
+                    result.error.message,
+                    null,
+                );
+            if (result.error.type == "not found")
+                return new ErrorHandler(res).notFound(
+                    result.error.message,
+                    null,
+                );
+        } else {
+            return ResponseHandler.ok("Files founded!", result.data, res);
         }
-        return ResponseHandler.ok("Files founded!", result, res);
     }
     static async download(req, res) {
         const { repoName } = req.query;
@@ -84,22 +80,23 @@ export default class RepositoryController {
             console.error();
             return new ErrorHandler(res).internalServer();
         }
-        if (result?.validationError) {
-            return new ErrorHandler(res).badRequest(
-                result.validationError,
-                result.validationField,
-            );
-        } else if (result?.repoNotExistsDb) {
-            return new ErrorHandler(res).notFound(
-                "Repository doesn't exists in database!",
-                repoName,
-            );
-        } else if (result?.repoNotExistsCloud) {
-            return new ErrorHandler(res).notFound(
-                "Repository doesn't exists in cloud!",
-                repoName,
+        if (!result.success) {
+            if (result.error.type == "validation")
+                return new ErrorHandler(res).badRequest(
+                    result.error.message,
+                    null,
+                );
+            if (result.error.type == "not found")
+                return new ErrorHandler(res).notFound(
+                    result.error.message,
+                    null,
+                );
+        } else {
+            return ResponseHandler.ok(
+                "Repository downloaded!",
+                result.data,
+                res,
             );
         }
-        return ResponseHandler.ok("Repository downloaded!", result, res);
     }
 }
