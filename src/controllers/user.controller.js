@@ -16,18 +16,22 @@ export default class UserController {
             return new ErrorHandler(res).internalServer();
         }
         // Send response depending on validations
-        if (result?.validationError) {
-            return new ErrorHandler(res).badRequest(
-                result.validationError,
-                result.validationField,
-            );
-        } else if (result?.userNotExists) {
-            return new ErrorHandler(res).notFound("User doesn't Exists!", null);
-        } else if (result?.passwordNotMatch) {
-            return new ErrorHandler(res).forbidden(
-                "Password Incorrect!",
-                password,
-            );
+        if (!result.success) {
+            if (result.error.type == "validation")
+                return new ErrorHandler(res).badRequest(
+                    result.error.message,
+                    null,
+                );
+            if (result.error.type == "not found")
+                return new ErrorHandler(res).notFound(
+                    result.error.message,
+                    null,
+                );
+            if (result.error.type == "forbidden")
+                return new ErrorHandler(res).forbidden(
+                    result.error.message,
+                    null,
+                );
         } else {
             return ResponseHandler.ok("User Deleted!", null, res);
         }
@@ -48,20 +52,24 @@ export default class UserController {
             return new ErrorHandler(res).internalServer();
         }
         // Send response depending on validations
-        if (result?.validationError) {
-            return (
-                new ErrorHandler(res).badRequest(result.validationError),
-                result.validationField
-            );
-        } else if (result?.userNotExists) {
-            return new ErrorHandler(res).notFound("User doesn't Exists!", null);
-        } else if (result?.passwordNotMatch) {
-            return new ErrorHandler(res).forbidden(
-                "Password Incorrect!",
-                password,
-            );
+        if (!result.success) {
+            if (result.error.type == "validation")
+                return new ErrorHandler(res).badRequest(
+                    result.error.message,
+                    null,
+                );
+            if (result.error.type == "not found")
+                return new ErrorHandler(res).notFound(
+                    result.error.message,
+                    null,
+                );
+            if (result.error.type == "forbidden")
+                return new ErrorHandler(res).forbidden(
+                    result.error.message,
+                    null,
+                );
         } else {
-            return ResponseHandler.ok("Username Modified!", newUsername, res);
+            return ResponseHandler.ok("Username Modified!", null, res);
         }
     }
     // Change password of a existing user
@@ -80,18 +88,19 @@ export default class UserController {
             return new ErrorHandler(res).internalServer();
         }
         // Send response depending on validations
-        if (result?.validationError) {
-            return new ErrorHandler(res).badRequest(
-                result.validationError,
-                result.validationField,
-            );
-        } else if (result?.userNotExists) {
-            return new ErrorHandler(res).notFound("User doesn't Exists!", null);
-        } else if (result?.passwordNotMatch) {
-            return new ErrorHandler(res).forbidden(
-                "Password Incorrect!",
-                password,
-            );
+        if (!result.success) {
+            if (result.error.type == "validation")
+                return new ErrorHandler(res).badRequest(
+                    result.error.message,
+                    null,
+                );
+            if (result.error.type == "not found")
+                return new ErrorHandler(res).notFound(result.error, null);
+            if (result.error.type == "forbidden")
+                return new ErrorHandler(res).forbidden(
+                    result.error.message,
+                    null,
+                );
         } else {
             return ResponseHandler.ok("Password Modified!", newPassword, res);
         }
@@ -108,13 +117,17 @@ export default class UserController {
             return new ErrorHandler(res).internalServer();
         }
         // Send response depending on validations
-        if (result?.validationError) {
-            return new ErrorHandler(res).badRequest(
-                result.validationError,
-                result.validationField,
-            );
-        } else if (result?.userNotExists) {
-            return new ErrorHandler(res).notFound("User doesn't Exists", null);
+        if (!result.success) {
+            if (result.error.type == "validation")
+                return new ErrorHandler(res).badRequest(
+                    result.error.message,
+                    null,
+                );
+            if (result.error.type == "not found")
+                return new ErrorHandler(res).notFound(
+                    result.error.message,
+                    null,
+                );
         } else {
             return ResponseHandler.ok(
                 "Description Modified!",
@@ -135,13 +148,17 @@ export default class UserController {
             return new ErrorHandler(res).internalServer();
         }
         // Send response depending on validations
-        if (result?.validationError) {
-            return new ErrorHandler(res).badRequest(
-                result.validationError,
-                result.validationField,
-            );
-        }else if (result?.userNotExists) {
-            return new ErrorHandler(res).notFound("User doesn't Exists", null);
+        if (!result.success) {
+            if (result.error.type == "validation")
+                return new ErrorHandler(res).badRequest(
+                    result.validationError,
+                    result.validationField,
+                );
+            if (result.error.type == "not found")
+                return new ErrorHandler(res).notFound(
+                    result.error.message,
+                    null,
+                );
         } else {
             return ResponseHandler.ok("Image Modified!", result.imageUrl, res);
         }
@@ -158,18 +175,24 @@ export default class UserController {
             return new ErrorHandler(res).internalServer();
         }
         // Send response depending on validations
-        if (result?.validationError) {
-            return new ErrorHandler(res).badRequest(
-                result.validationError,
-                result.validationField,
-            );
+        if (!result.success) {
+            if (result.error.type == "validation")
+                return new ErrorHandler(res).badRequest(
+                    result.error.message,
+                    null,
+                );
+            if (result.error.type == "not found")
+                return new ErrorHandler(res).notFound(
+                    result.error.message,
+                    null,
+                );
         } else if (result.userNotExists) {
             return new ErrorHandler(res).notFound(
                 "User doesn't Exists!",
                 userFollowedId,
             );
         } else {
-            return ResponseHandler.ok("User Followed!", userFollowedId, res);
+            return ResponseHandler.ok("User Followed!", null, res);
         }
     }
     // Get users by username
@@ -183,18 +206,10 @@ export default class UserController {
             return new ErrorHandler(res).internalServer();
         }
         // Send response depending on validations
-        if (result.validationError) {
-            return new ErrorHandler(res).badRequest(
-                result.validationError,
-                result.validationField,
-            );
-        } else if (result.length == 0) {
-            return new ErrorHandler(res).notFound(
-                "Users not founded!",
-                username,
-            );
+        if (!result.success) {
+            return new ErrorHandler(res).badRequest(result.error.message, null);
         } else {
-            return ResponseHandler.ok("Users Founded!", result, res);
+            return ResponseHandler.ok("Users Founded!", null, res);
         }
     }
     // Get user's followers by ID
@@ -209,20 +224,19 @@ export default class UserController {
             return new ErrorHandler(res).internalServer();
         }
         // Send response depending on validations
-        if (result.validationError) {
-            return new ErrorHandler(res).badRequest(
-                result.validationError,
-                result.validationField,
-            );
-        } else if (result.userNotExists) {
-            return new ErrorHandler(res).notFound("User doesn't exists!", null);
-        } else if (result.length == 0) {
-            return new ErrorHandler(res).notFound(
-                "User doesn't have followers!",
-                null,
-            );
+        if (!result.success) {
+            if (result.error.type == "validation")
+                return new ErrorHandler(res).badRequest(
+                    result.error.message,
+                    null,
+                );
+            if (result.error.type == "not found")
+                return new ErrorHandler(res).notFound(
+                    result.error.message,
+                    null,
+                );
         } else {
-            return ResponseHandler.ok("Followers Founded!", result, res);
+            return ResponseHandler.ok("Followers Founded!", null, res);
         }
     }
     // Get profile info of a existing user by ID
@@ -236,15 +250,14 @@ export default class UserController {
             return new ErrorHandler(res).internalServer();
         }
         // Send response depending on validations
-        if (result.validationError) {
-            return new ErrorHandler(res).badRequest(
-                result.validationError,
-                result.validationField,
+        if (!result.success) {
+            if (result.error.type == "validation") return new ErrorHandler(res).badRequest(
+                result.error.message,
+                null
             );
-        } else if (result.userNotExists) {
-            return new ErrorHandler(res).notFound("User doesn't exists!", null);
+                if (result.error.type == "not found") return new ErrorHandler(res).notFound(result.error.message, null)
         } else {
-            return ResponseHandler.ok("Profile Info", result, res);
+            return ResponseHandler.ok("Profile Info", null, res);
         }
     }
 }

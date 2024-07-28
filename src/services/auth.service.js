@@ -7,24 +7,24 @@ export default class AuthService {
     static async signupUser(userData) {
         const { username, password } = userData;
 
-        const username_validation_error = await User.validateUsername(username);
-        if (username_validation_error)
+        const username_validation = await User.validateUsername(username);
+        if (username_validation)
             return {
                 success: false,
                 error: {
-                    message: username_validation_error.validationError,
-                    type: "validation",
+                    message: username_validation.validationError,
+                    type: "bad request",
                 },
                 data: null,
             };
 
-        const password_validation_error = await User.validatePassword(password);
-        if (password_validation_error)
+        const password_validation = await User.validatePassword(password);
+        if (password_validation)
             return {
                 success: false,
                 error: {
-                    message: password_validation_error.validationError,
-                    type: "validation",
+                    message: password_validation.validationError,
+                    type: "bad request",
                 },
                 data: null,
             };
@@ -57,24 +57,24 @@ export default class AuthService {
     static async signinUser(userData) {
         const { username, password } = userData;
 
-        const username_validation_error = await User.validateUsername(username);
-        if (username_validation_error)
+        const username_validation = await User.validateUsername(username);
+        if (username_validation)
             return {
                 success: false,
                 error: {
-                    message: username_validation_error.validationError,
-                    type: "validation",
+                    message: username_validation.validationError,
+                    type: "bad request",
                 },
                 data: null,
             };
 
-        const password_validation_error = await User.validatePassword(password);
-        if (password_validation_error)
+        const password_validation = await User.validatePassword(password);
+        if (password_validation)
             return {
                 success: false,
                 error: {
-                    message: password_validation_error.validationError,
-                    type: "validation",
+                    message: password_validation.validationError,
+                    type: "bad request",
                 },
                 data: null,
             };
@@ -124,7 +124,7 @@ export default class AuthService {
                 success: false,
                 error: {
                     message: token_validation.error,
-                    type: "validation",
+                    type: "bad request",
                 },
                 data: null,
             };
