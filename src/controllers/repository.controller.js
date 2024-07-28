@@ -1,5 +1,4 @@
 import RepositoryService from "../services/repository.service.js";
-import ErrorHandler from "../lib/errorHandler.js";
 import ResponseHandler from "../lib/responseHandler.js";
 
 export default class RepositoryController {
@@ -11,10 +10,10 @@ export default class RepositoryController {
             result = await RepositoryService.createRepository(repoData, token);
         } catch (e) {
             console.error(e);
-            return new ErrorHandler(res).internalServer();
+            return ResponseHandler.error(500, "Internal Server Error!", res)
         }
         if (!result.success) {
-            return new ErrorHandler(res).badRequest(result.error.message, null);
+            return ResponseHandler.error(400, result.error.message, res)
         } else {
             return ResponseHandler.ok("Created Repository!", null, res);
         }

@@ -1,5 +1,4 @@
 import AuthService from "../services/auth.service.js";
-import ErrorHandler from "../lib/errorHandler.js";
 import ResponseHandler from "../lib/responseHandler.js";
 import { COOKIES_SAMESITE, COOKIES_SECURE } from "../config/env.js";
 
@@ -16,11 +15,11 @@ export default class AuthController {
             });
         } catch (e) {
             console.error(e);
-            return new ErrorHandler(res).internalServer();
+            return ResponseHandler.error(500, "Internal Server Error!", res);
         }
         // Send response depending on validations
         if (!result.success) {
-            return new ErrorHandler(res).badRequest(result.error.message, null);
+            return ResponseHandler.error(400, result.error.message, res);
         } else {
             res.cookie("token", result.data, {
                 httpOnly: true,
@@ -41,18 +40,18 @@ export default class AuthController {
             });
         } catch (e) {
             console.error(e);
-            return new ErrorHandler(res).internalServer();
+            return ResponseHandler.error(500, "Internal Server Error!", res);
         }
         // Send response depending on validations
         if (!result.success) {
             if (result.error.type == "validation")
-                return new ErrorHandler(res).badRequest(result.error.message, null);
+                return ResponseHandler.error(400, result.error.message, res);
 
             if (result.error.type == "not found")
-                return new ErrorHandler(res).notFound(result.error.message, null);
+                return ResponseHandler.error(404, result.error.message, res);
 
             if (result.error.type == "forbidden")
-                return new ErrorHandler(res).forbidden(result.error.message, null);
+                return ResponseHandler.error(403, result.error.message, res);
         } else {
             res.cookie("token", result.data, {
                 httpOnly: true,
@@ -70,13 +69,10 @@ export default class AuthController {
             result = await AuthService.verifyToken(token);
         } catch (e) {
             console.error(e);
-            return new ErrorHandler(res).internalServer();
+            return ResponseHandler.error(500, "Internal Server Error!", res);
         }
         if (!result.success) {
-            return new ErrorHandler(res).badRequest(
-                result.error.message,
-                null
-            );
+            return ResponseHandler.error(400, result.error.message, res);
         } else {
             return ResponseHandler.ok("User Authenticated!", null, res);
         }

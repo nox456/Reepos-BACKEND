@@ -8,23 +8,23 @@ export default class AuthService {
         const { username, password } = userData;
 
         const username_validation = await User.validateUsername(username);
-        if (username_validation)
+        if (username_validation.error)
             return {
                 success: false,
                 error: {
-                    message: username_validation.validationError,
-                    type: "bad request",
+                    message: username_validation.error,
+                    type: "validation",
                 },
                 data: null,
             };
 
         const password_validation = await User.validatePassword(password);
-        if (password_validation)
+        if (password_validation.error)
             return {
                 success: false,
                 error: {
-                    message: password_validation.validationError,
-                    type: "bad request",
+                    message: password_validation.error,
+                    type: "validation",
                 },
                 data: null,
             };
@@ -58,23 +58,23 @@ export default class AuthService {
         const { username, password } = userData;
 
         const username_validation = await User.validateUsername(username);
-        if (username_validation)
+        if (username_validation.error)
             return {
                 success: false,
                 error: {
-                    message: username_validation.validationError,
-                    type: "bad request",
+                    message: username_validation.error,
+                    type: "validation",
                 },
                 data: null,
             };
 
         const password_validation = await User.validatePassword(password);
-        if (password_validation)
+        if (password_validation.error)
             return {
                 success: false,
                 error: {
-                    message: password_validation.validationError,
-                    type: "bad request",
+                    message: password_validation.error,
+                    type: "validation",
                 },
                 data: null,
             };
@@ -124,7 +124,7 @@ export default class AuthService {
                 success: false,
                 error: {
                     message: token_validation.error,
-                    type: "bad request",
+                    type: "validation",
                 },
                 data: null,
             };

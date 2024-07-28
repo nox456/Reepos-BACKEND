@@ -1,5 +1,4 @@
 import UserService from "../services/user.service.js";
-import ErrorHandler from "../lib/errorHandler.js";
 import ResponseHandler from "../lib/responseHandler.js";
 
 // Class used in 'user.routes.js' that contains request handlers
@@ -13,25 +12,16 @@ export default class UserController {
             result = await UserService.deleteUser(token, password);
         } catch (e) {
             console.error(e);
-            return new ErrorHandler(res).internalServer();
+            return ResponseHandler.error(500, "Internal Server Error!", res)
         }
         // Send response depending on validations
         if (!result.success) {
             if (result.error.type == "validation")
-                return new ErrorHandler(res).badRequest(
-                    result.error.message,
-                    null,
-                );
+                return ResponseHandler.error(400, result.error.message, res)
             if (result.error.type == "not found")
-                return new ErrorHandler(res).notFound(
-                    result.error.message,
-                    null,
-                );
+                return ResponseHandler.error(404, result.error.message, res)
             if (result.error.type == "forbidden")
-                return new ErrorHandler(res).forbidden(
-                    result.error.message,
-                    null,
-                );
+                return ResponseHandler.error(403, result.error.message, res)
         } else {
             return ResponseHandler.ok("User Deleted!", null, res);
         }
