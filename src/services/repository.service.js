@@ -16,10 +16,10 @@ export default class RepositoryService {
         const { name, description, languages } = repoData;
 
         const repoName_validation = await Repository.validateRepoName(name)
-        if (repoName_validation) return {
+        if (repoName_validation.error) return {
             success: false,
             error: {
-                message: repoName_validation.validationError,
+                message: repoName_validation.error,
                 type: "validation"
             },
             data: null
@@ -168,10 +168,10 @@ export default class RepositoryService {
     static async uploadRepository(repoName) {
         const repoName_validation =
             await Repository.validateRepoName(repoName);
-        if (repoName_validation) return {
+        if (repoName_validation.error) return {
             success: false,
             error: {
-                message: repoName_validation.validationError,
+                message: repoName_validation.error,
                 type: "validation"
             },
             data: null
@@ -199,10 +199,10 @@ export default class RepositoryService {
     static async getFiles(repoName) {
         const repoName_validation =
             await Repository.validateRepoName(repoName);
-        if (repoName_validation) return {
+        if (repoName_validation.error) return {
             success: false,
             error: {
-                message: repoName_validation.validationError,
+                message: repoName_validation.error,
                 type: "validation"
             },
             data: null
@@ -230,10 +230,10 @@ export default class RepositoryService {
     static async download(repoName) {
         const repoName_validation =
             await Repository.validateRepoName(repoName);
-        if (repoName_validation) return {
+        if (repoName_validation.error) return {
             success: false,
             error: {
-                message: repoName_validation.validationError,
+                message: repoName_validation.error,
                 type: "validation"
             },
             data: null

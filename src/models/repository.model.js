@@ -43,12 +43,11 @@ export default class Repository {
             required_error: "Repository Name required!",
         });
         const validation = await schema.safeParseAsync(repoName);
+        let error = null
         if (!validation.success) {
-            return {
-                validationError: validation.error.issues[0].message,
-                validationField: repoName,
-            };
+            error = validation.error.issues[0].message
         }
+        return {error}
     }
     // Check if repo exists in 'temp' dir
     static async checkIfExistsInBackend(repoName) {

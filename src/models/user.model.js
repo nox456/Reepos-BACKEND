@@ -156,6 +156,7 @@ export default class User {
             .min(3, { message: "Username must be 3 or more characters" })
             .max(15, { message: "Username must be less than 15 characters" })
         const validation = await schema.safeParseAsync(username)
+        let error = null
         if (!validation.success) {
             error = validation.error.issues[0].message
         }
@@ -169,6 +170,7 @@ export default class User {
             .string({ invalid_type_error: "Password must be a string!", required_error: "Password required!" })
             .min(1, { message: "Password required!" })
         const validation = await schema.safeParseAsync(password)
+        let error = null
         if (!validation.success) {
             error = validation.error.issues[0].message
         }
@@ -182,6 +184,7 @@ export default class User {
             .string({ invalid_type_error: "Description must be a string!", required_error: "Description required!" })
             .max(150, { message: "Description must be less than 150 characters" })
         const validation = await schema.safeParseAsync(description)
+        let error = null
         if (!validation.success) {
             error = validation.error.issues[0].message
         }
