@@ -3,6 +3,8 @@ import { extname, join, dirname } from "path";
 import { mkdir } from "fs/promises";
 import { fileURLToPath } from "url";
 import ResponseHandler from "../lib/responseHandler.js";
+import errorCodes from "../lib/constants/errorCodes.js";
+import { INTERNAL_SERVER_ERROR } from "../lib/constants/errors.js";
 
 const reposPath = join(dirname(fileURLToPath(import.meta.url)), "../temp");
 
@@ -42,7 +44,7 @@ export default class MulterController {
         }).single("file")(req, res, (err) => {
             if (err) {
                 return ResponseHandler.error(
-                    500,
+                    errorCodes[INTERNAL_SERVER_ERROR],
                     "Internal Server Error!",
                     res,
                 );

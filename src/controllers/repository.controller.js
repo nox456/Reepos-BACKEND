@@ -1,5 +1,7 @@
 import RepositoryService from "../services/repository.service.js";
 import ResponseHandler from "../lib/responseHandler.js";
+import errorCodes from "../lib/constants/errorCodes.js"
+import { INTERNAL_SERVER_ERROR } from "../lib/constants/errors.js";
 
 export default class RepositoryController {
     static async create(req, res) {
@@ -10,10 +12,10 @@ export default class RepositoryController {
             result = await RepositoryService.createRepository(repoData, token);
         } catch (e) {
             console.error(e);
-            return ResponseHandler.error(500, "Internal Server Error!", res)
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res)
         }
         if (!result.success) {
-            return ResponseHandler.error(400, result.error.message, res)
+            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
         } else {
             return ResponseHandler.ok("Created Repository!", null, res);
         }
@@ -25,19 +27,10 @@ export default class RepositoryController {
             result = await RepositoryService.uploadRepository(repoName);
         } catch (e) {
             console.error(e);
-            return new ErrorHandler(res).internalServer();
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res)
         }
         if (!result.success) {
-            if (result.error.type == "validation")
-                return new ErrorHandler(res).badRequest(
-                    result.error.message,
-                    null,
-                );
-            if (result.error.type == "not found")
-                return new ErrorHandler(res).notFound(
-                    result.error.message,
-                    null,
-                );
+            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
         } else {
             return ResponseHandler.ok(
                 "Repository Uploaded to Cloud!",
@@ -53,19 +46,10 @@ export default class RepositoryController {
             result = await RepositoryService.getFiles(repoName);
         } catch (e) {
             console.error(e);
-            return new ErrorHandler(res).internalServer();
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res)
         }
         if (!result.success) {
-            if (result.error.type == "validation")
-                return new ErrorHandler(res).badRequest(
-                    result.error.message,
-                    null,
-                );
-            if (result.error.type == "not found")
-                return new ErrorHandler(res).notFound(
-                    result.error.message,
-                    null,
-                );
+            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
         } else {
             return ResponseHandler.ok("Files founded!", result.data, res);
         }
@@ -77,19 +61,10 @@ export default class RepositoryController {
             result = await RepositoryService.download(repoName);
         } catch (e) {
             console.error();
-            return new ErrorHandler(res).internalServer();
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res)
         }
         if (!result.success) {
-            if (result.error.type == "validation")
-                return new ErrorHandler(res).badRequest(
-                    result.error.message,
-                    null,
-                );
-            if (result.error.type == "not found")
-                return new ErrorHandler(res).notFound(
-                    result.error.message,
-                    null,
-                );
+            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
         } else {
             return ResponseHandler.ok(
                 "Repository downloaded!",

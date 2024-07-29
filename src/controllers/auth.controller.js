@@ -1,6 +1,8 @@
 import AuthService from "../services/auth.service.js";
 import ResponseHandler from "../lib/responseHandler.js";
 import { COOKIES_SAMESITE, COOKIES_SECURE } from "../config/env.js";
+import errorCodes from "../lib/constants/errorCodes.js"
+import {INTERNAL_SERVER_ERROR} from "../lib/constants/errors.js"
 
 // Class used in 'auth.routes.js' that contains request handlers
 export default class AuthController {
@@ -15,11 +17,11 @@ export default class AuthController {
             });
         } catch (e) {
             console.error(e);
-            return ResponseHandler.error(500, "Internal Server Error!", res);
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res);
         }
         // Send response depending on validations
         if (!result.success) {
-            return ResponseHandler.error(400, result.error.message, res);
+            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res);
         } else {
             res.cookie("token", result.data, {
                 httpOnly: true,
@@ -40,18 +42,11 @@ export default class AuthController {
             });
         } catch (e) {
             console.error(e);
-            return ResponseHandler.error(500, "Internal Server Error!", res);
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res);
         }
         // Send response depending on validations
         if (!result.success) {
-            if (result.error.type == "validation")
-                return ResponseHandler.error(400, result.error.message, res);
-
-            if (result.error.type == "not found")
-                return ResponseHandler.error(404, result.error.message, res);
-
-            if (result.error.type == "forbidden")
-                return ResponseHandler.error(403, result.error.message, res);
+            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res);
         } else {
             res.cookie("token", result.data, {
                 httpOnly: true,
@@ -69,10 +64,10 @@ export default class AuthController {
             result = await AuthService.verifyToken(token);
         } catch (e) {
             console.error(e);
-            return ResponseHandler.error(500, "Internal Server Error!", res);
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res);
         }
         if (!result.success) {
-            return ResponseHandler.error(400, result.error.message, res);
+            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res);
         } else {
             return ResponseHandler.ok("User Authenticated!", null, res);
         }

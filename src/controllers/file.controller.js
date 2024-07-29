@@ -1,5 +1,7 @@
 import FileService from "../services/file.service.js";
 import ResponseHandler from "../lib/responseHandler.js";
+import errorCodes from "../lib/constants/errorCodes.js";
+import { INTERNAL_SERVER_ERROR } from "../lib/constants/errors.js";
 
 export default class FileController {
     static async download(req, res) {
@@ -9,13 +11,10 @@ export default class FileController {
             result = await FileService.download(id, repoName);
         } catch (e) {
             console.error(e);
-            return ResponseHandler.error(500, "Internal Server Error!", res)
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res)
         }
         if (!result.success) {
-            if (result.error.type == "validation")
-                return ResponseHandler.error(400, result.error.message, res)
-            if (result.error.type == "not found")
-                return ResponseHandler.error(404, result.error.message, res)
+            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
         } else {
             return ResponseHandler.ok("File founded!", result.data, res);
         }

@@ -1,5 +1,6 @@
 import User from "../models/user.model.js";
 import Auth from "../models/auth.model.js";
+import { BAD_REQUEST, FORBIDDEN, NOT_FOUND } from "../lib/constants/errors.js";
 
 // Class used in 'auth.controller.js' that contains validations and queries of models
 export default class AuthService {
@@ -13,7 +14,7 @@ export default class AuthService {
                 success: false,
                 error: {
                     message: username_validation.error,
-                    type: "validation",
+                    type: BAD_REQUEST,
                 },
                 data: null,
             };
@@ -24,7 +25,7 @@ export default class AuthService {
                 success: false,
                 error: {
                     message: password_validation.error,
-                    type: "validation",
+                    type: BAD_REQUEST,
                 },
                 data: null,
             };
@@ -36,7 +37,7 @@ export default class AuthService {
                 success: false,
                 error: {
                     message: "User already exists!",
-                    type: "exists",
+                    type: BAD_REQUEST,
                 },
                 data: null,
             };
@@ -63,7 +64,7 @@ export default class AuthService {
                 success: false,
                 error: {
                     message: username_validation.error,
-                    type: "validation",
+                    type: BAD_REQUEST,
                 },
                 data: null,
             };
@@ -74,7 +75,7 @@ export default class AuthService {
                 success: false,
                 error: {
                     message: password_validation.error,
-                    type: "validation",
+                    type: BAD_REQUEST,
                 },
                 data: null,
             };
@@ -86,7 +87,7 @@ export default class AuthService {
                 success: false,
                 error: {
                     message: "User doesn't exists!",
-                    type: "not found",
+                    type: NOT_FOUND,
                 },
                 data: null,
             };
@@ -103,7 +104,7 @@ export default class AuthService {
                 success: false,
                 error: {
                     message: "Invalid Password!",
-                    type: "forbidden",
+                    type: FORBIDDEN,
                 },
                 data: null,
             };
@@ -124,7 +125,7 @@ export default class AuthService {
                 success: false,
                 error: {
                     message: token_validation.error,
-                    type: "validation",
+                    type: BAD_REQUEST,
                 },
                 data: null,
             };
