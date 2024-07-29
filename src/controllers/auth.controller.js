@@ -1,7 +1,8 @@
 import AuthService from "../services/auth.service.js";
-import ErrorHandler from "../lib/errorHandler.js";
 import ResponseHandler from "../lib/responseHandler.js";
 import { COOKIES_SAMESITE, COOKIES_SECURE } from "../config/env.js";
+import errorCodes from "../lib/constants/errorCodes.js"
+import {INTERNAL_SERVER_ERROR} from "../lib/constants/errors.js"
 
 // Class used in 'auth.routes.js' that contains request handlers
 export default class AuthController {
@@ -16,24 +17,16 @@ export default class AuthController {
             });
         } catch (e) {
             console.error(e);
-            return new ErrorHandler(res).internalServer();
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res);
         }
         // Send response depending on validations
-        if (result.validationError) {
-            return new ErrorHandler(res).badRequest(
-                userRegistered.validationError,
-                userRegistered.validationField,
-            );
-        } else if (result.userExists) {
-            return new ErrorHandler(res).forbidden(
-                "User already exists!",
-                username,
-            );
+        if (!result.success) {
+            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res);
         } else {
-            res.cookie("token", result.token, {
+            res.cookie("token", result.data, {
                 httpOnly: true,
                 secure: COOKIES_SECURE === "true",
-                sameSite: COOKIES_SAMESITE
+                sameSite: COOKIES_SAMESITE,
             });
             return ResponseHandler.ok("User Registered!", null, res);
         }
@@ -49,38 +42,21 @@ export default class AuthController {
             });
         } catch (e) {
             console.error(e);
-            return new ErrorHandler(res).internalServer();
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res);
         }
         // Send response depending on validations
-        if (result.validationError) {
-            return new ErrorHandler(res).badRequest(
-                userAuthenticated.validationError,
-                userAuthenticated.validationField,
-            );
-        } else if (result.userNotExists) {
-            return new ErrorHandler(res).notFound(
-                "User doesn't Exists!",
-                username,
-            );
-        } else if (result.passwordNotMatch) {
-            return new ErrorHandler(res).forbidden(
-                "Password Incorrect!",
-                password,
-            );
+        if (!result.success) {
+            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res);
         } else {
-            res.cookie("token", result.token, {
+            res.cookie("token", result.data, {
                 httpOnly: true,
                 secure: COOKIES_SECURE === "true",
-                sameSite: COOKIES_SAMESITE
+                sameSite: COOKIES_SAMESITE,
             });
-            return ResponseHandler.ok(
-                "User Authenticated!",
-                null,
-                res,
-            );
+            return ResponseHandler.ok("User Authenticated!", null, res);
         }
     }
-    // Check if a user is authenticated
+    // Check if a user is authenticated by token
     static async isAuthenticated(req, res) {
         const { token } = req.cookies;
         let result;
@@ -88,16 +64,12 @@ export default class AuthController {
             result = await AuthService.verifyToken(token);
         } catch (e) {
             console.error(e);
-            return new ErrorHandler(res).internalServer();
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res);
         }
-        if (result.validationError) {
-            return new ErrorHandler(res).badRequest(
-                result.validationError,
-                result.validationField,
-            );
-        } else if (result == false) {
-            return new ErrorHandler(res).unauthorized("Invalid Token!", token);
+        if (!result.success) {
+            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res);
+        } else {
+            return ResponseHandler.ok("User Authenticated!", null, res);
         }
-        return ResponseHandler.ok("User Authenticated!", token, res);
     }
 }

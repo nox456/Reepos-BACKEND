@@ -1,6 +1,8 @@
 import UserService from "../services/user.service.js";
-import ErrorHandler from "../lib/errorHandler.js";
 import ResponseHandler from "../lib/responseHandler.js";
+import errorCodes from "../lib/constants/errorCodes.js"
+import { INTERNAL_SERVER_ERROR } from "../lib/constants/errors.js";
+import errorMap from "zod/lib/locales/en.js";
 
 // Class used in 'user.routes.js' that contains request handlers
 export default class UserController {
@@ -13,21 +15,11 @@ export default class UserController {
             result = await UserService.deleteUser(token, password);
         } catch (e) {
             console.error(e);
-            return new ErrorHandler(res).internalServer();
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res)
         }
         // Send response depending on validations
-        if (result?.validationError) {
-            return new ErrorHandler(res).badRequest(
-                result.validationError,
-                result.validationField,
-            );
-        } else if (result?.userNotExists) {
-            return new ErrorHandler(res).notFound("User doesn't Exists!", null);
-        } else if (result?.passwordNotMatch) {
-            return new ErrorHandler(res).forbidden(
-                "Password Incorrect!",
-                password,
-            );
+        if (!result.success) {
+            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
         } else {
             return ResponseHandler.ok("User Deleted!", null, res);
         }
@@ -45,23 +37,13 @@ export default class UserController {
             );
         } catch (e) {
             console.error(e);
-            return new ErrorHandler(res).internalServer();
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res)
         }
         // Send response depending on validations
-        if (result?.validationError) {
-            return (
-                new ErrorHandler(res).badRequest(result.validationError),
-                result.validationField
-            );
-        } else if (result?.userNotExists) {
-            return new ErrorHandler(res).notFound("User doesn't Exists!", null);
-        } else if (result?.passwordNotMatch) {
-            return new ErrorHandler(res).forbidden(
-                "Password Incorrect!",
-                password,
-            );
+        if (!result.success) {
+            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
         } else {
-            return ResponseHandler.ok("Username Modified!", newUsername, res);
+            return ResponseHandler.ok("Username Modified!", null, res);
         }
     }
     // Change password of a existing user
@@ -77,21 +59,11 @@ export default class UserController {
             );
         } catch (e) {
             console.error(e);
-            return new ErrorHandler(res).internalServer();
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res)
         }
         // Send response depending on validations
-        if (result?.validationError) {
-            return new ErrorHandler(res).badRequest(
-                result.validationError,
-                result.validationField,
-            );
-        } else if (result?.userNotExists) {
-            return new ErrorHandler(res).notFound("User doesn't Exists!", null);
-        } else if (result?.passwordNotMatch) {
-            return new ErrorHandler(res).forbidden(
-                "Password Incorrect!",
-                password,
-            );
+        if (!result.success) {
+            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
         } else {
             return ResponseHandler.ok("Password Modified!", newPassword, res);
         }
@@ -105,16 +77,11 @@ export default class UserController {
             result = await UserService.changeDescription(newDescription, token);
         } catch (e) {
             console.error(e);
-            return new ErrorHandler(res).internalServer();
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res)
         }
         // Send response depending on validations
-        if (result?.validationError) {
-            return new ErrorHandler(res).badRequest(
-                result.validationError,
-                result.validationField,
-            );
-        } else if (result?.userNotExists) {
-            return new ErrorHandler(res).notFound("User doesn't Exists", null);
+        if (!result.success) {
+            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
         } else {
             return ResponseHandler.ok(
                 "Description Modified!",
@@ -132,16 +99,11 @@ export default class UserController {
             result = await UserService.changeImage(file, token);
         } catch (e) {
             console.error(e);
-            return new ErrorHandler(res).internalServer();
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res)
         }
         // Send response depending on validations
-        if (result?.validationError) {
-            return new ErrorHandler(res).badRequest(
-                result.validationError,
-                result.validationField,
-            );
-        }else if (result?.userNotExists) {
-            return new ErrorHandler(res).notFound("User doesn't Exists", null);
+        if (!result.success) {
+            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
         } else {
             return ResponseHandler.ok("Image Modified!", result.imageUrl, res);
         }
@@ -155,21 +117,13 @@ export default class UserController {
             result = await UserService.followUser(userFollowedId, token);
         } catch (e) {
             console.error(e);
-            return new ErrorHandler(res).internalServer();
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res)
         }
         // Send response depending on validations
-        if (result?.validationError) {
-            return new ErrorHandler(res).badRequest(
-                result.validationError,
-                result.validationField,
-            );
-        } else if (result.userNotExists) {
-            return new ErrorHandler(res).notFound(
-                "User doesn't Exists!",
-                userFollowedId,
-            );
+        if (!result.success) {
+            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
         } else {
-            return ResponseHandler.ok("User Followed!", userFollowedId, res);
+            return ResponseHandler.ok("User Followed!", null, res);
         }
     }
     // Get users by username
@@ -180,21 +134,13 @@ export default class UserController {
             result = await UserService.search(username);
         } catch (e) {
             console.error(e);
-            return new ErrorHandler(res).internalServer();
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res)
         }
         // Send response depending on validations
-        if (result.validationError) {
-            return new ErrorHandler(res).badRequest(
-                result.validationError,
-                result.validationField,
-            );
-        } else if (result.length == 0) {
-            return new ErrorHandler(res).notFound(
-                "Users not founded!",
-                username,
-            );
+        if (!result.success) {
+            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
         } else {
-            return ResponseHandler.ok("Users Founded!", result, res);
+            return ResponseHandler.ok("Users Founded!", null, res);
         }
     }
     // Get user's followers by ID
@@ -206,23 +152,13 @@ export default class UserController {
             result = await UserService.getFollowers(token, username);
         } catch (e) {
             console.error(e);
-            return new ErrorHandler(res).internalServer();
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res)
         }
         // Send response depending on validations
-        if (result.validationError) {
-            return new ErrorHandler(res).badRequest(
-                result.validationError,
-                result.validationField,
-            );
-        } else if (result.userNotExists) {
-            return new ErrorHandler(res).notFound("User doesn't exists!", null);
-        } else if (result.length == 0) {
-            return new ErrorHandler(res).notFound(
-                "User doesn't have followers!",
-                null,
-            );
+        if (!result.success) {
+            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
         } else {
-            return ResponseHandler.ok("Followers Founded!", result, res);
+            return ResponseHandler.ok("Followers Founded!", null, res);
         }
     }
     // Get profile info of a existing user by ID
@@ -233,18 +169,13 @@ export default class UserController {
             result = await UserService.getProfileInfo(token);
         } catch (e) {
             console.error(e);
-            return new ErrorHandler(res).internalServer();
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res)
         }
         // Send response depending on validations
-        if (result.validationError) {
-            return new ErrorHandler(res).badRequest(
-                result.validationError,
-                result.validationField,
-            );
-        } else if (result.userNotExists) {
-            return new ErrorHandler(res).notFound("User doesn't exists!", null);
+        if (!result.success) {
+            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
         } else {
-            return ResponseHandler.ok("Profile Info", result, res);
+            return ResponseHandler.ok("Profile Info", null, res);
         }
     }
 }

@@ -141,11 +141,12 @@ export default class User {
             .string({ invalid_type_error: "ID must be a string!", required_error: "ID required!" })
             .uuid({ message: "ID must be a UUID" })
         const validation = await schema.safeParseAsync(id)
+        let error = null
         if (!validation.success) {
-            return {
-                validationError: validation.error.issues[0].message,
-                validationField: id
-            }
+            error = validation.error.issues[0].message
+        }
+        return {
+            error
         }
     }
     // Validate input of username field
@@ -155,11 +156,12 @@ export default class User {
             .min(3, { message: "Username must be 3 or more characters" })
             .max(15, { message: "Username must be less than 15 characters" })
         const validation = await schema.safeParseAsync(username)
+        let error = null
         if (!validation.success) {
-            return {
-                validationError: validation.error.issues[0].message,
-                validationField: username
-            }
+            error = validation.error.issues[0].message
+        }
+        return {
+            error
         }
     }
     // Validate input of password field
@@ -168,11 +170,12 @@ export default class User {
             .string({ invalid_type_error: "Password must be a string!", required_error: "Password required!" })
             .min(1, { message: "Password required!" })
         const validation = await schema.safeParseAsync(password)
+        let error = null
         if (!validation.success) {
-            return {
-                validationError: validation.error.issues[0].message,
-                validationField: password
-            }
+            error = validation.error.issues[0].message
+        }
+        return {
+            error
         }
     }
     // Validate input of description field
@@ -181,11 +184,12 @@ export default class User {
             .string({ invalid_type_error: "Description must be a string!", required_error: "Description required!" })
             .max(150, { message: "Description must be less than 150 characters" })
         const validation = await schema.safeParseAsync(description)
+        let error = null
         if (!validation.success) {
-            return {
-                validationError: validation.error.issues[0].message,
-                validationField: description
-            }
+            error = validation.error.issues[0].message
+        }
+        return {
+            error
         }
     }
     // Get users by username field

@@ -1,7 +1,6 @@
 import bcryptjs from "bcryptjs";
 import { SECRET } from "../config/env.js";
 import jwt from "jsonwebtoken";
-import { z } from "zod"
 
 // Class used in 'auth.service.js' that contains functions related with auth services
 export default class Auth {
@@ -21,20 +20,18 @@ export default class Auth {
     } 
     // Validate input of token field
     static async validateToken(token) {
-        const schema = z.string({ required_error: "Token required!" })
-        const validation = await schema.safeParseAsync(token)
-        if (!validation.success) {
-            return {
-                validationError: validation.error.issues[0].message,
-                validationField: token
-            }
-        }
-        return jwt.verify(token,SECRET, (err,encoded) => {
+        let error = null
+        let data = null
+        jwt.verify(token,SECRET, (err,encoded) => {
             if (err) {
-                return false
+                error = err.message
             } else {
-                return encoded
+                data = encoded
             }
         })
+        return {
+            error,
+            data
+        }
     }
 }
