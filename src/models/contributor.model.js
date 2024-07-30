@@ -18,6 +18,7 @@ export default class Contributor {
      * Save a contributor in database
      * @param {ContributorData} contributorData - Contributor Data 
      * @return {Promise<ContributorType>} Contributor saved
+     * @async
      * */
     static async save(contributorData) {
         const { name, repo } = contributorData

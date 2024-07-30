@@ -37,8 +37,8 @@ export default class Auth {
     }
     /**
      * @typedef {Object} Result
-     * @property {(string|null)} error
-     * @property {(string|null)} data
+     * @property {?string} error
+     * @property {?string} data
      * */
     /**
      * Verify a JWT Token

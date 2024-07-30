@@ -25,6 +25,7 @@ export default class File {
      * Save a file in database
      * @param {FileData} fileData 
      * @return {Promise<FileType>} File saved
+     * @async
      * */
     static async save(fileData) {
         const { name, size, path, repo } = fileData;
@@ -44,7 +45,8 @@ export default class File {
      * Get file URL to download
      * @param {string} id - File ID
      * @param {string} repoName - Repository Name
-     * @return {string} File public URL
+     * @return {Promise<string>} File public URL
+     * @async
      * */
     static async download(id, repoName) {
         let fileUrl;
@@ -81,6 +83,12 @@ export default class File {
             };
         }
     }
+    /**
+     * Check if the file exists in the database
+     * @param {string} id - File ID
+     * @return {Promise<boolean>} True if the file exists or False is not
+     * @async
+     * */
     static async checkIfExistsInDb(id) {
         let exists;
         try {
@@ -94,6 +102,13 @@ export default class File {
         }
         return exists;
     }
+    /**
+     * Check if the file exists in the cloud storage
+     * @param {string} repoName - Repository name
+     * @param {string} file_id - File ID
+     * @return {Promise<boolean>} True if the file exists or False is not
+     * @async
+     * */
     static async checkIfExistsInCloud(repoName, file_id) {
         let exists;
         try {

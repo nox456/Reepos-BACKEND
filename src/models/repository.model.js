@@ -10,8 +10,30 @@ import { REPOSITORIES_FILES } from "./queries.js";
 
 const reposPath = join(dirname(fileURLToPath(import.meta.url)), "../temp");
 
+/**
+ * Repository class
+ * */
 export default class Repository {
-    // Create a repository in database
+    /**
+     * @typedef {Object} RepoData
+     * @property {string} name - Repository Name
+     * @property {string} description - Repository Description
+     * @property {string} user_owner - User owner ID
+     * 
+     * @typedef {Object} RepoType
+     * @property {string} id - Repository ID
+     * @property {string} name - Repository name
+     * @property {string} description - Repository Description
+     * @property {string} user_owner - User owner ID
+     * @property {string} created_at - Date of creation
+     * @property {int} likes - Count of likes
+     * */
+    /**
+     * Save a repository in database
+     * @param {RepoData} repoData - Repository Data
+     * @return {Promise<RepoType>} Repository saved
+     * @async
+     * */
     static async save(repoData) {
         const { name, description, user_owner } = repoData;
         let repoSaved;
@@ -26,7 +48,11 @@ export default class Repository {
         }
         return repoSaved;
     }
-    // Upload a repository to supabase
+    /**
+     * Upload a repository to cloud storage
+     * @param {string} repoName - Repository name 
+     * @async
+     * */
     static async upload(repoName) {
         const path = join(reposPath, repoName);
         const files = await getReposFiles(path);
@@ -36,7 +62,16 @@ export default class Repository {
                 .upload(`${repoName}/${file.path}`, file.buffer);
         }
     }
-    // Validate repo name
+    /**
+     * @typedef {Object} Result
+     * @property {?string} error - Error message
+     * */
+    /**
+     * Validate Repository name
+     * @param {string} repoName - Repository name
+     * @return {Promise<Result>} Result Data
+     * @async
+     * */
     static async validateRepoName(repoName) {
         const schema = z.string({
             invalid_type_error: "Repository Name must be a string!",
@@ -49,12 +84,22 @@ export default class Repository {
         }
         return {error}
     }
-    // Check if repo exists in 'temp' dir
+    /**
+     * Check if the repository exists in backend
+     * @param {string} repoName - Repository name
+     * @return {Promise<boolean>} True if the file exists or False is not
+     * @async
+     * */
     static async checkIfExistsInBackend(repoName) {
         const repos = await readdir(reposPath);
         return repos.includes(repoName);
     }
-    // Check if repo exists in database
+    /**
+     * Check if the repository exists in database
+     * @param {string} repoName - Repository name
+     * @return {Promise<boolean>} True if the file exists or False is not
+     * @async
+     * */
     static async checkIfExistsInDb(repoName) {
         let exists;
         try {
@@ -68,7 +113,21 @@ export default class Repository {
         }
         return exists;
     }
-    // Get files from a repository stored in database
+    /**
+     * @typedef {Object} File
+     * @property {string} id - File ID
+     * @property {string} name - File name
+     * @property {string} size - File size
+     * @property {string} path - File path
+     * @property {string} last_commit_title - Title of the last commit
+     * @property {string} last_commit_created_at - Date of creation of the last commit
+     * */
+    /**
+     * Get files from a repository
+     * @param {string} repoName - Repository name
+     * @return {Promise<File[]>} Files
+     * @async
+     * */
     static async getFiles(repoName) {
         let files;
         try {
@@ -84,7 +143,13 @@ export default class Repository {
         }
         return files;
     }
-    // Get cloud public urls of files
+    /**
+     * Get public URLs of repository files
+     * @param {string} repoName - Repository name
+     * @param {File[]} files - Files
+     * @return {Promise<string[]>} Files URLs
+     * @async
+     * */
     static async getFilesUrls(repoName, files) {
         const urls = [];
         try {
@@ -99,7 +164,12 @@ export default class Repository {
         }
         return urls;
     }
-    // Check if a repository is stored in cloud (supabase)
+    /**
+     * Check if the repository exists in cloud storage
+     * @param {string} repoName - Repository name
+     * @return {Promise<boolean>} True if the file exists or False is not 
+     * @async
+     * */
     static async checkIfExistsInCloud(repoName) {
         let repos;
         try {

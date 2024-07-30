@@ -5,9 +5,20 @@ import { extname } from "path"
 import { z } from "zod"
 import { PROFILE_INFO, SEARCH_USERS, USER_FOLLOWERS } from "./queries.js"
 
-// Class used in 'user.service.js' that contains queries to database
+/**
+ * User class
+ * */
 export default class User {
-    // Create a user in database with username and password
+    /**
+     * @typedef {Object} UserData
+     * @property {string} username - User name
+     * @property {string} password - User password
+     * */
+    /**
+     * Save a user in database
+     * @param {UserData} data - User data 
+     * @return {string} User saved ID
+     * */
     static async save(data) {
         const { username, password } = data;
         let user;
@@ -22,7 +33,21 @@ export default class User {
         }
         return user;
     }
-    // Get a user by username field
+    /**
+     * @typedef {Object} UserType
+     * @property {string} id - User ID
+     * @property {string} username - User name
+     * @property {string} password - User password
+     * @property {string} description - User description
+     * @property {string} created_at - Date of creation
+     * @property {string} img - URL of user image
+     * */
+    /**
+     * Get a user by username
+     * @param {string} username - User name 
+     * @return {Promise<UserType>} User
+     * @async
+     * */
     static async getByUsername(username) {
         let user
         try {
@@ -33,7 +58,12 @@ export default class User {
         }
         return user
     }
-    // Get a user by id field
+    /**
+     * Get a user by ID
+     * @param {string} id - User ID
+     * @return {Promise<UserType>} User
+     * @async
+     * */
     static async getById(id) {
         let user
         try {
@@ -44,7 +74,11 @@ export default class User {
         }
         return user
     }
-    // Delete a user by id field
+    /**
+     * Delete a user by ID
+     * @param {string} id - User ID
+     * @async
+     * */
     static async delete(id) {
         try {
             await db.query("DELETE FROM users WHERE id = $1", [id])
@@ -52,7 +86,12 @@ export default class User {
             console.error(e)
         }
     }
-    // Check if a user exists by id field
+    /**
+     * Check if the user exists by username
+     * @param {string} id - User ID
+     * @return {Promise<boolean>} True if the file exists or False is not
+     * @async
+     * */
     static async checkIfExistsById(id) {
         let usersExists
         try {
@@ -63,7 +102,12 @@ export default class User {
         }
         return usersExists
     }
-    // Check if a user exists by username field
+    /**
+     * Check if the user exists by ID
+     * @param {string} username - User name
+     * @return {Promise<boolean>} True if the file exists or False is not
+     * @async
+     * */
     static async checkIfExistsByUsername(username) {
         let usersExists
         try {
@@ -74,7 +118,12 @@ export default class User {
         }
         return usersExists
     }
-    // Update username field by id field
+    /**
+     * Change username of user
+     * @param {string} newUsername - New username
+     * @param {string} id - User ID
+     * @async
+     * */
     static async changeUsername(newUsername, id) {
         try {
             await db.query("UPDATE users SET username = $1 WHERE id = $2", [newUsername, id])
@@ -82,7 +131,12 @@ export default class User {
             console.error(e)
         }
     }
-    // Update password field by id field
+    /**
+     * Change password of user
+     * @param {string} newPassword - New password 
+     * @param {string} id - User ID
+     * @async
+     * */
     static async changePassword(newPassword, id) {
         try {
             await db.query("UPDATE users SET password = $1 WHERE id = $2", [newPassword, id])
@@ -90,7 +144,12 @@ export default class User {
             console.error(e)
         }
     }
-    // Update description field by id field
+    /**
+     * Change description of user
+     * @param {string} newDescription - New description 
+     * @param {string} id - User ID
+     * @async
+     * */
     static async changeDescription(newDescription, id) {
         try {
             await db.query("UPDATE users SET description = $1 WHERE id = $2", [newDescription, id])
@@ -98,7 +157,12 @@ export default class User {
             console.error(e)
         }
     }
-    // Update image field by id field
+    /**
+     * Change image of user
+     * @param {string} image - Image URL
+     * @param {string} id - User ID
+     * @return {string} Image public URL
+     * */
     static async changeImage(image, id) {
         const ext = extname(image.originalname)
         let imageUrl
@@ -111,7 +175,13 @@ export default class User {
         }
         return imageUrl.data.publicUrl
     }
-    // Add a user id in followers field of another user
+    /**
+     * Add a user as followed
+     * @param {string} userFollowedId - User followed ID
+     * @param {string} userFollowerId - User follower ID
+     * @return {Promise<UserType>} User Followed
+     * @async
+     * */
     static async addFollowedUser(userFollowedId, userFollowerId) {
         let userFollowed
         try {
@@ -124,7 +194,12 @@ export default class User {
         }
         return userFollowed.rows[0]
     }
-    // Add a user id in followed field of another user
+    /**
+     * Add a user as follower
+     * @param {string} userFollowerId - User follower ID
+     * @param {string} userFollowedId - User followed ID
+     * @async
+     * */
     static async addFollowerUser(userFollowerId, userFollowedId) {
         try {
             const user_followers_response = await db.query("SELECT followers FROM users WHERE id = $1", [userFollowedId])
@@ -135,7 +210,16 @@ export default class User {
             console.error(e)
         }
     }
-    // Validate input of id field
+    /**
+     * @typedef {Object} Result
+     * @property {?string} error - Error message 
+     * */
+    /**
+     * Validate ID
+     * @param {string} id - User ID
+     * @return {Promise<Result>} Result Data
+     * @async
+     * */
     static async validateId(id) {
         const schema = z
             .string({ invalid_type_error: "ID must be a string!", required_error: "ID required!" })
@@ -149,7 +233,12 @@ export default class User {
             error
         }
     }
-    // Validate input of username field
+    /**
+     * Validate username
+     * @param {string} username - User name
+     * @return {Promise<Result>} Result Data
+     * @async
+     * */
     static async validateUsername(username) {
         const schema = z
             .string({ invalid_type_error: "Username must be a string!", required_error: "Username required!" })
@@ -164,7 +253,12 @@ export default class User {
             error
         }
     }
-    // Validate input of password field
+    /**
+     * Validate password
+     * @param {string} password - User password
+     * @return {Promise<Result>} Result Data
+     * @async
+     * */
     static async validatePassword(password) {
         const schema = z
             .string({ invalid_type_error: "Password must be a string!", required_error: "Password required!" })
@@ -178,7 +272,12 @@ export default class User {
             error
         }
     }
-    // Validate input of description field
+    /**
+     * Validate description
+     * @param {string} description - User description
+     * @return {Promise<Result>} Result Data
+     * @async
+     * */
     static async validateDescription(description) {
         const schema = z
             .string({ invalid_type_error: "Description must be a string!", required_error: "Description required!" })
@@ -192,7 +291,19 @@ export default class User {
             error
         }
     }
-    // Get users by username field
+    /**
+     * @typedef {Object} UserSearched
+     * @property {string} usename - User name
+     * @property {string} img - User image URL
+     * @property {int} followers_count - Followers count
+     * @property {int} repos_count - Repositories count
+     * */
+    /**
+     * Search user by username
+     * @param {string} username - User name
+     * @return {Promise<UserSearched>} User founded
+     * @async
+     * */
     static async search(username) {
         let usersFounded
         try {
@@ -203,7 +314,24 @@ export default class User {
         }
         return usersFounded
     }
-    // Get followers field of a user by id field
+    /**
+     * @typedef {Object} Follower
+     * @property {string} username - Follower name
+     * @property {string} img - Follower image URL
+     * @property {int} followers_count - Followers count of the follower
+     * @property {int} repos_count - Repositories count of the follower
+     *
+     * @typedef {Object} FollowerType
+     * @property {string} user_name - User name
+     * @property {Follower[]} followers - Followers
+     * */
+    /**
+     * Get followers
+     * @param {string} user_id - User ID
+     * @param {string} username - User name to search followers
+     * @return {Promise<FollowerType>} Followers founded
+     * @async
+     * */
     static async getFollowers(user_id, username) {
         let followers
         try {
@@ -223,7 +351,20 @@ export default class User {
 
         return followers
     }
-    // Get profile info of a user by id
+    /**
+     * @typedef {Object} ProfileInfo
+     * @property {string} user_name - User name
+     * @property {string} user_description - User description
+     * @property {string} user_img - User image URL
+     * @property {int} repos_count - Repositories count
+     * @property {int} followers_count - Followers count
+     * @property {int} followed_count - Followed count
+     * */
+    /**
+     * Get user's profile info
+     * @param {string} user_id - User ID
+     * @return {Promise<ProfileInfo>} Profile info
+     * */
     static async getProfileInfo(user_id) {
         let profileInfo
         try {
