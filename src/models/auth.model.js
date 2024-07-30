@@ -2,36 +2,62 @@ import bcryptjs from "bcryptjs";
 import { SECRET } from "../config/env.js";
 import jwt from "jsonwebtoken";
 
-// Class used in 'auth.service.js' that contains functions related with auth services
+/**
+ * Authentication class
+ * */
 export default class Auth {
-    // Encrypt a user password
+    /**
+     * Encrypt a password
+     * @param {string} password - The user's password to be encrypted
+     * @return {string} The user's password encrypted
+     * @async
+     * */
     static async encryptPassword(password) {
         const salt = await bcryptjs.genSalt();
         const passwordEncrypted = await bcryptjs.hash(password, salt);
-        return passwordEncrypted
+        return passwordEncrypted;
     }
-    // Create a JWT token with the user ID
+    /**
+     * Generate Token by user's ID
+     * @param {string} userId - The user's ID
+     * @return {string} JWT Token
+     * */
     static generateToken(userId) {
         return jwt.sign(userId, SECRET);
     }
-    // Compare a password sended by requests with a password storeed in database
-    static async comparePassword(requestPassword, storedPassword) {
-        return await bcryptjs.compare(requestPassword, storedPassword)
-    } 
-    // Validate input of token field
-    static async validateToken(token) {
-        let error = null
-        let data = null
-        jwt.verify(token,SECRET, (err,encoded) => {
+    /**
+     * Compare a raw password with a encrypted password
+     * @param {string} rawPassword - The raw password
+     * @param {string} encryptedPassword - The encrypted password
+     * @return {boolean} If both passwords are equals returns true, if not false
+     * @async
+     * */
+    static async comparePassword(rawPassword, encryptedPassword) {
+        return await bcryptjs.compare(rawPassword, encryptedPassword);
+    }
+    /**
+     * @typedef {Object} Result
+     * @property {(string|null)} error
+     * @property {(string|null)} data
+     * */
+    /**
+     * Verify a JWT Token
+     * @param {string} token - JWT Token
+     * @return {Result} Result data
+     * */
+    static validateToken(token) {
+        let error = null;
+        let data = null;
+        jwt.verify(token, SECRET, (err, encoded) => {
             if (err) {
-                error = err.message
+                error = err.message;
             } else {
-                data = encoded
+                data = encoded;
             }
-        })
+        });
         return {
             error,
-            data
-        }
+            data,
+        };
     }
 }

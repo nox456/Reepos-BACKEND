@@ -3,7 +3,29 @@ import supabase from "../connections/supabase.js";
 import { SUPABASE_REPOSITORY_BUCKET } from "../config/env.js";
 import { z } from "zod";
 
+/**
+ * Repository File class
+ * */
 export default class File {
+    /**
+     * @typedef {Object} FileData
+     * @property {string} name - File name
+     * @property {string} size - File size
+     * @property {string} path - File path
+     * @property {string} repo - Repository ID
+     *
+     * @typedef {Object} FileType
+     * @property {string} id - File ID
+     * @property {string} name - File name
+     * @property {string} size - File size
+     * @property {string} path - File path
+     * @property {string} repo - Repository ID
+     * */
+    /**
+     * Save a file in database
+     * @param {FileData} fileData 
+     * @return {Promise<FileType>} File saved
+     * */
     static async save(fileData) {
         const { name, size, path, repo } = fileData;
         let fileSaved;
@@ -18,6 +40,12 @@ export default class File {
         }
         return fileSaved;
     }
+    /**
+     * Get file URL to download
+     * @param {string} id - File ID
+     * @param {string} repoName - Repository Name
+     * @return {string} File public URL
+     * */
     static async download(id, repoName) {
         let fileUrl;
         try {
@@ -34,6 +62,10 @@ export default class File {
         }
         return fileUrl;
     }
+    /**
+     * Validate File ID
+     * @param {string} id - File ID
+     * */
     static async validateId(id) {
         const schema = z
             .string({
