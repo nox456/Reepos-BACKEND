@@ -1,7 +1,27 @@
 import File from "../models/file.model.js";
 
+/**
+ * Service to handle files proccesses
+ * */
 export default class FileService {
-    static async download(id,projecName) {
+    /**
+     * @typedef {Object} ErrorType
+     * @property {string} message - Error message
+     * @property {string} type - Error Type
+     *
+     * @typedef {Object} ServiceResult
+     * @property {boolean} success
+     * @property {?ErrorType} error - Error object
+     * @property {?string} data - Result Data
+     * */
+    /**
+     * Get public URL of a file to download
+     * @param {string} id - File ID
+     * @param {string} repoName - Repository Name
+     * @return {Promise<ServiceResult>} Service result object
+     * @async
+     * */
+    static async download(id,repoName) {
         const id_validation = await File.validateId(id)
         if (id_validation) return {
             success: false,
@@ -22,7 +42,7 @@ export default class FileService {
             data: null
         }
 
-        const existsInCloud = await File.checkIfExistsInCloud(projecName,id)
+        const existsInCloud = await File.checkIfExistsInCloud(repoName,id)
         if (!existsInCloud) return {
             success: false,
             error: {
@@ -33,7 +53,7 @@ export default class FileService {
         }
 
 
-        const fileUrl = await File.download(id,projecName)
+        const fileUrl = await File.download(id,repoName)
         return {
             success: true,
             error: null,

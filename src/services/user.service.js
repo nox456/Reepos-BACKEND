@@ -1,11 +1,29 @@
 import User from "../models/user.model.js"
 import Auth from "../models/auth.model.js"
 
-// Class used in 'user.controller.js' that contains validations and user model queries
+/**
+ * Service to handle user proccesses
+ * */
 export default class UserService {
-    // Delete a user by id and password
+    /**
+     * @typedef {Object} ErrorType
+     * @property {string} message - Error message
+     * @property {string} type - Error Type
+     *
+     * @typedef {Object} ServiceResult
+     * @property {boolean} success
+     * @property {?ErrorType} error - Error object
+     * @property {?string} data - Result Data
+     * */
+    /**
+     * Delete a user from database
+     * @param {string} token - JWT Token
+     * @param {string} password - User password
+     * @return {Promise<ServiceResult>} Service result object
+     * @async
+     * */
     static async deleteUser(token, password) {
-        const token_validation = await Auth.validateToken(token)
+        const token_validation = Auth.validateToken(token)
         if (token_validation.error) return {
             success: false,
             error: {
@@ -68,9 +86,16 @@ export default class UserService {
             data: null
         }
     }
-    // Change username field of a user by id and password
+    /**
+     * Change username validating token and password
+     * @param {string} newUsername - New username
+     * @param {string} token - JWT Token
+     * @param {string} password - User password
+     * @return {Promise<ServiceResult>} Service result object
+     * @async
+     * */
     static async changeUsername(newUsername, token, password) {
-        const token_validation = await Auth.validateToken(token)
+        const token_validation = Auth.validateToken(token)
         if (token_validation.error) return {
             success: false,
             error: {
@@ -141,9 +166,16 @@ export default class UserService {
             data: null
         }
     }
-    // Change password field of a user by id and password
+    /**
+     * Change password validating token and password
+     * @param {string} newPassword - New user password
+     * @param {string} token - JWT Token
+     * @param {string} password - User password
+     * @return {Promise<ServiceResult>} Service result object
+     * @async
+     * */
     static async changePassword(newPassword, token, password) {
-        const token_validation = await Auth.validateToken(token)
+        const token_validation = Auth.validateToken(token)
         if (token_validation.error) return {
             success: false,
             error: {
@@ -216,9 +248,15 @@ export default class UserService {
             data: null
         }
     }
-    // Change description field of a user by id
+    /**
+     * Change description validating token
+     * @param {string} newDescription - New description
+     * @param {string} token - JWT Token
+     * @return {Promise<ServiceResult>} Service result object
+     * @async
+     * */
     static async changeDescription(newDescription, token) {
-        const token_validation =  await Auth.validateToken(token)
+        const token_validation = Auth.validateToken(token)
         if (token_validation.error) return {
             success: false,
             error: {
@@ -266,9 +304,15 @@ export default class UserService {
             data: null
         }
     }
-    // Change image field of a user by id
+    /**
+     * Change image validating token
+     * @param {string} image - User image URL
+     * @param {string} token - JWT Token
+     * @return {Promise<ServiceResult>} Service result object
+     * @async
+     * */
     static async changeImage(image, token) {
-        const token_validation = await Auth.validateToken(token)
+        const token_validation = Auth.validateToken(token)
         if (token_validation.error) return {
             success: false,
             error: {
@@ -306,9 +350,15 @@ export default class UserService {
             data: imageUrl
         }
     }
-    // Follow a user by id field
+    /**
+     * Add a user has follower
+     * @param {string} userFollowedId - User followed ID
+     * @param {string} token - JWT Token
+     * @return {Promise<ServiceResult>} Service result object
+     * @async
+     * */
     static async followUser(userFollowedId, token) {
-        const token_validation = await Auth.validateToken(token)
+        const token_validation = Auth.validateToken(token)
         if (token_validation.error) return {
             success: false,
             error: {
@@ -357,7 +407,12 @@ export default class UserService {
             data: null
         }
     }
-    // Get users by username field
+    /**
+     * Search a user by username
+     * @param {string} username - User name
+     * @return {Promise<ServiceResult>} Service result object
+     * @async
+     * */
     static async search(username) {
         const username_validation = await User.validateUsername(username)
         if (username_validation.error) return {
@@ -376,9 +431,15 @@ export default class UserService {
             data: users
         }
     }
-    // Get followers of a user by username
+    /**
+     * Get followers of a user by username
+     * @param {string} token - JWT Token
+     * @param {string} username - User name
+     * @return {Promise<ServiceResult>} Service result object
+     * @async
+     * */
     static async getFollowers(token,username) {
-        const token_validation = await Auth.validateToken(token)
+        const token_validation = Auth.validateToken(token)
         if (token_validation.error) return {
             success: false,
             error: {
@@ -427,9 +488,14 @@ export default class UserService {
             data: followers
         }
     }
-    // Get profile info a user by id
+    /**
+     * Get user profile information
+     * @param {string} token - JWT Token
+     * @return {Promise<ServiceResult>} Service result object
+     * @async
+     * */
     static async getProfileInfo(token) {
-        const token_validation = await Auth.validateToken(token)
+        const token_validation = Auth.validateToken(token)
         if (token_validation.error) return {
             success: false,
             error: {

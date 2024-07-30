@@ -9,7 +9,7 @@ export default class Auth {
     /**
      * Encrypt a password
      * @param {string} password - The user's password to be encrypted
-     * @return {string} The user's password encrypted
+     * @return {Promise<string>} The user's password encrypted
      * @async
      * */
     static async encryptPassword(password) {
@@ -29,7 +29,7 @@ export default class Auth {
      * Compare a raw password with a encrypted password
      * @param {string} rawPassword - The raw password
      * @param {string} encryptedPassword - The encrypted password
-     * @return {boolean} If both passwords are equals returns true, if not false
+     * @return {Promise<boolean>} If both passwords are equals returns true, if not false
      * @async
      * */
     static async comparePassword(rawPassword, encryptedPassword) {

@@ -10,8 +10,32 @@ import Auth from "../models/auth.model.js"
 import repoInfo from "../lib/getReposInfo.js";
 import downloadFiles from "../lib/downloadFiles.js";
 
+/**
+ * Service to handle repositories proccesses
+ * */
 export default class RepositoryService {
-    // Create a repository with their commits, contributors, files, branches, languages and modifications
+    /**
+     * @typedef {Object} RepoData
+     * @property {string} name - Repository name
+     * @property {string} description - Repository description
+     * @property {string[]} languages - Repository languages
+     *
+     * @typedef {Object} ErrorType
+     * @property {string} message - Error message
+     * @property {string} type - Error Type
+     *
+     * @typedef {Object} ServiceResult
+     * @property {boolean} success
+     * @property {?ErrorType} error - Error object
+     * @property {?string} data - Result Data
+     * */
+    /**
+     * Save a repository in database
+     * @param {RepoData} repoData - Repository data
+     * @param {string} token - JWT Token
+     * @return {Promise<ServiceResult>} Service result object
+     * @async
+     * */
     static async createRepository(repoData, token) {
         const { name, description, languages } = repoData;
 
@@ -28,7 +52,7 @@ export default class RepositoryService {
         const { commits, files, branches, contributors, modifications } =
             await repoInfo(name);
 
-        const token_validation = await Auth.validateToken(token)
+        const token_validation = Auth.validateToken(token)
         if (token_validation.error) return {
             success: false,
             error: {
@@ -164,7 +188,12 @@ export default class RepositoryService {
             data: null
         };
     }
-    // Upload a repository to cloud storage (supabase)
+    /**
+     * Upload a repository stored in backend to cloud storage
+     * @param {string} repoName - Repository name
+     * @return {Promise<ServiceResult>} Service result object
+     * @async
+     * */
     static async uploadRepository(repoName) {
         const repoName_validation =
             await Repository.validateRepoName(repoName);
@@ -195,7 +224,12 @@ export default class RepositoryService {
             data: null
         }
     }
-    // Get files from a repository stored in database
+    /**
+     * Get public URLs of files by repository name
+     * @param {string} repoName - Repository name
+     * @return {Promise<ServiceResult>} Service result object
+     * @async
+     * */
     static async getFiles(repoName) {
         const repoName_validation =
             await Repository.validateRepoName(repoName);
@@ -226,7 +260,12 @@ export default class RepositoryService {
             data: files
         };
     }
-    // Generate a zip file of a repository
+    /**
+     * Generate a zip file with the repository content
+     * @param {string} repoName - Repository name
+     * @return {Promise<ServiceResult>} Service result object
+     * @async
+     * */
     static async download(repoName) {
         const repoName_validation =
             await Repository.validateRepoName(repoName);

@@ -17,7 +17,7 @@ export default class User {
     /**
      * Save a user in database
      * @param {UserData} data - User data 
-     * @return {string} User saved ID
+     * @return {Promise<string>} User saved ID
      * */
     static async save(data) {
         const { username, password } = data;

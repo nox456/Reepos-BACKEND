@@ -2,9 +2,30 @@ import User from "../models/user.model.js";
 import Auth from "../models/auth.model.js";
 import { BAD_REQUEST, FORBIDDEN, NOT_FOUND } from "../lib/constants/errors.js";
 
-// Class used in 'auth.controller.js' that contains validations and queries of models
+/**
+ * Service to handle auth proccesses
+ * */
 export default class AuthService {
-    // Signup a user by username and password
+    /**
+     * @typedef {Object} UserData
+     * @property {string} username - User name
+     * @property {string} password - User password
+     *
+     * @typedef {Object} ErrorType
+     * @property {string} message - Error message
+     * @property {string} type - Error Type
+     *
+     * @typedef {Object} ServiceResult
+     * @property {boolean} success
+     * @property {?ErrorType} error - Error object
+     * @property {?string} data - Result Data
+     * */
+    /**
+     * Signup process to register a user in database and authenticate it
+     * @param {UserData} userData - User Data
+     * @return {Promise<ServiceResult>} Service result object
+     * @async
+     * */
     static async signupUser(userData) {
         const { username, password } = userData;
 
@@ -54,7 +75,12 @@ export default class AuthService {
             data: token,
         };
     }
-    // Signin a user by username and password
+    /**
+     * Signin a user validating username and password
+     * @param {UserData} userData 
+     * @return {ServiceResult} Service result object
+     * @async
+     * */
     static async signinUser(userData) {
         const { username, password } = userData;
 
@@ -117,9 +143,13 @@ export default class AuthService {
             data: token,
         };
     }
-    // Verify token's user
-    static async verifyToken(token) {
-        const token_validation = await Auth.validateToken(token);
+    /**
+     * Validate a JWT token
+     * @param {string} token - JWT Token
+     * @return {ServiceResult} Service result object
+     * */
+    static verifyToken(token) {
+        const token_validation = Auth.validateToken(token);
         if (token_validation.error) {
             return {
                 success: false,
