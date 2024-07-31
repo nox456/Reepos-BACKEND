@@ -2,11 +2,14 @@ import UserService from "../services/user.service.js";
 import ResponseHandler from "../lib/responseHandler.js";
 import errorCodes from "../lib/constants/errorCodes.js"
 import { INTERNAL_SERVER_ERROR } from "../lib/constants/errors.js";
-import errorMap from "zod/lib/locales/en.js";
 
-// Class used in 'user.routes.js' that contains request handlers
+/**
+ * Controller to handler user requests
+ * */
 export default class UserController {
-    // Delete a existing user with password
+    /**
+     * Delete a user validating token and password
+     * */
     static async deleteUser(req, res) {
         const { token } = req.cookies;
         const { password } = req.body;
@@ -24,7 +27,9 @@ export default class UserController {
             return ResponseHandler.ok("User Deleted!", null, res);
         }
     }
-    // Change username of a existing user
+    /**
+     * Change username validating token and password
+     * */
     static async changeUsername(req, res) {
         const { token } = req.cookies;
         const { newUsername, password } = req.body;
@@ -46,7 +51,9 @@ export default class UserController {
             return ResponseHandler.ok("Username Modified!", null, res);
         }
     }
-    // Change password of a existing user
+    /**
+     * Change password validating token and password
+     * */
     static async changePassword(req, res) {
         const { token } = req.cookies;
         const { newPassword, password } = req.body;
@@ -68,7 +75,9 @@ export default class UserController {
             return ResponseHandler.ok("Password Modified!", newPassword, res);
         }
     }
-    // Change description of a existing user
+    /**
+     * Change description validating token
+     * */
     static async changeDescription(req, res) {
         const { token } = req.cookies;
         const { newDescription } = req.body;
@@ -90,7 +99,9 @@ export default class UserController {
             );
         }
     }
-    // Change image url of a existing user
+    /**
+     * Change image validating token
+     * */
     static async storeImage(req, res) {
         const { token } = req.cookies;
         const { file } = req;
@@ -108,7 +119,9 @@ export default class UserController {
             return ResponseHandler.ok("Image Modified!", result.imageUrl, res);
         }
     }
-    // Add the id of a user follower in followers field of a user followed
+    /**
+     * Add a user as follower
+     * */
     static async followUser(req, res) {
         const { token } = req.cookies;
         const { userFollowedId } = req.body;
@@ -126,7 +139,9 @@ export default class UserController {
             return ResponseHandler.ok("User Followed!", null, res);
         }
     }
-    // Get users by username
+    /**
+     * Search a user by username
+     * */
     static async search(req, res) {
         const { username } = req.query;
         let result;
@@ -143,7 +158,9 @@ export default class UserController {
             return ResponseHandler.ok("Users Founded!", null, res);
         }
     }
-    // Get user's followers by ID
+    /**
+     * Get followers of a user by username
+     * */
     static async getFollowers(req, res) {
         const { token } = req.cookies;
         const { username } = req.query;
@@ -161,7 +178,9 @@ export default class UserController {
             return ResponseHandler.ok("Followers Founded!", null, res);
         }
     }
-    // Get profile info of a existing user by ID
+    /**
+     * Get profile info of user validating token
+     * */
     static async getProfileInfo(req, res) {
         const { token } = req.cookies;
         let result;

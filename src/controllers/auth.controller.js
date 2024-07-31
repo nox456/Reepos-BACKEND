@@ -4,9 +4,13 @@ import { COOKIES_SAMESITE, COOKIES_SECURE } from "../config/env.js";
 import errorCodes from "../lib/constants/errorCodes.js"
 import {INTERNAL_SERVER_ERROR} from "../lib/constants/errors.js"
 
-// Class used in 'auth.routes.js' that contains request handlers
+/**
+ * Controller to handle auth requests
+ * */
 export default class AuthController {
-    // Register (create) a new user
+    /**
+     * Signup a user, save him in database and set cookie with token
+     * */
     static async signup(req, res) {
         const { username, password } = req.body;
         let result;
@@ -19,7 +23,6 @@ export default class AuthController {
             console.error(e);
             return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res);
         }
-        // Send response depending on validations
         if (!result.success) {
             return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res);
         } else {
@@ -31,7 +34,9 @@ export default class AuthController {
             return ResponseHandler.ok("User Registered!", null, res);
         }
     }
-    // Loggin (authenticate) a existing user with credentials (username and password)
+    /**
+     * Signin a user validating username and password and set cookie with token 
+     * */
     static async signin(req, res) {
         const { username, password } = req.body;
         let result;
@@ -56,12 +61,14 @@ export default class AuthController {
             return ResponseHandler.ok("User Authenticated!", null, res);
         }
     }
-    // Check if a user is authenticated by token
+    /**
+     * Check if a user is authenticated validating token
+     * */
     static async isAuthenticated(req, res) {
         const { token } = req.cookies;
         let result;
         try {
-            result = await AuthService.verifyToken(token);
+            result = AuthService.verifyToken(token);
         } catch (e) {
             console.error(e);
             return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res);

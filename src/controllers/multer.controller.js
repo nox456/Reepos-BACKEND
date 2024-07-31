@@ -8,7 +8,6 @@ import { INTERNAL_SERVER_ERROR } from "../lib/constants/errors.js";
 
 const reposPath = join(dirname(fileURLToPath(import.meta.url)), "../temp");
 
-// Store buffer image in memory
 const imageStorage = multer.memoryStorage();
 const fileStorage = multer.diskStorage({
     destination: async (req, file, cb) => {
@@ -23,8 +22,13 @@ const fileStorage = multer.diskStorage({
     filename: (req, file, cb) => cb(null, file.originalname),
 });
 
-// Class used in 'user.routes.js' that contains middlewares to upload images
+/**
+ * Controller to handle images and repository files requests
+ * */
 export default class MulterController {
+    /**
+     * Upload a user image
+     * */
     static uploadImage = multer({
         storage: imageStorage,
         fileFilter: (req, file, cb) => {
@@ -38,6 +42,9 @@ export default class MulterController {
             }
         },
     }).single("user_image");
+    /**
+     * Upload a repository file
+     * */
     static uploadFile(req, res) {
         multer({
             storage: fileStorage,

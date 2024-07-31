@@ -3,7 +3,13 @@ import ResponseHandler from "../lib/responseHandler.js";
 import errorCodes from "../lib/constants/errorCodes.js";
 import { INTERNAL_SERVER_ERROR } from "../lib/constants/errors.js";
 
+/**
+ * Controller to handle Files requests
+ * */
 export default class FileController {
+    /**
+     * Get public URL of a file to download it
+     * */
     static async download(req, res) {
         const { id, repoName } = req.query;
         let result;

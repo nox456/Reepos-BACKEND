@@ -78,7 +78,7 @@ export default class AuthService {
     /**
      * Signin a user validating username and password
      * @param {UserData} userData 
-     * @return {ServiceResult} Service result object
+     * @return {Promise<ServiceResult>} Service result object
      * @async
      * */
     static async signinUser(userData) {
