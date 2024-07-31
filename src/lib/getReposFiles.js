@@ -10,6 +10,7 @@ import { readdir, readFile } from "fs/promises"
  * Get repository files by repository name
  * @param {string} repoName - Repository name
  * @return {Promise<File[]>} Files
+ * @async
  * */
 export default async function getRepoFiles(repoName) {
     const allFiles = await readdir(repoName, { recursive: true })

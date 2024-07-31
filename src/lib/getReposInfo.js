@@ -37,6 +37,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
  * Get all info of a git repository (commits, branches, contributors, etc)
  * @param {string} repoName - Repository name
  * @return {Promise<RepoInfo>} Repository info object
+ * @async
  * */
 export default async function repoInfo(repoName) {
     const git = simpleGit(join(__dirname, "../temp", repoName))

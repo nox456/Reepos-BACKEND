@@ -12,7 +12,8 @@ const downloadsDir = join(
  * Generate a zip files by repository name
  * @param {string[]} urls - Files urls
  * @param {string} repoName - Repository name
- * @return {string} ZIP file name
+ * @return {Promise<string>} ZIP file name
+ * @async
  * */
 export default async function downloadFiles(urls, repoName) {
     const zip = createWriteStream(join(downloadsDir, `${repoName}.zip`));

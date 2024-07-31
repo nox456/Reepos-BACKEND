@@ -1,4 +1,5 @@
 import File from "../models/file.model.js";
+import { BAD_REQUEST, NOT_FOUND } from "../lib/constants/errors.js";
 
 /**
  * Service to handle files proccesses
@@ -21,43 +22,45 @@ export default class FileService {
      * @return {Promise<ServiceResult>} Service result object
      * @async
      * */
-    static async download(id,repoName) {
-        const id_validation = await File.validateId(id)
-        if (id_validation) return {
-            success: false,
-            error: {
-                message: id_validation.validationError,
-                type: "validation"
-            },
-            data: null
-        }
+    static async download(id, repoName) {
+        const id_validation = await File.validateId(id);
+        if (id_validation.error)
+            return {
+                success: false,
+                error: {
+                    message: id_validation.error,
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
 
-        const existsInDb = await File.checkIfExistsInDb(id)
-        if (!existsInDb) return {
-            success: false,
-            error: {
-                message: "File doesn't exists in database!",
-                type: "not found"
-            },
-            data: null
-        }
+        const existsInDb = await File.checkIfExistsInDb(id);
+        if (!existsInDb)
+            return {
+                success: false,
+                error: {
+                    message: "File doesn't exists in database!",
+                    type: "not found",
+                },
+                data: null,
+            };
 
-        const existsInCloud = await File.checkIfExistsInCloud(repoName,id)
-        if (!existsInCloud) return {
-            success: false,
-            error: {
-                message: "File doesn't exists in cloud storage",
-                type: "not found"
-            },
-            data: null
-        }
+        const existsInCloud = await File.checkIfExistsInCloud(repoName, id);
+        if (!existsInCloud)
+            return {
+                success: false,
+                error: {
+                    message: "File doesn't exists in cloud storage",
+                    type: NOT_FOUND,
+                },
+                data: null,
+            };
 
-
-        const fileUrl = await File.download(id,repoName)
+        const fileUrl = await File.download(id, repoName);
         return {
             success: true,
             error: null,
-            data: fileUrl
-        }
+            data: fileUrl,
+        };
     }
 }

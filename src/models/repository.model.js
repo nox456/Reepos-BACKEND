@@ -19,7 +19,7 @@ export default class Repository {
      * @property {string} name - Repository Name
      * @property {string} description - Repository Description
      * @property {string} user_owner - User owner ID
-     * 
+     *
      * @typedef {Object} RepoType
      * @property {string} id - Repository ID
      * @property {string} name - Repository name
@@ -50,7 +50,7 @@ export default class Repository {
     }
     /**
      * Upload a repository to cloud storage
-     * @param {string} repoName - Repository name 
+     * @param {string} repoName - Repository name
      * @async
      * */
     static async upload(repoName) {
@@ -78,11 +78,11 @@ export default class Repository {
             required_error: "Repository Name required!",
         });
         const validation = await schema.safeParseAsync(repoName);
-        let error = null
+        let error = null;
         if (!validation.success) {
-            error = validation.error.issues[0].message
+            error = validation.error.issues[0].message;
         }
-        return {error}
+        return { error };
     }
     /**
      * Check if the repository exists in backend
@@ -167,7 +167,7 @@ export default class Repository {
     /**
      * Check if the repository exists in cloud storage
      * @param {string} repoName - Repository name
-     * @return {Promise<boolean>} True if the file exists or False is not 
+     * @return {Promise<boolean>} True if the file exists or False is not
      * @async
      * */
     static async checkIfExistsInCloud(repoName) {

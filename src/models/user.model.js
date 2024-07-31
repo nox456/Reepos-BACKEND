@@ -161,7 +161,7 @@ export default class User {
      * Change image of user
      * @param {string} image - Image URL
      * @param {string} id - User ID
-     * @return {string} Image public URL
+     * @return {Promise<string>} Image public URL
      * */
     static async changeImage(image, id) {
         const ext = extname(image.originalname)

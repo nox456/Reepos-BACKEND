@@ -23,7 +23,7 @@ export default class File {
      * */
     /**
      * Save a file in database
-     * @param {FileData} fileData 
+     * @param {FileData} fileData
      * @return {Promise<FileType>} File saved
      * @async
      * */
@@ -65,8 +65,15 @@ export default class File {
         return fileUrl;
     }
     /**
+     * @typedef {Object} Result
+     * @property {?string} error - Error message
+     * */
+    /**
+    /**
      * Validate File ID
      * @param {string} id - File ID
+     * @return {Promise<Result>} Result Data
+     * @async
      * */
     static async validateId(id) {
         const schema = z
@@ -76,12 +83,11 @@ export default class File {
             })
             .uuid({ message: "ID must be a UUID" });
         const validation = await schema.safeParseAsync(id);
+        let error = null;
         if (!validation.success) {
-            return {
-                validationError: validation.error.issues[0].message,
-                validationField: id,
-            };
+            error = validation.error.issues[0].message;
         }
+        return { error };
     }
     /**
      * Check if the file exists in the database
@@ -119,10 +125,9 @@ export default class File {
             const { name, path } = result_file.rows[0];
             const files = await supabase.storage
                 .from(SUPABASE_REPOSITORY_BUCKET)
-                .list(
-                    `${repoName}/${path.slice(0, path.lastIndexOf("/"))}`,
-                    { search: name },
-                );
+                .list(`${repoName}/${path.slice(0, path.lastIndexOf("/"))}`, {
+                    search: name,
+                });
             exists = files.data.length > 0;
         } catch (e) {
             console.error(e);
