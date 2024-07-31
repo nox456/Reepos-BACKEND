@@ -8,7 +8,12 @@ const downloadsDir = join(
     "../temp/downloads",
 );
 
-// Generate a zip file with the content of a repository
+/**
+ * Generate a zip files by repository name
+ * @param {string[]} urls - Files urls
+ * @param {string} repoName - Repository name
+ * @return {string} ZIP file name
+ * */
 export default async function downloadFiles(urls, repoName) {
     const zip = createWriteStream(join(downloadsDir, `${repoName}.zip`));
     const archive = archiver("zip", { zlib: { level: 5 } });

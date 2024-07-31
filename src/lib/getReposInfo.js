@@ -4,6 +4,40 @@ import { fileURLToPath } from "url"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
+/**
+ * @typedef {Object} Commit
+ * @property {string} hash - Commit hash
+ * @property {string} title - Commit title
+ * @property {string} author - Commit author
+ * @property {string} content - Commit content
+ * @property {string} created_at - Date of creation
+ *
+ * @typedef {Object} Branch
+ * @property {string} name - Branch name
+ * @property {string} type - Branch type
+ *
+ * @typedef {Object} File
+ * @property {string} name - File name
+ * @property {string} size - File size
+ * @property {string} path - File path
+ *
+ * @typedef {Object} Modification
+ * @property {string} commit - Commit ID
+ * @property {string} type - Modification type
+ * @property {string} file - File ID
+ *
+ * @typedef {Object} RepoInfo
+ * @property {Commit[]} commits - Repository commits
+ * @property {string[]} contributors - Repository contributors
+ * @property {Branch[]} branches - Repository branches
+ * @property {File[]} files - Repository files
+ * @property {Modification[]} modifications - Repository modifications
+ * */
+/**
+ * Get all info of a git repository (commits, branches, contributors, etc)
+ * @param {string} repoName - Repository name
+ * @return {Promise<RepoInfo>} Repository info object
+ * */
 export default async function repoInfo(repoName) {
     const git = simpleGit(join(__dirname, "../temp", repoName))
     const commits = await git.log({

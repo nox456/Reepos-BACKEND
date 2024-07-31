@@ -1,6 +1,16 @@
 import { join } from "path"
 import { readdir, readFile } from "fs/promises"
 
+/**
+ * @typedef {Object} File
+ * @property {string} path - File path
+ * @property {Buffer} buffer - File buffer
+ * */
+/**
+ * Get repository files by repository name
+ * @param {string} repoName - Repository name
+ * @return {Promise<File[]>} Files
+ * */
 export default async function getRepoFiles(repoName) {
     const allFiles = await readdir(repoName, { recursive: true })
 
