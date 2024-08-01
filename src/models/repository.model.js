@@ -182,4 +182,42 @@ export default class Repository {
         }
         return repos.includes(repoName);
     }
+    /**
+     * Validate Repository description
+     * @param {string} description - Repository description
+     * @return {Promise<Result>} Result Data
+     * @async
+     * */
+    static async validateDescription(description) {
+        const schema = z.string({
+            required_error: "Description required!",
+            invalid_type_error: "Description must be a string!",
+        });
+        const validation = await schema.safeParseAsync(description);
+        let error = null;
+        if (!validation.success) {
+            error = validation.error.issues[0].message;
+        }
+        return { error };
+    }
+    /**
+     * Validate languages
+     * @param {string[]} languages - Repository languages
+     * @return {Promise<Result>} Result Data
+     * @async
+     * */
+    static async validateLanguages(languages) {
+        const schema = z
+            .string({
+                invalid_type_error: "Languages must be an array of strings!",
+                required_error: "Languages required!",
+            })
+            .array();
+        const validation = await schema.safeParseAsync(languages);
+        let error = null;
+        if (!validation.success) {
+            error = validation.error.issues[0].message;
+        }
+        return { error };
+    }
 }

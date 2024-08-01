@@ -6,9 +6,11 @@ import Contributor from "../models/contributor.model.js";
 import Modification from "../models/modification.model.js";
 import Commit_Branch from "../models/commit_branch.model.js";
 import Repository_Language from "../models/repository_language.model.js";
-import Auth from "../models/auth.model.js"
+import Auth from "../models/auth.model.js";
+import Language from "../models/language.model.js";
 import repoInfo from "../lib/getReposInfo.js";
 import downloadFiles from "../lib/downloadFiles.js";
+import { BAD_REQUEST, NOT_FOUND } from "../lib/constants/errors.js";
 
 /**
  * Service to handle repositories proccesses
@@ -39,28 +41,78 @@ export default class RepositoryService {
     static async createRepository(repoData, token) {
         const { name, description, languages } = repoData;
 
-        const repoName_validation = await Repository.validateRepoName(name)
-        if (repoName_validation.error) return {
-            success: false,
-            error: {
-                message: repoName_validation.error,
-                type: "validation"
-            },
-            data: null
+        const repoName_validation = await Repository.validateRepoName(name);
+        if (repoName_validation.error)
+            return {
+                success: false,
+                error: {
+                    message: repoName_validation.error,
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
+
+        const description_validation =
+            await Repository.validateDescription(description);
+        if (description_validation.error)
+            return {
+                success: false,
+                error: {
+                    message: description_validation.error,
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
+
+        const languages_validation =
+            await Repository.validateLanguages(languages);
+        if (languages_validation.error)
+            return {
+                success: false,
+                error: {
+                    message: languages_validation.error,
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
+
+        for (const lang of languages) {
+            const lang_exists = await Language.checkIfExists(lang);
+            if (!lang_exists)
+                return {
+                    success: false,
+                    error: {
+                        message: `Language ${lang} doesn't exists in database!`,
+                        type: NOT_FOUND,
+                    },
+                    data: null,
+                };
         }
+
+        const existsBackend = await Repository.checkIfExistsInBackend(name);
+        if (!existsBackend)
+            return {
+                success: false,
+                error: {
+                    message: "Repository doesn't exists in backend!",
+                    type: NOT_FOUND,
+                },
+                data: null,
+            };
 
         const { commits, files, branches, contributors, modifications } =
             await repoInfo(name);
 
-        const token_validation = Auth.validateToken(token)
-        if (token_validation.error) return {
-            success: false,
-            error: {
-                message: token_validation.error,
-                type: "validation"
-            },
-            data: null
-        }
+        const token_validation = Auth.validateToken(token);
+        if (token_validation.error)
+            return {
+                success: false,
+                error: {
+                    message: token_validation.error,
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
 
         // Create repository in database
         const repoSaved = await Repository.save({
@@ -185,7 +237,7 @@ export default class RepositoryService {
         return {
             success: true,
             error: null,
-            data: null
+            data: null,
         };
     }
     /**
@@ -195,34 +247,34 @@ export default class RepositoryService {
      * @async
      * */
     static async uploadRepository(repoName) {
-        const repoName_validation =
-            await Repository.validateRepoName(repoName);
-        if (repoName_validation.error) return {
-            success: false,
-            error: {
-                message: repoName_validation.error,
-                type: "validation"
-            },
-            data: null
-        };
+        const repoName_validation = await Repository.validateRepoName(repoName);
+        if (repoName_validation.error)
+            return {
+                success: false,
+                error: {
+                    message: repoName_validation.error,
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
 
-        const repoExists =
-            await Repository.checkIfExistsInBackend(repoName);
-        if (!repoExists) return {
-            success: false,
-            error: {
-                message: "Repository doesn't exists in server!",
-                type: "not found"
-            },
-            data: null
-        };
+        const repoExists = await Repository.checkIfExistsInBackend(repoName);
+        if (!repoExists)
+            return {
+                success: false,
+                error: {
+                    message: "Repository doesn't exists in server!",
+                    type: NOT_FOUND,
+                },
+                data: null,
+            };
 
         await Repository.upload(repoName);
         return {
             success: true,
             error: null,
-            data: null
-        }
+            data: null,
+        };
     }
     /**
      * Get public URLs of files by repository name
@@ -231,33 +283,34 @@ export default class RepositoryService {
      * @async
      * */
     static async getFiles(repoName) {
-        const repoName_validation =
-            await Repository.validateRepoName(repoName);
-        if (repoName_validation.error) return {
-            success: false,
-            error: {
-                message: repoName_validation.error,
-                type: "validation"
-            },
-            data: null
-        };
+        const repoName_validation = await Repository.validateRepoName(repoName);
+        if (repoName_validation.error)
+            return {
+                success: false,
+                error: {
+                    message: repoName_validation.error,
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
 
         const exists = await Repository.checkIfExistsInDb(repoName);
 
-        if (!exists) return {
-            success: false,
-            error: {
-                message: "Repository doesn't exists in database!",
-                type: "not found"
-            },
-            data: null
-        };
+        if (!exists)
+            return {
+                success: false,
+                error: {
+                    message: "Repository doesn't exists in database!",
+                    type: NOT_FOUND,
+                },
+                data: null,
+            };
 
         const files = await Repository.getFiles(repoName);
         return {
             success: true,
             error: null,
-            data: files
+            data: files,
         };
     }
     /**
@@ -267,38 +320,40 @@ export default class RepositoryService {
      * @async
      * */
     static async download(repoName) {
-        const repoName_validation =
-            await Repository.validateRepoName(repoName);
-        if (repoName_validation.error) return {
-            success: false,
-            error: {
-                message: repoName_validation.error,
-                type: "validation"
-            },
-            data: null
-        };
+        const repoName_validation = await Repository.validateRepoName(repoName);
+        if (repoName_validation.error)
+            return {
+                success: false,
+                error: {
+                    message: repoName_validation.error,
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
 
         const existsDb = await Repository.checkIfExistsInDb(repoName);
 
-        if (!existsDb) return {
-            success: false,
-            error: {
-                message: "Repository doesn't exists in database!",
-                type: "not found"
-            },
-            data: null
-        };
+        if (!existsDb)
+            return {
+                success: false,
+                error: {
+                    message: "Repository doesn't exists in database!",
+                    type: NOT_FOUND,
+                },
+                data: null,
+            };
 
         const existsCloud = await Repository.checkIfExistsInCloud(repoName);
 
-        if (!existsCloud) return {
-            success: false,
-            error: {
-                message: "Repository doesn't exists in cloud storage!",
-                type: "not found"
-            },
-            data: null
-        };
+        if (!existsCloud)
+            return {
+                success: false,
+                error: {
+                    message: "Repository doesn't exists in cloud storage!",
+                    type: NOT_FOUND,
+                },
+                data: null,
+            };
 
         const files = await Repository.getFiles(repoName);
 
@@ -308,7 +363,7 @@ export default class RepositoryService {
         return {
             success: true,
             error: null,
-            data: zip_file
+            data: zip_file,
         };
     }
 }
