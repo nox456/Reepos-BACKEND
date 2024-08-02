@@ -92,7 +92,7 @@ export default class File {
     /**
      * Check if the file exists in the database
      * @param {string} id - File ID
-     * @return {Promise<boolean>} True if the file exists or False is not
+     * @return {Promise<boolean>} True if the file exists or False if not
      * @async
      * */
     static async checkIfExistsInDb(id) {
@@ -112,7 +112,7 @@ export default class File {
      * Check if the file exists in the cloud storage
      * @param {string} repoName - Repository name
      * @param {string} file_id - File ID
-     * @return {Promise<boolean>} True if the file exists or False is not
+     * @return {Promise<boolean>} True if the file exists or False if not
      * @async
      * */
     static async checkIfExistsInCloud(repoName, file_id) {

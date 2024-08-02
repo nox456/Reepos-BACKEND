@@ -7,7 +7,7 @@ export default class Language {
     /**
      * Check if a language exists in database
      * @param {string} language - Language name
-     * @return {Promise<boolean>} True if the file exists or False is not
+     * @return {Promise<boolean>} True if the language exists or False if not
      * @async
      * */
     static async checkIfExists(language) {

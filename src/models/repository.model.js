@@ -87,7 +87,7 @@ export default class Repository {
     /**
      * Check if the repository exists in backend
      * @param {string} repoName - Repository name
-     * @return {Promise<boolean>} True if the file exists or False is not
+     * @return {Promise<boolean>} True if the repository exists or False if not
      * @async
      * */
     static async checkIfExistsInBackend(repoName) {
@@ -97,7 +97,7 @@ export default class Repository {
     /**
      * Check if the repository exists in database
      * @param {string} repoName - Repository name
-     * @return {Promise<boolean>} True if the file exists or False is not
+     * @return {Promise<boolean>} True if the repository exists or False if not
      * @async
      * */
     static async checkIfExistsInDb(repoName) {
@@ -167,7 +167,7 @@ export default class Repository {
     /**
      * Check if the repository exists in cloud storage
      * @param {string} repoName - Repository name
-     * @return {Promise<boolean>} True if the file exists or False is not
+     * @return {Promise<boolean>} True if the repository exists or False if not
      * @async
      * */
     static async checkIfExistsInCloud(repoName) {
@@ -256,6 +256,12 @@ export default class Repository {
             console.error(e);
         }
     }
+    /**
+     * Delete a repository by name and user ID from cloud storage
+     * @param {string} repoName - Repository name
+     * @param {string} userId - User ID
+     * @aync
+     * */
     static async deleteCloud(repoName, userId) {
         const path = join(reposPath, repoName);
         const files = await getReposFiles(path);

@@ -18,6 +18,7 @@ export default class User {
      * Save a user in database
      * @param {UserData} data - User data 
      * @return {Promise<string>} User saved ID
+     * @async
      * */
     static async save(data) {
         const { username, password } = data;
@@ -89,7 +90,7 @@ export default class User {
     /**
      * Check if the user exists by username
      * @param {string} id - User ID
-     * @return {Promise<boolean>} True if the file exists or False is not
+     * @return {Promise<boolean>} True if the user exists or False if not
      * @async
      * */
     static async checkIfExistsById(id) {
@@ -105,7 +106,7 @@ export default class User {
     /**
      * Check if the user exists by ID
      * @param {string} username - User name
-     * @return {Promise<boolean>} True if the file exists or False is not
+     * @return {Promise<boolean>} True if the user exists or False if not
      * @async
      * */
     static async checkIfExistsByUsername(username) {
@@ -162,6 +163,7 @@ export default class User {
      * @param {string} image - Image URL
      * @param {string} id - User ID
      * @return {Promise<string>} Image public URL
+     * @async
      * */
     static async changeImage(image, id) {
         const ext = extname(image.originalname)
@@ -364,6 +366,7 @@ export default class User {
      * Get user's profile info
      * @param {string} user_id - User ID
      * @return {Promise<ProfileInfo>} Profile info
+     * @async
      * */
     static async getProfileInfo(user_id) {
         let profileInfo
