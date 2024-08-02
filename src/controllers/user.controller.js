@@ -194,7 +194,7 @@ export default class UserController {
         if (!result.success) {
             return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
         } else {
-            return ResponseHandler.ok("Profile Info", null, res);
+            return ResponseHandler.ok("Profile Info", result.data, res);
         }
     }
 }

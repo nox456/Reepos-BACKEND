@@ -53,13 +53,13 @@ export default class Repository {
      * @param {string} repoName - Repository name
      * @async
      * */
-    static async upload(repoName) {
+    static async upload(repoName, userId) {
         const path = join(reposPath, repoName);
         const files = await getReposFiles(path);
         for (const file of files) {
             await supabase.storage
                 .from(SUPABASE_REPOSITORY_BUCKET)
-                .upload(`${repoName}/${file.path}`, file.buffer);
+                .upload(`${userId}/${repoName}/${file.path}`, file.buffer);
         }
     }
     /**
@@ -219,5 +219,48 @@ export default class Repository {
             error = validation.error.issues[0].message;
         }
         return { error };
+    }
+    /**
+     * Check if the user already has a repository by name
+     * @param {string} name - Repository name
+     * @param {string} userId - User ID
+     * @return {Promise<boolean>} True if the user has the repo and false if not
+     * @async
+     * */
+    static async checkIfUserHasRepo(name, userId) {
+        let hasRepo;
+        try {
+            const result = await db.query(
+                "SELECT count(*) FROM repositories WHERE name = $1 AND user_owner = $2",
+                [name, userId],
+            );
+            hasRepo = result.rows[0].count == 1;
+        } catch (e) {
+            console.error(e);
+        }
+        return hasRepo;
+    }
+    /**
+     * Delete a repository by name and user ID from database
+     * @param {string} repoName - Repository name
+     * @param {string} userId - User ID
+     * @async
+     * */
+    static async deleteDb(repoName, userId) {
+        try {
+            await db.query(
+                "DELETE FROM repositories WHERE name = $1 AND user_owner = $2",
+                [repoName, userId],
+            );
+        } catch (e) {
+            console.error(e);
+        }
+    }
+    static async deleteCloud(repoName, userId) {
+        const path = join(reposPath, repoName);
+        const files = await getReposFiles(path);
+        await supabase.storage
+            .from(SUPABASE_REPOSITORY_BUCKET)
+            .remove(files.map((f) => `${userId}/${repoName}/${f.path}`));
     }
 }

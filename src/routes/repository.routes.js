@@ -13,5 +13,7 @@ router.post("/upload-cloud", RepositoryController.uploadCloud)
 router.get("/get-files", RepositoryController.getFiles)
 // Get download link of a repository
 router.get("/download", RepositoryController.download)
+// Deleted a repository
+router.delete("/", RepositoryController.delete)
 
 export default router

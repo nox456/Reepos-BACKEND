@@ -8,6 +8,7 @@ import Commit_Branch from "../models/commit_branch.model.js";
 import Repository_Language from "../models/repository_language.model.js";
 import Auth from "../models/auth.model.js";
 import Language from "../models/language.model.js";
+import User from "../models/user.model.js";
 import repoInfo from "../lib/getReposInfo.js";
 import downloadFiles from "../lib/downloadFiles.js";
 import { BAD_REQUEST, NOT_FOUND } from "../lib/constants/errors.js";
@@ -52,6 +53,42 @@ export default class RepositoryService {
                 data: null,
             };
 
+        const existsBackend = await Repository.checkIfExistsInBackend(name);
+        if (!existsBackend)
+            return {
+                success: false,
+                error: {
+                    message: "Repository doesn't exists in backend!",
+                    type: NOT_FOUND,
+                },
+                data: null,
+            };
+
+        const token_validation = Auth.validateToken(token);
+        if (token_validation.error)
+            return {
+                success: false,
+                error: {
+                    message: token_validation.error,
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
+
+        const userHasRepo = await Repository.checkIfUserHasRepo(
+            name,
+            token_validation.data,
+        );
+        if (userHasRepo)
+            return {
+                success: false,
+                error: {
+                    message: "User has repository!",
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
+
         const description_validation =
             await Repository.validateDescription(description);
         if (description_validation.error)
@@ -89,30 +126,8 @@ export default class RepositoryService {
                 };
         }
 
-        const existsBackend = await Repository.checkIfExistsInBackend(name);
-        if (!existsBackend)
-            return {
-                success: false,
-                error: {
-                    message: "Repository doesn't exists in backend!",
-                    type: NOT_FOUND,
-                },
-                data: null,
-            };
-
         const { commits, files, branches, contributors, modifications } =
             await repoInfo(name);
-
-        const token_validation = Auth.validateToken(token);
-        if (token_validation.error)
-            return {
-                success: false,
-                error: {
-                    message: token_validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
 
         // Create repository in database
         const repoSaved = await Repository.save({
@@ -246,13 +261,24 @@ export default class RepositoryService {
      * @return {Promise<ServiceResult>} Service result object
      * @async
      * */
-    static async uploadRepository(repoName) {
+    static async uploadRepository(repoName, token) {
         const repoName_validation = await Repository.validateRepoName(repoName);
         if (repoName_validation.error)
             return {
                 success: false,
                 error: {
                     message: repoName_validation.error,
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
+
+        const token_validation = Auth.validateToken(token);
+        if (token_validation.error)
+            return {
+                success: false,
+                error: {
+                    message: token_validation.error,
                     type: BAD_REQUEST,
                 },
                 data: null,
@@ -269,7 +295,7 @@ export default class RepositoryService {
                 data: null,
             };
 
-        await Repository.upload(repoName);
+        await Repository.upload(repoName, token_validation.data);
         return {
             success: true,
             error: null,
@@ -365,5 +391,54 @@ export default class RepositoryService {
             error: null,
             data: zip_file,
         };
+    }
+    /**
+     * Delete a repository from database and clout storage
+     * @param {string} repoName - Repository name
+     * @param {string} token - JWT Token
+     * @return {Promise<ServiceResult>} Service result object
+     * @async
+     * */
+    static async delete(repoName, token) {
+        const repoName_validation = await Repository.validateRepoName(repoName);
+        if (repoName_validation.error)
+            return {
+                success: false,
+                error: {
+                    message: repoName_validation.error,
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
+
+        const token_validation = Auth.validateToken(token);
+        if (token_validation.error)
+            return {
+                success: false,
+                error: {
+                    message: token_validation.error,
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
+
+        const userId_validation = await User.validateId(token_validation.data);
+        if (userId_validation.error)
+            return {
+                success: false,
+                error: {
+                    message: userId_validation.error,
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
+
+        await Repository.deleteDb(repoName, token_validation.data);
+        await Repository.deleteCloud(repoName, token_validation.data);
+        return {
+            success: true,
+            error: null,
+            data: null
+        }
     }
 }
