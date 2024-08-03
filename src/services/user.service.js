@@ -13,7 +13,7 @@ export default class UserService {
      * @typedef {Object} ServiceResult
      * @property {boolean} success
      * @property {?ErrorType} error - Error object
-     * @property {?string} data - Result Data
+     * @property {*} data - Result Data
      * */
     /**
      * Delete a user from database

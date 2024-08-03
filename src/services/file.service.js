@@ -13,7 +13,7 @@ export default class FileService {
      * @typedef {Object} ServiceResult
      * @property {boolean} success
      * @property {?ErrorType} error - Error object
-     * @property {?string} data - Result Data
+     * @property {*} data - Result Data
      * */
     /**
      * Get public URL of a file to download

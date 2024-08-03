@@ -148,4 +148,28 @@ export default class RepositoryController {
             return ResponseHandler.ok("Repository deleted!", null, res);
         }
     }
+    static async like(req, res) {
+        const { repoName } = req.body;
+        const { token } = req.cookies;
+        let result;
+        try {
+            result = await RepositoryService.like(repoName, token);
+        } catch (e) {
+            console.error(e);
+            return ResponseHandler.error(
+                errorCodes[INTERNAL_SERVER_ERROR],
+                "Internal Server Error!",
+                res,
+            );
+        }
+        if (!result.success) {
+            return ResponseHandler.error(
+                errorCodes[result.error.type],
+                result.error.message,
+                res,
+            );
+        } else {
+            return ResponseHandler.ok("Repository liked!", result.data, res);
+        }
+    }
 }

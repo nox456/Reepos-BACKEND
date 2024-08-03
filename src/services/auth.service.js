@@ -18,7 +18,7 @@ export default class AuthService {
      * @typedef {Object} ServiceResult
      * @property {boolean} success
      * @property {?ErrorType} error - Error object
-     * @property {?string} data - Result Data
+     * @property {*} data - Result Data
      * */
     /**
      * Signup process to register a user in database and authenticate it

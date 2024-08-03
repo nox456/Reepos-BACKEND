@@ -12,6 +12,7 @@ import User from "../models/user.model.js";
 import repoInfo from "../lib/getReposInfo.js";
 import downloadFiles from "../lib/downloadFiles.js";
 import { BAD_REQUEST, NOT_FOUND } from "../lib/constants/errors.js";
+import { REPOSITORIES_FILES } from "../models/queries.js";
 
 /**
  * Service to handle repositories proccesses
@@ -30,7 +31,7 @@ export default class RepositoryService {
      * @typedef {Object} ServiceResult
      * @property {boolean} success
      * @property {?ErrorType} error - Error object
-     * @property {?string} data - Result Data
+     * @property {*} data - Result Data
      * */
     /**
      * Save a repository in database
@@ -435,6 +436,61 @@ export default class RepositoryService {
 
         await Repository.deleteDb(repoName, token_validation.data);
         await Repository.deleteCloud(repoName, token_validation.data);
+        return {
+            success: true,
+            error: null,
+            data: null
+        }
+    }
+    /**
+     * Like a repository by name and user token
+     * @param {string} repoName - Repository name
+     * @param {string} token - JWT Token
+     * @return {Promise<ServiceResult>} Service result object
+     * @async
+     * */
+    static async like(repoName, token) {
+        const repoName_validation = await Repository.validateRepoName(repoName)
+        if (repoName_validation.error) return {
+            success: false,
+            error: {
+                message: repoName_validation.error,
+                type: BAD_REQUEST
+            },
+            data: null
+        }
+
+        const existsDb = await Repository.checkIfExistsInDb(repoName)
+        if (!existsDb) return {
+            success: false,
+            error: {
+                message: "Repository doesn't exists!",
+                type: NOT_FOUND
+            },
+            data: null
+        }
+
+        const token_validation = Auth.validateToken(token)
+        if (token_validation.error) return {
+            success: false,
+            error: {
+                message: token_validation.error,
+                type: BAD_REQUEST
+            },
+            data: null
+        }
+
+        const userHasRepo = await Repository.checkIfUserHasRepo(repoName, token_validation.data)
+        if (!userHasRepo) return {
+            success: false,
+            error: {
+                message: "User doesn't have the repository!",
+                type: NOT_FOUND
+            },
+            data: null
+        }
+
+        await Repository.like(repoName,token_validation.data)
         return {
             success: true,
             error: null,

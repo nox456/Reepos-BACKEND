@@ -13,6 +13,8 @@ router.post("/upload-cloud", RepositoryController.uploadCloud)
 router.get("/get-files", RepositoryController.getFiles)
 // Get download link of a repository
 router.get("/download", RepositoryController.download)
+// Like a repository
+router.put("/like", RepositoryController.like)
 // Deleted a repository
 router.delete("/", RepositoryController.delete)
 

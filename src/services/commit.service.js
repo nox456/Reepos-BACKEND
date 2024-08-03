@@ -21,7 +21,7 @@ export default class CommitService {
      * @typedef {Object} ServiceResult
      * @property {boolean} success
      * @property {?ErrorType} error - Error object
-     * @property {?Commit[]} data - Result Data
+     * @property {*} data - Result Data
      * */
     /**
      * Get all commits from a repository

@@ -269,4 +269,17 @@ export default class Repository {
             .from(SUPABASE_REPOSITORY_BUCKET)
             .remove(files.map((f) => `${userId}/${repoName}/${f.path}`));
     }
+    /**
+     * Like the repository by name and user owner ID
+     * @param {string} repoName - Repository name
+     * @param {string} userId - User owner ID
+     * @async
+     * */
+    static async like(repoName, userId) {
+        try {
+            await db.query("UPDATE repositories SET likes = likes + 1 WHERE name = $1 AND user_owner = $2", [repoName, userId])
+        } catch(e) {
+            console.error(e)
+        }
+    }
 }
