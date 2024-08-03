@@ -80,3 +80,10 @@ FROM
 commits
 LEFT OUTER JOIN repositories ON (SELECT id FROM repositories WHERE name = $1 AND user_owner = $2) = commits.repo
 LEFT OUTER JOIN contributors ON contributors.id = commits.author`;
+
+export const REPOSITORIES_CONTRIBUTORS = `SELECT
+contributors.name as name,
+last_commit.title as last_commit_title, 
+commits_created.count as commits_created
+FROM
+contributors, LATERAL (SELECT title FROM commits WHERE commits.author = contributors.id ORDER BY created_at DESC LIMIT 1) as last_commit,LATERAL (SELECT count(*) FROM commits WHERE commits.author = contributors.id) as commits_created WHERE contributors.repo = (SELECT id FROM repositories WHERE repositories.name = $1 AND repositories.user_owner = $2)`;

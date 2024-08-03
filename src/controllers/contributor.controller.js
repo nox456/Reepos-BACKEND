@@ -1,22 +1,20 @@
+import ContributorService from "../services/contributor.service.js";
+import ResponseHandler from "../lib/responseHandler.js";
 import errorCodes from "../lib/constants/errorCodes.js";
 import { INTERNAL_SERVER_ERROR } from "../lib/constants/errors.js";
-import ResponseHandler from "../lib/responseHandler.js";
-import CommitService from "../services/commit.service.js";
 
 /**
- * Controller to handle commits requests
+ * Controller to handle contributors requests
  * */
-export default class CommitController {
-    /**
-     * Get all commits from a repository
-     * */
+export default class ContributorController {
     static async getAll(req, res) {
         const { repoName } = req.query;
         const { token } = req.cookies;
         let result;
         try {
-            result = await CommitService.getAll(repoName, token);
+            result = await ContributorService.getAll(repoName, token);
         } catch (e) {
+            console.error(e);
             return ResponseHandler.error(
                 errorCodes[INTERNAL_SERVER_ERROR],
                 "Internal Server Error!",
@@ -30,7 +28,11 @@ export default class CommitController {
                 res,
             );
         } else {
-            return ResponseHandler.ok("Commits Founded!", result.data, res);
+            return ResponseHandler.ok(
+                "Contributors Founded!",
+                result.data,
+                res,
+            );
         }
     }
 }
