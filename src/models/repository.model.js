@@ -277,7 +277,10 @@ export default class Repository {
      * */
     static async like(repoName, userId) {
         try {
-            await db.query("UPDATE repositories SET likes = likes + 1 WHERE name = $1 AND user_owner = $2", [repoName, userId])
+            const result = await db.query("SELECT likes FROM repositories WHERE name = $1 AND user_owner = $2", [repoName, userId]) 
+            const users_liked = result.rows[0].likes
+            users_liked.push(userId)
+            await db.query("UPDATE repositories SET likes = $1 WHERE name = $2 AND user_owner = $3", [users_liked,repoName, userId])
         } catch(e) {
             console.error(e)
         }
