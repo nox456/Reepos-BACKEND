@@ -1,4 +1,5 @@
 import db from "../connections/database.js";
+import { REPOSITORIES_COMMITS } from "./queries.js";
 
 /**
  * Git Commit class
@@ -38,5 +39,29 @@ export default class Commit {
             console.error(e)
         }
         return commitSaved
+    }
+    /**
+     * @typedef {Object} Commit
+     * @property {string} title - Commit title
+     * @property {string} author - Commit author
+     * @property {string} created_at - Date of creation
+     * @property {string} hash - Commit hash
+     * */
+    /**
+     * Get all commits from a repository by name and user owner ID
+     * @param {string} repoName - Repository name
+     * @param {string} userId - User ID
+     * @return {Promise<Commit[]>} Commits
+     * @async
+     * */
+    static async getAll(repoName, userId) {
+        let commits        
+        try {
+            const result = await db.query(REPOSITORIES_COMMITS, [repoName, userId])
+            commits = result.rows
+        } catch(e) {
+            console.error(e)
+        }
+        return commits
     }
 }

@@ -3,6 +3,7 @@ import authRoutes from "./auth.routes.js"
 import userRoutes from "./user.routes.js"
 import repositoryRoutes from "./repository.routes.js"
 import fileRoutes from "./file.routes.js"
+import commitRoutes from "./commit.routes.js"
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -21,7 +22,9 @@ router.use("/users", userRoutes);
 router.use("/repositories", repositoryRoutes)
 // Base URL of files routes
 router.use("/files", fileRoutes)
+// Base URL of commits routes
+router.use("/commits", commitRoutes)
 // Serve downloads directory
 router.use(express.static(downloadsDir));
-//
+
 export default router;

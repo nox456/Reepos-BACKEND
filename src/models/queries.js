@@ -70,3 +70,13 @@ FROM (
 ) as file,
     LATERAL (SELECT c.title as last_commit_title, c.created_at as last_commit_created_at FROM modifications LEFT OUTER JOIN commits c ON c.id = modifications.commit WHERE modifications.file = file.id ORDER BY c.created_at DESC LIMIT 1) as last_commit WHERE file.size != 'N/A'
 `;
+
+export const REPOSITORIES_COMMITS = `SELECT
+commits.title as title,
+contributors.name as author,
+commits.created_at as created_at,
+commits.hash as hash
+FROM
+commits
+LEFT OUTER JOIN repositories ON (SELECT id FROM repositories WHERE name = $1 AND user_owner = $2) = commits.repo
+LEFT OUTER JOIN contributors ON contributors.id = commits.author`;
