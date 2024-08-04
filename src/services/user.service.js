@@ -28,7 +28,7 @@ export default class UserService {
             success: false,
             error: {
                 message: token_validation.error,
-                type: "validation"
+                type: NOT_FOUND
             },
             data: null
         }
@@ -38,7 +38,7 @@ export default class UserService {
             success: false,
             error: {
                 message: id_validation.error,
-                type: "validation"
+                type: NOT_FOUND
             },
             data: null
         }
@@ -48,7 +48,7 @@ export default class UserService {
             success: false,
             error: {
                 message: password_validation.error,
-                type: "forbidden"
+                type: FORBIDDEN
             },
             data: null
         }
@@ -59,7 +59,7 @@ export default class UserService {
             success: false,
             error: {
                 message: "User doesn't exists",
-                type: "not found"
+                type: NOT_FOUND
             },
             data: null
         }
@@ -74,7 +74,7 @@ export default class UserService {
             success: false,
             error: {
                 message: "Invalid Password",
-                type: "forbidden"
+                type: FORBIDDEN
             },
             data: null
         }
@@ -100,7 +100,7 @@ export default class UserService {
             success: false,
             error: {
                 message: token_validation.error,
-                type: "validation"
+                type: NOT_FOUND
             },
             data: null
         }
@@ -110,7 +110,7 @@ export default class UserService {
             success: false,
             error: {
                 message: username_validation.error,
-                type: "validation"
+                type: NOT_FOUND
             },
             data: null
         }
@@ -120,7 +120,7 @@ export default class UserService {
             success: false,
             error: {
                 message: id_validation.error,
-                type: "validation"
+                type: NOT_FOUND
             },
             data: null
         }
@@ -130,7 +130,7 @@ export default class UserService {
             success: false,
             error: {
                 message: password_validation.error,
-                type: "validation"
+                type: NOT_FOUND
             },
             data: null
         }
@@ -141,7 +141,7 @@ export default class UserService {
             success: false,
             error: {
                 message: "User doesn't exists!",
-                type: "not found"
+                type: NOT_FOUND
             },
             data: null
         }
@@ -154,7 +154,7 @@ export default class UserService {
             success: false,
             error: {
                 message: "Invalid Password!",
-                type: "forbidden"
+                type: FORBIDDEN
             },
             data: null
         }
@@ -180,7 +180,7 @@ export default class UserService {
             success: false,
             error: {
                 message: token_validation.error,
-                type: "validation"
+                type: NOT_FOUND
             },
             data: null
         }
@@ -190,7 +190,7 @@ export default class UserService {
             success: false,
             error: {
                 message: newPassword_validation.error,
-                type: "validation"
+                type: NOT_FOUND
             },
             data: null
         }
@@ -200,7 +200,7 @@ export default class UserService {
             success: false,
             error: {
                 message: id_validation.error,
-                type: "validation"
+                type: NOT_FOUND
             },
             data: null
         }
@@ -210,7 +210,7 @@ export default class UserService {
             success: false,
             error: {
                 message: password_validation.error,
-                type: "validation"
+                type: NOT_FOUND
             },
             data: null
         }
@@ -221,7 +221,7 @@ export default class UserService {
             success: false,
             error: {
                 message: "User doesn't exists!",
-                type: "not found"
+                type: NOT_FOUND
             },
             data: null
         }
@@ -234,7 +234,7 @@ export default class UserService {
             success: false,
             error: {
                 message: "Invalid Password!",
-                type: "forbidden"
+                type: FORBIDDEN
             },
             data: null
         }
@@ -261,7 +261,7 @@ export default class UserService {
             success: false,
             error: {
                 message: token_validation.error,
-                type: "validation"
+                type: NOT_FOUND
             },
             data: null
         }
@@ -271,7 +271,7 @@ export default class UserService {
             success: false,
             error: {
                 message: id_validation.error,
-                type: "validation"
+                type: NOT_FOUND
             },
             data: null
         }
@@ -281,7 +281,7 @@ export default class UserService {
             success: false,
             error: {
                 message: description_validation.error,
-                type: "validation"
+                type: NOT_FOUND
             },
             data: null
         }
@@ -292,7 +292,7 @@ export default class UserService {
             success: false,
             error: {
                 message: "User doesn't exists!",
-                type: "not found"
+                type: NOT_FOUND
             },
             data: null
         }
@@ -317,7 +317,7 @@ export default class UserService {
             success: false,
             error: {
                 message: token_validation.error,
-                type: "validation"
+                type: NOT_FOUND
             },
             data: null
         }
@@ -327,7 +327,7 @@ export default class UserService {
             success: false,
             error: {
                 message: id_validation.error,
-                type: "validation"
+                type: NOT_FOUND
             },
             data: null
         }
@@ -338,7 +338,7 @@ export default class UserService {
             success: false,
             error: {
                 message: "User doesn't exists!",
-                type: "not found"
+                type: NOT_FOUND
             },
             data: null
         }
@@ -363,7 +363,7 @@ export default class UserService {
             success: false,
             error: {
                 message: token_validation.error,
-                type: "validation"
+                type: NOT_FOUND
             },
             data: null
         }
@@ -373,7 +373,7 @@ export default class UserService {
             success: false,
             error: {
                 message: userFollowedId_validation.error,
-                type: "validation"
+                type: NOT_FOUND
             },
             data: null
         }
@@ -383,7 +383,7 @@ export default class UserService {
             success: false,
             error: {
                 message: userFollowedId_validation.error,
-                type: "validation"
+                type: NOT_FOUND
             },
             data: null
         }
@@ -394,7 +394,7 @@ export default class UserService {
             success: false,
             error: {
                 message: "User doesn't exists!",
-                type: "not found"
+                type: NOT_FOUND
             },
             data: null
         }
@@ -419,7 +419,7 @@ export default class UserService {
             success: false,
             error: {
                 message: username_validation.error,
-                type: "validation"
+                type: NOT_FOUND
             },
             data: null
         }
@@ -444,7 +444,7 @@ export default class UserService {
             success: false,
             error: {
                 message: token_validation.error,
-                type: "validation"
+                type: NOT_FOUND
             },
             data: null
         }
@@ -454,7 +454,7 @@ export default class UserService {
             success: false,
             error: {
                 message: id_validation.error,
-                type: "validation"
+                type: NOT_FOUND
             },
             data: null
         }
@@ -465,7 +465,7 @@ export default class UserService {
                 success: false,
                 error: {
                     message: username_validation.error,
-                    type: "validation"
+                    type: NOT_FOUND
                 },
                 data: null
             }
@@ -476,7 +476,7 @@ export default class UserService {
             success: false,
             error: {
                 message: "User doesn't exists!",
-                type: "not found"
+                type: NOT_FOUND
             },
             data: null
         }
@@ -500,7 +500,7 @@ export default class UserService {
             success: false,
             error: {
                 message: token_validation.error,
-                type: "validation"
+                type: NOT_FOUND
             },
             data: null
         }
@@ -510,7 +510,7 @@ export default class UserService {
             success: false,
             error: {
                 message: id_validation.error,
-                type: "validation"
+                type: NOT_FOUND
             },
             data: null
         }
@@ -520,7 +520,7 @@ export default class UserService {
             success: false,
             error: {
                 message: "User doesn't exists!",
-                type: "not found"
+                type: NOT_FOUND
             },
             data: null
         }
