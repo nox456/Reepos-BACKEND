@@ -6,7 +6,7 @@ import { z } from "zod";
 import { readdir } from "fs/promises";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
-import { REPOSITORIES_FILES } from "./queries.js";
+import { REPOSITORIES_FILES, USER_REPOSITORIES } from "./queries.js";
 
 const reposPath = join(dirname(fileURLToPath(import.meta.url)), "../temp");
 
@@ -284,5 +284,28 @@ export default class Repository {
         } catch(e) {
             console.error(e)
         }
+    }
+    /**
+     * @typedef {Object} Repository
+     * @property {string} name - Repository name
+     * @property {string} description- Repository description
+     * @property {int} likes - Repository likes
+     * @property {string[]} languages - Repository languages
+     * */
+    /**
+     * Get repositories from an user by ID
+     * @param {string} userId - User owner ID
+     * @return {Promise<Repository[]>} User's repositories
+     * @async
+     * */
+    static async getFromUser(userId) {
+        let repos
+        try {
+            const repos_result = await db.query(USER_REPOSITORIES, [userId]) 
+            repos = repos_result.rows
+        } catch(e) {
+            console.error(e)
+        }
+        return repos
     }
 }

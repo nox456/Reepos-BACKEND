@@ -172,4 +172,22 @@ export default class RepositoryController {
             return ResponseHandler.ok("Repository liked!", result.data, res);
         }
     }
+    /**
+     * Get repositories from an user
+     * */
+    static async getFromUser(req,res) {
+        const { token} = req.cookies
+        let result
+        try {
+            result = await RepositoryService.getFromUser(token)
+        } catch(e) {
+            console.error(e)
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res)
+        }
+        if (!result.success) {
+            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
+        } else {
+            return ResponseHandler.ok("Repositories Founded!", result.data, res)
+        }
+    }
 }

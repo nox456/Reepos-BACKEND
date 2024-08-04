@@ -17,5 +17,7 @@ router.get("/download", RepositoryController.download)
 router.put("/like", RepositoryController.like)
 // Deleted a repository
 router.delete("/", RepositoryController.delete)
+// Get from an user
+router.get("/", RepositoryController.getFromUser)
 
 export default router

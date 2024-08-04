@@ -497,4 +497,48 @@ export default class RepositoryService {
             data: null
         }
     }
+    /**
+     * Get repositories from an user by ID
+     * @param {string} token - JWT Token
+     * @return {Promise<ServiceResult>} Service result object
+     * @async
+     * */
+    static async getFromUser(token) {
+        const token_validation = Auth.validateToken(token)
+        if (token_validation.error) return {
+            success: false,
+            error: {
+                message: token_validation.error,
+                type: BAD_REQUEST
+            },
+            data: null
+        }
+
+        const user_exists = await User.checkIfExistsById(token_validation.data)
+        if (!user_exists) return {
+            success: false,
+            error: {
+                message: "User doesn't exists!",
+                type: NOT_FOUND
+            },
+            data: null
+        }
+
+        const repos = await Repository.getFromUser(token_validation.data)
+
+        if (repos.length == 0) return {
+            success: false,
+            error: {
+                message: "User doesn't have repositories",
+                type: NOT_FOUND
+            },
+            data: null
+        }
+
+        return {
+            success: true,
+            error: null,
+            data: repos
+        }
+    }
 }
