@@ -26,6 +26,8 @@ Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos H
 - **[Users](#users)**
 - **[Repositories](#repositories)**
 - **[Files](#files)**
+- **[Contributors](#contributors)**
+- **[Commits](#commits)**
 
 ### Auth
 
@@ -54,11 +56,11 @@ Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos H
     </tr>
     <tr>
         <td><code>POST</code></td>
-        <td><code>/signinToken</code></td>
+        <td><code>/is-authenticated</code></td>
         <td>
-            <code>{ "token": "string" }</code>
+            <code>{}</code>
         </td>
-        <td>Autenticar un usuario con Token</td>
+        <td>Comprobar con si existe un token de autenticación</td>
     </tr>
 </table>
 
@@ -76,37 +78,37 @@ Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos H
     <tr>
         <td><code>DELETE</code></td>
         <td><code>/delete</code></td>
-        <td><code>{ "id": "string", "password": "string" }</code></td>
+        <td><code>{ "password": "string" }</code></td>
         <td>Eliminar un usuario</td>
     </tr>
     <tr>
         <td><code>PUT</code></td>
         <td><code>/change-username</code></td>
-        <td><code>{ "newUsername": "string", "id": "string", "password": "string" }</code></td>
+        <td><code>{ "newUsername": "string", "password": "string" }</code></td>
         <td>Cambiar nombre de usuario</td>
     </tr>
     <tr>
         <td><code>PUT</code></td>
         <td><code>/change-password</code></td>
-        <td><code>{ "newPassword": "string", "id": "string", "password": "string" }</code></td>
+        <td><code>{ "newPassword": "string", "password": "string" }</code></td>
         <td>Cambiar contraseña</td>
     </tr>
     <tr>
         <td><code>PUT</code></td>
         <td><code>/change-description</code></td>
-        <td><code>{ "newDescription": "string", "id": "string" }</code></td>
+        <td><code>{ "newDescription": "string" }</code></td>
         <td>Cambiar Descripción/Biografia</td>
     </tr>
     <tr>
         <td><code>POST</code></td>
         <td><code>/upload-image</code></td>
-        <td><code>{ "user_img": "image", "user_id": "string" }</code></td>
+        <td><code>{ "user_img": "image" }</code></td>
         <td>Actualizar imagen de usuario</td>
     </tr>
     <tr>
         <td><code>POST</code></td>
         <td><code>/follow-user</code></td>
-        <td><code>{ "userFollowerId": "string", "userFollowedId": "string" }</code></td>
+        <td><code>{ "username": "string" }</code></td>
         <td>Seguir a un usuario</td>
     </tr>
     <tr>
@@ -118,13 +120,13 @@ Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos H
     <tr>
         <td><code>GET</code></td>
         <td><code>/followers</code></td>
-        <td><code>?id="string"</code></td>
+        <td><code>{}</code></td>
         <td>Obtener seguidores de un usuario</td>
     </tr>
     <tr>
         <td><code>GET</code></td>
         <td><code>/profile</code></td>
-        <td><code>?id="string"</code></td>
+        <td><code>{}</code></td>
         <td>Obtener información sobre el perfil del usuario</td>
     </tr>
 </table>
@@ -143,12 +145,12 @@ Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos H
     <tr>
         <td><code>POST</code></td>        
         <td><code>/create</code></td>
-        <td><code>{ "repoData": { "name": "string", "description": "string", "user_owner": "string", "languages": "string[]" }, "projecName": "string" }</code></td>
+        <td><code>{ "repoData": { "name": "string", "description": "string", "languages": "string[]" } }</code></td>
         <td>Registrar información del repositorio</td>
     </tr>
     <tr>
         <td><code>POST</code></td>
-        <td><code>/upload</code></td>
+        <td><code>/upload-cloud</code></td>
         <td><code>{ "repoName": "string" }</code></td>
         <td>Subir archivos del repositorio a la nube (Supabase)</td>
     </tr>
@@ -157,6 +159,24 @@ Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos H
         <td><code>/download</code></td>
         <td><code>?repoName="string"</code></td>
         <td>Obtener la url pública de un repositorio comprimido en zip</td>
+    </tr>
+    <tr>
+        <td><code>PUT</code></td>
+        <td><code>/like</code></td>
+        <td><code>{ "repoName": "string" }</code></td>
+        <td>Dar like a repositorio</td>
+    </tr>
+    <tr>
+        <td><code>DELETE</code></td>
+        <td><code>/</code></td>
+        <td><code>{ "repoName": "string" }</code></td>
+        <td>Eliminar un repositorio</td>
+    </tr>
+    <tr>
+        <td><code>GET</code></td>
+        <td><code>/</code></td>
+        <td><code>{}</code></td>
+        <td>Obtener repositorios de un usuario a partir del token</td>
     </tr>
 </table>
 
@@ -172,5 +192,41 @@ Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos H
         <td><code>/download</code></td>
         <td><code>?id="string"&repoName="string"</code></td>
         <td>Obtener url pública de un archivo</td>
+    </tr>
+    <tr>
+        <td><code>POST</code></td>
+        <td><code>/upload</code></td>
+        <td><code>{ "path": "string", "repoName": "string", "file": "img" }</code></td>
+    </tr>
+</table>
+
+
+### Contributors
+
+<table>
+    <th>Método</th>
+    <th>Endpoint</th>
+    <th>Body / Query</th>
+    <th>Descripción</th>
+    <tr>
+        <td><code>GET</code></td>
+        <td><code>/</code></td>
+        <td><code>?repoName="string"</code></td>
+        <td>Obtener contribuidores de un repositorio</td>
+    </tr>
+</table>
+
+### Commits
+
+<table>
+    <th>Método</th>
+    <th>Endpoint</th>
+    <th>Body / Query</th>
+    <th>Descripción</th>
+    <tr>
+        <td><code>GET</code></td>
+        <td><code>/</code></td>
+        <td><code>?repoName="string"</code></td>
+        <td>Obtener commits de un repositorio</td>
     </tr>
 </table>
