@@ -17,8 +17,7 @@ incluye API, **Autenticación con JWT** y conexión con la **base de datos**.
 
 # Documentación de la API 📔
 
-Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos HTTP**, **objeto de respuesta** y 
-**objeto de petición**.
+Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos HTTP** y **objeto de petición**.
 
 ## Recursos
 
