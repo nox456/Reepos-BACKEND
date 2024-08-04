@@ -25,7 +25,7 @@ export default class User {
         let user;
         try {
             const user_response = await db.query(
-                "INSERT INTO users VALUES (DEFAULT,$1,$2,DEFAULT,DEFAULT,DEFAULT,DEFAULT,DEFAULT) RETURNING id",
+                "INSERT INTO users VALUES (DEFAULT,$1,$2,DEFAULT,DEFAULT,DEFAULT,DEFAULT) RETURNING id",
                 [username, password]
             );
             user = user_response.rows[0];
@@ -178,37 +178,20 @@ export default class User {
         return imageUrl.data.publicUrl
     }
     /**
-     * Add a user as followed
-     * @param {string} userFollowedId - User followed ID
-     * @param {string} userFollowerId - User follower ID
-     * @return {Promise<UserType>} User Followed
+     * Follow an user
+     * @param {string} followerId - User follower ID
+     * @param {string} followedName - User followed name
      * @async
      * */
-    static async addFollowedUser(userFollowedId, userFollowerId) {
-        let userFollowed
+    static async followUser(followerId, followedName) {
         try {
-            const users_followed_response = await db.query("SELECT followed FROM users WHERE id = $1", [userFollowerId])
-            const users_followed = users_followed_response.rows[0].followed
-            users_followed.push(userFollowedId)
-            userFollowed = await db.query("UPDATE users SET followed = $1 WHERE id = $2 RETURNING *", [users_followed, userFollowerId])
-        } catch (e) {
-            console.error(e)
-        }
-        return userFollowed.rows[0]
-    }
-    /**
-     * Add a user as follower
-     * @param {string} userFollowerId - User follower ID
-     * @param {string} userFollowedId - User followed ID
-     * @async
-     * */
-    static async addFollowerUser(userFollowerId, userFollowedId) {
-        try {
-            const user_followers_response = await db.query("SELECT followers FROM users WHERE id = $1", [userFollowedId])
-            const user_followers = user_followers_response.rows[0].followers
-            user_followers.push(userFollowerId)
-            await db.query("UPDATE users SET followers = $1 WHERE id = $2 RETURNING *", [user_followers, userFollowedId])
-        } catch (e) {
+            const followers_response = await db.query("SELECT followers FROM users WHERE username = $1", [followedName])
+            const followers = followers_response.rows[0].followers
+
+            followers.push(followerId)
+
+            await db.query("UPDATE users SET followers = $1 WHERE username = $2", [followers, followedName])
+        } catch(e) {
             console.error(e)
         }
     }
@@ -322,36 +305,22 @@ export default class User {
      * @property {string} img - Follower image URL
      * @property {int} followers_count - Followers count of the follower
      * @property {int} repos_count - Repositories count of the follower
-     *
-     * @typedef {Object} FollowerType
-     * @property {string} user_name - User name
-     * @property {Follower[]} followers - Followers
      * */
     /**
      * Get followers
      * @param {string} user_id - User ID
-     * @param {string} username - User name to search followers
-     * @return {Promise<FollowerType>} Followers founded
+     * @return {Promise<Follower[]>} Followers founded
      * @async
      * */
-    static async getFollowers(user_id, username) {
+    static async getFollowers(user_id) {
         let followers
         try {
-            const users_response = await db.query(USER_FOLLOWERS, [user_id])
-            if (username) {
-                followers = users_response.rows[0].followers.filter((follower) => {
-                    return follower.username.toLowerCase().includes(username.toLowerCase())
-                }
-                )
-            } else {
-                followers = users_response.rows[0].followers
-            }
+            const followers_response = await db.query(USER_FOLLOWERS, [user_id])
+            followers = followers_response.rows.map(f => f.followers)
         } catch (e) {
             console.error(e)
         }
-        if (!followers[0].username) return []
-
-        return followers
+        return followers[0].username ? followers : []
     }
     /**
      * @typedef {Object} ProfileInfo

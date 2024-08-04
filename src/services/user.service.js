@@ -1,5 +1,6 @@
 import User from "../models/user.model.js"
 import Auth from "../models/auth.model.js"
+import { NOT_FOUND } from "../lib/constants/errors.js"
 
 /**
  * Service to handle user proccesses
@@ -357,7 +358,7 @@ export default class UserService {
      * @return {Promise<ServiceResult>} Service result object
      * @async
      * */
-    static async followUser(userFollowedId, token) {
+    static async followUser(username, token) {
         const token_validation = Auth.validateToken(token)
         if (token_validation.error) return {
             success: false,
@@ -372,17 +373,7 @@ export default class UserService {
         if (userFollowerId_validation.error) return {
             success: false,
             error: {
-                message: userFollowedId_validation.error,
-                type: NOT_FOUND
-            },
-            data: null
-        }
-
-        const userFollowedId_validation = await User.validateId(userFollowedId)
-        if (userFollowedId_validation.error) return {
-            success: false,
-            error: {
-                message: userFollowedId_validation.error,
+                message: userFollowerId_validation.error,
                 type: NOT_FOUND
             },
             data: null
@@ -399,8 +390,17 @@ export default class UserService {
             data: null
         }
 
-        await User.addFollowedUser(userFollowedId, token_validation.data)
-        await User.addFollowerUser(token_validation.data, userFollowedId)
+        const followerExists = await User.checkIfExistsByUsername(username)
+        if (!followerExists) return {
+            success: false,
+            error: {
+                message: "Follower doesn't exists!",
+                type: NOT_FOUND
+            },
+            data: null
+        }
+
+        await User.followUser(token_validation.data,username)
         return {
             success: true,
             error: null,
@@ -438,7 +438,7 @@ export default class UserService {
      * @return {Promise<ServiceResult>} Service result object
      * @async
      * */
-    static async getFollowers(token,username) {
+    static async getFollowers(token) {
         const token_validation = Auth.validateToken(token)
         if (token_validation.error) return {
             success: false,
@@ -447,28 +447,6 @@ export default class UserService {
                 type: NOT_FOUND
             },
             data: null
-        }
-
-        const id_validation = await User.validateId(token_validation.data)
-        if (id_validation.error) return {
-            success: false,
-            error: {
-                message: id_validation.error,
-                type: NOT_FOUND
-            },
-            data: null
-        }
-
-        if (username) {
-            const username_validation = await User.validateUsername(username)
-            if (username_validation.error) return {
-                success: false,
-                error: {
-                    message: username_validation.error,
-                    type: NOT_FOUND
-                },
-                data: null
-            }
         }
 
         const userExists = await User.checkIfExistsById(token_validation.data)
@@ -481,7 +459,7 @@ export default class UserService {
             data: null
         }
 
-        const followers = await User.getFollowers(token_validation.data,username)
+        const followers = await User.getFollowers(token_validation.data)
         return {
             success: true,
             error: null,

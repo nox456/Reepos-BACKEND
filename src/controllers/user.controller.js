@@ -120,14 +120,14 @@ export default class UserController {
         }
     }
     /**
-     * Add a user as follower
+     * Follow an user
      * */
     static async followUser(req, res) {
         const { token } = req.cookies;
-        const { userFollowedId } = req.body;
+        const { username } = req.body;
         let result;
         try {
-            result = await UserService.followUser(userFollowedId, token);
+            result = await UserService.followUser(username, token);
         } catch (e) {
             console.error(e);
             return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res)
@@ -163,10 +163,9 @@ export default class UserController {
      * */
     static async getFollowers(req, res) {
         const { token } = req.cookies;
-        const { username } = req.query;
         let result;
         try {
-            result = await UserService.getFollowers(token, username);
+            result = await UserService.getFollowers(token);
         } catch (e) {
             console.error(e);
             return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res)
@@ -175,7 +174,7 @@ export default class UserController {
         if (!result.success) {
             return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
         } else {
-            return ResponseHandler.ok("Followers Founded!", null, res);
+            return ResponseHandler.ok("Followers Founded!", result.data, res);
         }
     }
     /**

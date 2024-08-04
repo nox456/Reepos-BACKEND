@@ -9,32 +9,13 @@ export const SEARCH_USERS = `SELECT
                                 WHERE users.username ILIKE $1
                                 GROUP BY users.username,users.img,users.followers`;
 export const USER_FOLLOWERS = `SELECT
-	                                 follower.user_name,
-	                                 array_agg(json_build_object(
-	                                 	'username',follower.username,
-	                                 	'img',follower.img,
-	                                 	'followers_count',follower.count,
-	                                 	'repos_count',follower.repos_count
-	                                 )) as followers
-                                 FROM (
-                                 	SELECT usrs.username as user_name,
-                                 		fllwers.username,
-                                 		fllwers.img,
-                                 		coalesce(array_length(fllwers.followers,1),0) as count,
-                                 		count(fllwers_repos) as repos_count
-                                 	FROM users usrs 
-                                 	LEFT OUTER JOIN users fllwers 
-                                 	ON ARRAY[usrs.id] && fllwers.followed
-                                 	LEFT OUTER JOIN repositories fllwers_repos 
-                                 	ON fllwers.id = fllwers_repos.user_owner 
-                                 	WHERE usrs.id = $1
-                                 	GROUP BY 
-                                 		fllwers.username,
-                                 		fllwers.img,
-                                 		fllwers.followers,
-                                 		usrs.username
-                                 ) as follower 
-                                 GROUP BY follower.user_name`;
+json_build_object(
+'username',follower.username,
+'img',follower.img,
+'followers_count',coalesce(array_length(follower.followers,1),0), 'repos_count',count(repositories)) as followers
+FROM users usr LEFT OUTER JOIN users follower ON ARRAY[follower.id] && usr.followers 
+LEFT OUTER JOIN repositories ON repositories.user_owner = follower.id 
+WHERE usr.id = $1 GROUP BY follower.username, follower.img, follower.followers`;
 export const PROFILE_INFO = `SELECT
 	users.username as user_name,
 	users.description as user_description,
