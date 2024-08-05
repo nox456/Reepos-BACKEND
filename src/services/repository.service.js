@@ -541,4 +541,36 @@ export default class RepositoryService {
             data: repos
         }
     }
+    /**
+     * Search repositories by name
+     * @return {Promise<ServiceResult>} Service result object
+     * */
+    static async search(repoName) {
+        const repoName_validation = await Repository.validateRepoName(repoName)
+        if (repoName_validation.error) return {
+            success: false,
+            error: {
+                message: repoName_validation.error,
+                type: BAD_REQUEST
+            },
+            data: null
+        }
+
+        const repos = await Repository.search(repoName)
+
+        if (repos.length == 0) return {
+            success: false,
+            error: {
+                message: "Repositories not founded!",
+                type: NOT_FOUND
+            },
+            data: null
+        }
+
+        return {
+            success: true,
+            error: null,
+            data: repos
+        }
+    }
 }

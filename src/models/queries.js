@@ -130,3 +130,20 @@ FROM repositories
 WHERE users.id = $1
 GROUP BY repositories.name, repositories.description, repositories.likes
 `
+
+export const SEARCH_REPOSITORIES = `
+SELECT
+    users.username as user,
+    repositories.name as name,
+    repositories.description as description,
+    coalesce(array_length(repositories.likes,1),0) as likes,
+    array_agg(languages.name) as languages
+FROM repositories
+    LEFT OUTER JOIN users
+        ON users.id = repositories.user_owner
+    LEFT OUTER JOIN repositories_languages
+        ON repositories_languages.repo_id = repositories.id
+    LEFT OUTER JOIN languages
+        ON repositories_languages.language_id = languages.id
+WHERE repositories.name ILIKE $1
+GROUP BY repositories.name, repositories.description, repositories.likes, users.username`

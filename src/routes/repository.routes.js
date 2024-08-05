@@ -19,5 +19,7 @@ router.put("/like", RepositoryController.like)
 router.delete("/", RepositoryController.delete)
 // Get from an user
 router.get("/", RepositoryController.getFromUser)
+// Search repositories by name
+router.get("/search", RepositoryController.search)
 
 export default router

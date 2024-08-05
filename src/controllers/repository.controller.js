@@ -190,4 +190,22 @@ export default class RepositoryController {
             return ResponseHandler.ok("Repositories Founded!", result.data, res)
         }
     }
+    /**
+     * Search repositories by name
+     * */
+    static async search(req,res) {
+        const {repoName} = req.query
+        let result
+        try {
+            result = await RepositoryService.search(repoName)
+        } catch(e) {
+            console.error(e)
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res)
+        }
+        if (!result.success) {
+            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
+        } else {
+            return ResponseHandler.ok("Respositories Founded!", result.data, res)
+        }
+    }
 }
