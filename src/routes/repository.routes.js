@@ -23,5 +23,7 @@ router.get("/", RepositoryController.getFromUser)
 router.get("/search", RepositoryController.search)
 // Change name of repository
 router.put("/change-name", RepositoryController.changeName)
+// Change description of repository
+router.put("/change-description", RepositoryController.changeDescription)
 
 export default router

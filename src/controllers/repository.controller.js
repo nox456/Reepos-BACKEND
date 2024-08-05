@@ -175,53 +175,131 @@ export default class RepositoryController {
     /**
      * Get repositories from an user
      * */
-    static async getFromUser(req,res) {
-        const { token} = req.cookies
-        let result
+    static async getFromUser(req, res) {
+        const { token } = req.cookies;
+        let result;
         try {
-            result = await RepositoryService.getFromUser(token)
-        } catch(e) {
-            console.error(e)
-            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res)
+            result = await RepositoryService.getFromUser(token);
+        } catch (e) {
+            console.error(e);
+            return ResponseHandler.error(
+                errorCodes[INTERNAL_SERVER_ERROR],
+                "Internal Server Error!",
+                res,
+            );
         }
         if (!result.success) {
-            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
+            return ResponseHandler.error(
+                errorCodes[result.error.type],
+                result.error.message,
+                res,
+            );
         } else {
-            return ResponseHandler.ok("Repositories Founded!", result.data, res)
+            return ResponseHandler.ok(
+                "Repositories Founded!",
+                result.data,
+                res,
+            );
         }
     }
     /**
      * Search repositories by name
      * */
-    static async search(req,res) {
-        const {repoName} = req.query
-        let result
+    static async search(req, res) {
+        const { repoName } = req.query;
+        let result;
         try {
-            result = await RepositoryService.search(repoName)
-        } catch(e) {
-            console.error(e)
-            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res)
+            result = await RepositoryService.search(repoName);
+        } catch (e) {
+            console.error(e);
+            return ResponseHandler.error(
+                errorCodes[INTERNAL_SERVER_ERROR],
+                "Internal Server Error!",
+                res,
+            );
         }
         if (!result.success) {
-            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
+            return ResponseHandler.error(
+                errorCodes[result.error.type],
+                result.error.message,
+                res,
+            );
         } else {
-            return ResponseHandler.ok("Respositories Founded!", result.data, res)
+            return ResponseHandler.ok(
+                "Respositories Founded!",
+                result.data,
+                res,
+            );
         }
     }
-    static async changeName(req,res) {
-        const {newRepoName,repoName} = req.body
-        const {token} = req.cookies
-        let result
+    /**
+     * Change name of repository
+     * */
+    static async changeName(req, res) {
+        const { newRepoName, repoName } = req.body;
+        const { token } = req.cookies;
+        let result;
         try {
-            result = await RepositoryService.changeName(newRepoName, repoName,token)
-        } catch(e) {
-            console.error(e)
-            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res)
+            result = await RepositoryService.changeName(
+                newRepoName,
+                repoName,
+                token,
+            );
+        } catch (e) {
+            console.error(e);
+            return ResponseHandler.error(
+                errorCodes[INTERNAL_SERVER_ERROR],
+                "Internal Server Error!",
+                res,
+            );
         }
         if (!result.success) {
-            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
+            return ResponseHandler.error(
+                errorCodes[result.error.type],
+                result.error.message,
+                res,
+            );
         } else {
-            return ResponseHandler.ok("Name of repository changed!",result.data, res)
+            return ResponseHandler.ok(
+                "Name of repository changed!",
+                result.data,
+                res,
+            );
+        }
+    }
+    /**
+     * Change description of repository
+     * */
+    static async changeDescription(req, res) {
+        const { newDescription, repoName } = req.body;
+        const { token } = req.cookies;
+        let result;
+        try {
+            result = await RepositoryService.changeDescription(
+                newDescription,
+                repoName,
+                token,
+            );
+        } catch (e) {
+            console.error(e);
+            return ResponseHandler.error(
+                errorCodes[INTERNAL_SERVER_ERROR],
+                "Internal Server Error!",
+                res,
+            );
+        }
+        if (!result.success) {
+            return ResponseHandler.error(
+                errorCodes[result.error.type],
+                result.error.message,
+                res,
+            );
+        } else {
+            return ResponseHandler.ok(
+                "Description of repository changed!",
+                result.data,
+                res,
+            );
         }
     }
 }

@@ -142,7 +142,7 @@ Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos H
     <th>Body / Query</th>
     <th>Descripción</th>
     <tr>
-        <td><code>POST</code></td>        
+        <td><code>POST</code></td>
         <td><code>/create</code></td>
         <td><code>{ "repoData": { "name": "string", "description": "string", "languages": "string[]" } }</code></td>
         <td>Registrar información del repositorio</td>
@@ -176,6 +176,18 @@ Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos H
         <td><code>/</code></td>
         <td><code>{}</code></td>
         <td>Obtener repositorios de un usuario a partir del token</td>
+    </tr>
+    <tr>
+        <td><code>PUT</code></td>
+        <td><code>/change-name</code></td>
+        <td><code>{ "newRepoName": "string", "repoName": "string" }</code></td>
+        <td>Cambiar nombre de repositorio</td>
+    </tr>
+    <tr>
+        <td><code>PUT</code></td>
+        <td><code>/change-description</code></td>
+        <td><code>{ "newDescription": "string", "repoName": "string" }</code></td>
+        <td>Cambiar descripción de repositorio</td>
     </tr>
 </table>
 

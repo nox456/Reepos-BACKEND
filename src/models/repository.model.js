@@ -360,4 +360,18 @@ export default class Repository {
             console.error(e);
         }
     }
+    /**
+     * Change description of repository
+     * @param {string} newDescription - New repository description
+     * @param {string} repoName - Repository name
+     * @param {string} userId - User owner ID
+     * @async
+     * */
+    static async changeDescription(newDescription, repoName, userId) {
+        try {
+            await db.query("UPDATE repositories SET description = $1 WHERE name = $2 AND user_owner = $3", [newDescription, repoName,userId])
+        } catch(e) {
+            console.error(e)
+        }
+    }
 }

@@ -674,4 +674,80 @@ export default class RepositoryService {
             data: null,
         };
     }
+    /**
+     * Change description of repository
+     * @param {string} newDescription - New repository description
+     * @param {string} repoName - Repository name
+     * @param {string} token - JWT Token
+     * @return {Promise<ServiceResult>} Service result object
+     * @async
+     * */
+    static async changeDescription(newDescription, repoName, token) {
+        const newDescription_validation = await Repository.validateDescription(newDescription)
+        if (newDescription_validation.error) return {
+            success: false,
+            error: {
+                message: newDescription_validation.error,
+                type: BAD_REQUEST
+            },
+            data: null
+        }
+
+        const repoName_validation = await Repository.validateRepoName(repoName)
+        if (repoName_validation.error) return {
+            success: false,
+            error: {
+                message: repoName_validation.error,
+                type: BAD_REQUEST
+            },
+            data: null
+        }
+
+        const existsDb = await Repository.checkIfExistsInDb(repoName)
+        if (!existsDb) return {
+            success: false,
+            error: {
+                message: "Repository doesn't exists!",
+                type: NOT_FOUND
+            },
+            data: null
+        }
+
+        const token_validation = Auth.validateToken(token)
+        if (token_validation.error) return {
+            success: false,
+            error: {
+                message: token_validation.error,
+                type: BAD_REQUEST
+            },
+            data: null
+        }
+
+        const user_exists = await User.checkIfExistsById(token_validation.data)
+        if (!user_exists) return {
+            success: false,
+            error: {
+                message: "User doesn't exists!",
+                type: NOT_FOUND
+            },
+            data: null
+        }
+
+        const userHasRepo = await Repository.checkIfUserHasRepo(repoName,token_validation.data)
+        if (!userHasRepo) return {
+            success: false,
+            error: {
+                message: "User doesn't have the repository!",
+                type: FORBIDDEN
+            },
+            data: null
+        }
+
+        await Repository.changeDescription(newDescription,repoName,token_validation.data)
+        return {
+            success: true,
+            error: null,
+            data: null
+        }
+    }
 }
