@@ -21,5 +21,7 @@ router.delete("/", RepositoryController.delete)
 router.get("/", RepositoryController.getFromUser)
 // Search repositories by name
 router.get("/search", RepositoryController.search)
+// Change name of repository
+router.put("/change-name", RepositoryController.changeName)
 
 export default router

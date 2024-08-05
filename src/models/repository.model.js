@@ -6,7 +6,11 @@ import { z } from "zod";
 import { readdir } from "fs/promises";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
-import { REPOSITORIES_FILES, SEARCH_REPOSITORIES, USER_REPOSITORIES } from "./queries.js";
+import {
+    REPOSITORIES_FILES,
+    SEARCH_REPOSITORIES,
+    USER_REPOSITORIES,
+} from "./queries.js";
 
 const reposPath = join(dirname(fileURLToPath(import.meta.url)), "../temp");
 
@@ -277,12 +281,18 @@ export default class Repository {
      * */
     static async like(repoName, userId) {
         try {
-            const result = await db.query("SELECT likes FROM repositories WHERE name = $1 AND user_owner = $2", [repoName, userId]) 
-            const users_liked = result.rows[0].likes
-            users_liked.push(userId)
-            await db.query("UPDATE repositories SET likes = $1 WHERE name = $2 AND user_owner = $3", [users_liked,repoName, userId])
-        } catch(e) {
-            console.error(e)
+            const result = await db.query(
+                "SELECT likes FROM repositories WHERE name = $1 AND user_owner = $2",
+                [repoName, userId],
+            );
+            const users_liked = result.rows[0].likes;
+            users_liked.push(userId);
+            await db.query(
+                "UPDATE repositories SET likes = $1 WHERE name = $2 AND user_owner = $3",
+                [users_liked, repoName, userId],
+            );
+        } catch (e) {
+            console.error(e);
         }
     }
     /**
@@ -299,14 +309,14 @@ export default class Repository {
      * @async
      * */
     static async getFromUser(userId) {
-        let repos
+        let repos;
         try {
-            const repos_result = await db.query(USER_REPOSITORIES, [userId]) 
-            repos = repos_result.rows
-        } catch(e) {
-            console.error(e)
+            const repos_result = await db.query(USER_REPOSITORIES, [userId]);
+            repos = repos_result.rows;
+        } catch (e) {
+            console.error(e);
         }
-        return repos
+        return repos;
     }
     /**
      * @typedef {Object} RepositoryFounded
@@ -323,13 +333,31 @@ export default class Repository {
      * @async
      * */
     static async search(repoName) {
-        let repos
+        let repos;
         try {
-            const repos_result = await db.query(SEARCH_REPOSITORIES, [`%${repoName}%`])
-            repos = repos_result.rows
-        } catch(e) {
-            console.error(e)
+            const repos_result = await db.query(SEARCH_REPOSITORIES, [
+                `%${repoName}%`,
+            ]);
+            repos = repos_result.rows;
+        } catch (e) {
+            console.error(e);
         }
-        return repos
+        return repos;
+    }
+    /**
+     * Change name of repository
+     * @param {string} newRepoName - New repository name
+     * @param {string} repoName - Repository name
+     * @async
+     * */
+    static async changeName(newRepoName, repoName, userId) {
+        try {
+            await db.query(
+                "UPDATE repositories SET name = $1 WHERE name = $2 AND user_owner = $3",
+                [newRepoName, repoName, userId],
+            );
+        } catch (e) {
+            console.error(e);
+        }
     }
 }

@@ -208,4 +208,20 @@ export default class RepositoryController {
             return ResponseHandler.ok("Respositories Founded!", result.data, res)
         }
     }
+    static async changeName(req,res) {
+        const {newRepoName,repoName} = req.body
+        const {token} = req.cookies
+        let result
+        try {
+            result = await RepositoryService.changeName(newRepoName, repoName,token)
+        } catch(e) {
+            console.error(e)
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res)
+        }
+        if (!result.success) {
+            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
+        } else {
+            return ResponseHandler.ok("Name of repository changed!",result.data, res)
+        }
+    }
 }

@@ -11,7 +11,7 @@ import Language from "../models/language.model.js";
 import User from "../models/user.model.js";
 import repoInfo from "../lib/getReposInfo.js";
 import downloadFiles from "../lib/downloadFiles.js";
-import { BAD_REQUEST, NOT_FOUND } from "../lib/constants/errors.js";
+import { BAD_REQUEST, FORBIDDEN, NOT_FOUND } from "../lib/constants/errors.js";
 import { REPOSITORIES_FILES } from "../models/queries.js";
 
 /**
@@ -439,8 +439,8 @@ export default class RepositoryService {
         return {
             success: true,
             error: null,
-            data: null
-        }
+            data: null,
+        };
     }
     /**
      * Like a repository by name and user token
@@ -450,52 +450,59 @@ export default class RepositoryService {
      * @async
      * */
     static async like(repoName, token) {
-        const repoName_validation = await Repository.validateRepoName(repoName)
-        if (repoName_validation.error) return {
-            success: false,
-            error: {
-                message: repoName_validation.error,
-                type: BAD_REQUEST
-            },
-            data: null
-        }
+        const repoName_validation = await Repository.validateRepoName(repoName);
+        if (repoName_validation.error)
+            return {
+                success: false,
+                error: {
+                    message: repoName_validation.error,
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
 
-        const existsDb = await Repository.checkIfExistsInDb(repoName)
-        if (!existsDb) return {
-            success: false,
-            error: {
-                message: "Repository doesn't exists!",
-                type: NOT_FOUND
-            },
-            data: null
-        }
+        const existsDb = await Repository.checkIfExistsInDb(repoName);
+        if (!existsDb)
+            return {
+                success: false,
+                error: {
+                    message: "Repository doesn't exists!",
+                    type: NOT_FOUND,
+                },
+                data: null,
+            };
 
-        const token_validation = Auth.validateToken(token)
-        if (token_validation.error) return {
-            success: false,
-            error: {
-                message: token_validation.error,
-                type: BAD_REQUEST
-            },
-            data: null
-        }
+        const token_validation = Auth.validateToken(token);
+        if (token_validation.error)
+            return {
+                success: false,
+                error: {
+                    message: token_validation.error,
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
 
-        const userHasRepo = await Repository.checkIfUserHasRepo(repoName, token_validation.data)
-        if (!userHasRepo) return {
-            success: false,
-            error: {
-                message: "User doesn't have the repository!",
-                type: NOT_FOUND
-            },
-            data: null
-        }
+        const userHasRepo = await Repository.checkIfUserHasRepo(
+            repoName,
+            token_validation.data,
+        );
+        if (!userHasRepo)
+            return {
+                success: false,
+                error: {
+                    message: "User doesn't have the repository!",
+                    type: FORBIDDEN,
+                },
+                data: null,
+            };
 
-        await Repository.like(repoName,token_validation.data)
+        await Repository.like(repoName, token_validation.data);
         return {
             success: true,
             error: null,
-            data: null
-        }
+            data: null,
+        };
     }
     /**
      * Get repositories from an user by ID
@@ -504,73 +511,167 @@ export default class RepositoryService {
      * @async
      * */
     static async getFromUser(token) {
-        const token_validation = Auth.validateToken(token)
-        if (token_validation.error) return {
-            success: false,
-            error: {
-                message: token_validation.error,
-                type: BAD_REQUEST
-            },
-            data: null
-        }
+        const token_validation = Auth.validateToken(token);
+        if (token_validation.error)
+            return {
+                success: false,
+                error: {
+                    message: token_validation.error,
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
 
-        const user_exists = await User.checkIfExistsById(token_validation.data)
-        if (!user_exists) return {
-            success: false,
-            error: {
-                message: "User doesn't exists!",
-                type: NOT_FOUND
-            },
-            data: null
-        }
+        const user_exists = await User.checkIfExistsById(token_validation.data);
+        if (!user_exists)
+            return {
+                success: false,
+                error: {
+                    message: "User doesn't exists!",
+                    type: NOT_FOUND,
+                },
+                data: null,
+            };
 
-        const repos = await Repository.getFromUser(token_validation.data)
+        const repos = await Repository.getFromUser(token_validation.data);
 
-        if (repos.length == 0) return {
-            success: false,
-            error: {
-                message: "User doesn't have repositories",
-                type: NOT_FOUND
-            },
-            data: null
-        }
+        if (repos.length == 0)
+            return {
+                success: false,
+                error: {
+                    message: "User doesn't have repositories",
+                    type: NOT_FOUND,
+                },
+                data: null,
+            };
 
         return {
             success: true,
             error: null,
-            data: repos
-        }
+            data: repos,
+        };
     }
     /**
      * Search repositories by name
      * @return {Promise<ServiceResult>} Service result object
      * */
     static async search(repoName) {
-        const repoName_validation = await Repository.validateRepoName(repoName)
-        if (repoName_validation.error) return {
-            success: false,
-            error: {
-                message: repoName_validation.error,
-                type: BAD_REQUEST
-            },
-            data: null
-        }
+        const repoName_validation = await Repository.validateRepoName(repoName);
+        if (repoName_validation.error)
+            return {
+                success: false,
+                error: {
+                    message: repoName_validation.error,
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
 
-        const repos = await Repository.search(repoName)
+        const repos = await Repository.search(repoName);
 
-        if (repos.length == 0) return {
-            success: false,
-            error: {
-                message: "Repositories not founded!",
-                type: NOT_FOUND
-            },
-            data: null
-        }
+        if (repos.length == 0)
+            return {
+                success: false,
+                error: {
+                    message: "Repositories not founded!",
+                    type: NOT_FOUND,
+                },
+                data: null,
+            };
 
         return {
             success: true,
             error: null,
-            data: repos
-        }
+            data: repos,
+        };
+    }
+    /**
+     * Change name of repository
+     * @param {string} newRepoName - New repository name
+     * @param {string} repoName - Repository name
+     * @return {Promise<ServiceResult>} Service result object
+     * @async
+     * */
+    static async changeName(newRepoName, repoName, token) {
+        const newRepoName_validation =
+            await Repository.validateRepoName(newRepoName);
+        if (newRepoName_validation.error)
+            return {
+                success: false,
+                error: {
+                    message: newRepoName_validation.error,
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
+
+        const repoName_validation = await Repository.validateRepoName(repoName);
+        if (repoName_validation.error)
+            return {
+                success: false,
+                error: {
+                    message: repoName_validation.error,
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
+
+        const existsDb = await Repository.checkIfExistsInDb(repoName);
+        if (!existsDb)
+            return {
+                success: false,
+                error: {
+                    message: "Repository doesn't exists!",
+                    type: NOT_FOUND,
+                },
+                data: null,
+            };
+
+        const token_validation = Auth.validateToken(token);
+        if (token_validation.error)
+            return {
+                success: false,
+                error: {
+                    message: token_validation.error,
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
+
+        const user_exists = await User.checkIfExistsById(token_validation.data);
+        if (!user_exists)
+            return {
+                success: false,
+                error: {
+                    message: "User doesn't exists!",
+                    type: NOT_FOUND,
+                },
+                data: null,
+            };
+
+        const userHasRepo = await Repository.checkIfUserHasRepo(
+            repoName,
+            token_validation.data,
+        );
+        if (!userHasRepo)
+            return {
+                success: false,
+                error: {
+                    message: "User doesn't have the repository!",
+                    type: FORBIDDEN,
+                },
+                data: null,
+            };
+
+        await Repository.changeName(
+            newRepoName,
+            repoName,
+            token_validation.data,
+        );
+        return {
+            success: true,
+            error: null,
+            data: null,
+        };
     }
 }
