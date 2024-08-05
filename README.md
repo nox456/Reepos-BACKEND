@@ -193,6 +193,8 @@ Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos H
 
 ### Files
 
+**URL base:** `/files/`
+
 <table>
     <th>Método</th>
     <th>Endpoint</th>
@@ -214,6 +216,8 @@ Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos H
 
 ### Contributors
 
+**URL base:** `/contributors/`
+
 <table>
     <th>Método</th>
     <th>Endpoint</th>
@@ -228,6 +232,8 @@ Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos H
 </table>
 
 ### Commits
+
+**URL base:** `/commits/`
 
 <table>
     <th>Método</th>
