@@ -154,13 +154,13 @@ export default class Repository {
      * @return {Promise<string[]>} Files URLs
      * @async
      * */
-    static async getFilesUrls(repoName, files) {
+    static async getFilesUrls(repoName, files, userId) {
         const urls = [];
         try {
             for (const file of files) {
                 const url = supabase.storage
                     .from(SUPABASE_REPOSITORY_BUCKET)
-                    .getPublicUrl(`${repoName}/${file.path}`).data.publicUrl;
+                    .getPublicUrl(`${userId}/${repoName}/${file.path}`).data.publicUrl;
                 urls.push(url);
             }
         } catch (e) {
@@ -174,12 +174,12 @@ export default class Repository {
      * @return {Promise<boolean>} True if the repository exists or False if not
      * @async
      * */
-    static async checkIfExistsInCloud(repoName) {
+    static async checkIfExistsInCloud(repoName,userId) {
         let repos;
         try {
             const result = await supabase.storage
                 .from(SUPABASE_REPOSITORY_BUCKET)
-                .list();
+                .list(userId);
             repos = result.data.map((p) => p.name);
         } catch (e) {
             console.error(e);

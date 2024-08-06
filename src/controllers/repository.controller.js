@@ -96,11 +96,12 @@ export default class RepositoryController {
      * */
     static async download(req, res) {
         const { repoName } = req.query;
+        const { token } = req.cookies;
         let result;
         try {
-            result = await RepositoryService.download(repoName);
+            result = await RepositoryService.download(repoName, token);
         } catch (e) {
-            console.error();
+            console.error(e);
             return ResponseHandler.error(
                 errorCodes[INTERNAL_SERVER_ERROR],
                 "Internal Server Error!",

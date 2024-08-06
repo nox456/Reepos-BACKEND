@@ -12,7 +12,6 @@ import User from "../models/user.model.js";
 import repoInfo from "../lib/getReposInfo.js";
 import downloadFiles from "../lib/downloadFiles.js";
 import { BAD_REQUEST, FORBIDDEN, NOT_FOUND } from "../lib/constants/errors.js";
-import { REPOSITORIES_FILES } from "../models/queries.js";
 
 /**
  * Service to handle repositories proccesses
@@ -304,7 +303,7 @@ export default class RepositoryService {
         };
     }
     /**
-     * Get public URLs of files by repository name
+     * Get files by repository name
      * @param {string} repoName - Repository name
      * @return {Promise<ServiceResult>} Service result object
      * @async
@@ -346,7 +345,7 @@ export default class RepositoryService {
      * @return {Promise<ServiceResult>} Service result object
      * @async
      * */
-    static async download(repoName) {
+    static async download(repoName, token) {
         const repoName_validation = await Repository.validateRepoName(repoName);
         if (repoName_validation.error)
             return {
@@ -370,7 +369,17 @@ export default class RepositoryService {
                 data: null,
             };
 
-        const existsCloud = await Repository.checkIfExistsInCloud(repoName);
+        const token_validation = Auth.validateToken(token)
+        if (token_validation.error) return {
+            success: false,
+            error: {
+                message: token_validation.error,
+                type: BAD_REQUEST
+            },
+            data: null
+        }
+
+        const existsCloud = await Repository.checkIfExistsInCloud(repoName, token_validation.data);
 
         if (!existsCloud)
             return {
@@ -384,7 +393,7 @@ export default class RepositoryService {
 
         const files = await Repository.getFiles(repoName);
 
-        const urls = await Repository.getFilesUrls(repoName, files);
+        const urls = await Repository.getFilesUrls(repoName, files, token_validation.data);
 
         const zip_file = await downloadFiles(urls, repoName);
         return {
