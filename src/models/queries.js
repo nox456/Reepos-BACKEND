@@ -40,18 +40,20 @@ SELECT
     users.description as user_description,
     users.img as user_img,
     count(repositories) as repos_count,
-    coalesce(array_length(users.followers,1),0) as followers_count,
-    coalesce(array_length(users.followed,1),0) as followed_count
+    coalesce(array_length(users.followers,1),0) as followers_count, 
+    count(usrs) as followed_count
 FROM users
     FULL OUTER JOIN repositories
-        ON users.id = repositories.user_owner
+        ON users.id = repositories.user_owner 
+    FULL OUTER JOIN users usrs 
+        ON ARRAY[users.id] && usrs.followers
 WHERE users.id = $1
-GROUP BY 
-	users.username,
-	users.description,
-	users.img,
-	users.followers,
-	users.followed;`;
+GROUP BY
+    users.username,
+    users.description,
+    users.img,
+    users.followers
+`;
 
 export const REPOSITORIES_FILES = `
 SELECT
