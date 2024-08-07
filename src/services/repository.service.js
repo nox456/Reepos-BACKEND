@@ -342,6 +342,16 @@ export default class RepositoryService {
             data: null
         }
 
+        const userHasRepo = await Repository.checkIfUserHasRepo(repoName,token_validation.data)
+        if (!userHasRepo) return {
+            success: false,
+            error: {
+                message: "User doesn't have the repository",
+                type: FORBIDDEN
+            },
+            data: null
+        }
+
         const existsCloud = await Repository.checkIfExistsInCloud(repoName, token_validation.data);
 
         if (!existsCloud)
@@ -354,7 +364,7 @@ export default class RepositoryService {
                 data: null,
             };
 
-        const files = await Repository.getFiles(repoName);
+        const files = await Repository.getFiles(repoName,token_validation.data);
 
         const zip_file = await downloadFiles(files, repoName);
         return {

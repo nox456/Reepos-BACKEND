@@ -48,7 +48,7 @@ export default class File {
      * @return {Promise<string>} File public URL
      * @async
      * */
-    static async download(id, repoName) {
+    static async download(id, repoName, userId) {
         let fileUrl;
         try {
             const path_result = await db.query(
@@ -58,7 +58,7 @@ export default class File {
             const { path, name } = path_result.rows[0];
             fileUrl = supabase.storage
                 .from(SUPABASE_REPOSITORY_BUCKET)
-                .getPublicUrl(`${repoName}/${path}`, { download: name });
+                .getPublicUrl(`${userId}/${repoName}/${path}`, { download: name });
         } catch (e) {
             console.error(e);
         }
@@ -68,7 +68,6 @@ export default class File {
      * @typedef {Object} Result
      * @property {?string} error - Error message
      * */
-    /**
     /**
      * Validate File ID
      * @param {string} id - File ID
@@ -112,10 +111,11 @@ export default class File {
      * Check if the file exists in the cloud storage
      * @param {string} repoName - Repository name
      * @param {string} file_id - File ID
+     * @param {string} userId - ID of the repository owner
      * @return {Promise<boolean>} True if the file exists or False if not
      * @async
      * */
-    static async checkIfExistsInCloud(repoName, file_id) {
+    static async checkIfExistsInCloud(repoName, file_id, userId) {
         let exists;
         try {
             const result_file = await db.query(
@@ -125,7 +125,7 @@ export default class File {
             const { name, path } = result_file.rows[0];
             const files = await supabase.storage
                 .from(SUPABASE_REPOSITORY_BUCKET)
-                .list(`${repoName}/${path.slice(0, path.lastIndexOf("/"))}`, {
+                .list(`${userId}/${repoName}/${path.includes("/") ? path.slice(0, path.lastIndexOf("/")) : ""}`, {
                     search: name,
                 });
             exists = files.data.length > 0;

@@ -56,6 +56,7 @@ export default class Repository {
     /**
      * Upload a repository to cloud storage
      * @param {string} repoName - Repository name
+     * @param {string} userId - User owner ID
      * @async
      * */
     static async upload(repoName, userId) {
@@ -126,10 +127,12 @@ export default class Repository {
      * @property {string} path - File path
      * @property {string} last_commit_title - Title of the last commit
      * @property {string} last_commit_created_at - Date of creation of the last commit
+     * @property {string} url - Public url of the file
      * */
     /**
      * Get files from a repository
      * @param {string} repoName - Repository name
+     * @param {string} userId - User owner ID
      * @return {Promise<File[]>} Files
      * @async
      * */
@@ -153,6 +156,7 @@ export default class Repository {
     /**
      * Check if the repository exists in cloud storage
      * @param {string} repoName - Repository name
+     * @param {string} userId - User owner ID
      * @return {Promise<boolean>} True if the repository exists or False if not
      * @async
      * */
@@ -360,7 +364,31 @@ export default class Repository {
         }
     }
     /**
+     * @typedef {Object} Branch
+     * @property {string} name - Branch name
+     * @property {string} type - Branch type
+     *
+     * @typedef {Object} LastCommit
+     * @property {string} title - Last commit title
+     * @property {string} created_at - Date of creation
+     * @property {string} author - Author name
+     *
+     * @typedef {Object} Info
+     * @property {string} name - Repository name
+     * @property {string} description - Repository description
+     * @property {int} likes - Repository likes
+     * @property {string[]} languages - Repository languages
+     * @property {int} commits_count - Repository commits
+     * @property {int} contributors_count - Repository contributors
+     * @property {Branch[]} branches - Repository branches
+     * @property {LastCommit} last_commit - Last commit of repository
+     * */
+    /**
      * Get full information of repository by name and user owner ID
+     * @param {string} repoName - Repository name
+     * @param {string} userId - User owner ID
+     * @return {Promise<Info>} Info object of repository
+     * @async
      * */
     static async getFullInfo(repoName, userId) {
         let info;

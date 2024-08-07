@@ -9,8 +9,18 @@ const downloadsDir = join(
 );
 
 /**
+ * @typedef {Object} File
+ * @property {string} id - File ID
+ * @property {string} name - File name
+ * @property {string} size - File size
+ * @property {string} path - File path
+ * @property {string} last_commit_title - Title of the last commit
+ * @property {string} last_commit_created_at - Date of creation of the last commit
+ * @property {string} url - Public url of the file
+ * */
+/**
  * Generate a zip files by repository name
- * @param {string[]} urls - Files urls
+ * @param {File[]} files - Files urls
  * @param {string} repoName - Repository name
  * @return {Promise<string>} ZIP file name
  * @async
@@ -27,7 +37,7 @@ export default async function downloadFiles(files, repoName) {
         const res_buffer = await res_blob.arrayBuffer()
         const content = Buffer.from(res_buffer)
 
-        archive.append(content, { name: file.name, prefix: file.path });
+        archive.append(content, { name: file.name, prefix: `${repoName}/${file.path.slice(0,file.path.indexOf(file.name))}` });
     }
     archive.finalize();
     return `${repoName}.zip`;
