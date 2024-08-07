@@ -66,32 +66,6 @@ export default class RepositoryController {
         }
     }
     /**
-     * Get repository files
-     * */
-    static async getFiles(req, res) {
-        const { repoName } = req.body;
-        let result;
-        try {
-            result = await RepositoryService.getFiles(repoName);
-        } catch (e) {
-            console.error(e);
-            return ResponseHandler.error(
-                errorCodes[INTERNAL_SERVER_ERROR],
-                "Internal Server Error!",
-                res,
-            );
-        }
-        if (!result.success) {
-            return ResponseHandler.error(
-                errorCodes[result.error.type],
-                result.error.message,
-                res,
-            );
-        } else {
-            return ResponseHandler.ok("Files founded!", result.data, res);
-        }
-    }
-    /**
      * Generate a zip file with repository content and get url to download
      * */
     static async download(req, res) {
@@ -301,6 +275,21 @@ export default class RepositoryController {
                 result.data,
                 res,
             );
+        }
+    }
+    static async getInfo(req,res) {
+        const {repoName,username} = req.query
+        let result
+        try {
+            result = await RepositoryService.getInfo(repoName,username)
+        } catch(e) {
+            console.error(e)
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res)
+        }
+        if (!result.success) {
+            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
+        } else {
+            return ResponseHandler.ok("Info of repository!",result.data, res)
         }
     }
 }

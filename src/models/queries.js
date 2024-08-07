@@ -69,7 +69,7 @@ FROM (
     FROM repositories
     LEFT OUTER JOIN files f
     ON f.repo = repositories.id
-    WHERE repositories.id = $1
+    WHERE repositories.user_owner = $1 AND repositories.name = $2
     ) as file,
     LATERAL (
     SELECT 
@@ -123,13 +123,11 @@ SELECT
     coalesce(array_length(repositories.likes,1),0) as likes,
     array_agg(languages.name) as languages
 FROM repositories
-    LEFT OUTER JOIN users
-        ON users.id = repositories.user_owner
     LEFT OUTER JOIN repositories_languages
         ON repositories_languages.repo_id = repositories.id
     LEFT OUTER JOIN languages
         ON repositories_languages.language_id = languages.id
-WHERE users.id = $1
+WHERE repositories.user_owner = $1
 GROUP BY repositories.name, repositories.description, repositories.likes
 `
 
@@ -149,3 +147,56 @@ FROM repositories
         ON repositories_languages.language_id = languages.id
 WHERE repositories.name ILIKE $1
 GROUP BY repositories.name, repositories.description, repositories.likes, users.username`
+
+export const REPOSITORY_INFO = `
+SELECT
+    repositories.name as name,
+    repositories.description as description,
+    coalesce(array_length(repositories.likes,1),0) as likes,
+    array_agg(languages.name) as languages,
+    (
+    SELECT 
+        count(commits) as commits_count 
+    FROM repositories 
+        LEFT OUTER JOIN commits 
+            ON commits.repo = repositories.id
+    ),
+    (
+    SELECT  
+        count(contributors) as contributors_count 
+    FROM repositories 
+        LEFT OUTER JOIN contributors 
+            ON contributors.repo = repositories.id
+    ),
+    (
+    SELECT 
+        array_agg(json_build_object(
+            'name',branches.name,
+            'type',branches.type
+        )) as branches 
+    FROM repositories 
+        LEFT OUTER JOIN branches 
+            ON branches.repo = repositories.id
+    ),
+    (
+    SELECT 
+        json_build_object(
+            'title',commits.title,
+            'created_at',commits.created_at,
+            'author',contributors.name
+        ) as last_commit 
+    FROM repositories 
+        LEFT OUTER JOIN commits 
+            ON commits.repo = repositories.id 
+        LEFT OUTER JOIN contributors 
+            ON contributors.id = commits.author 
+    ORDER BY commits.created_at DESC LIMIT 1
+    )
+FROM repositories
+    LEFT OUTER JOIN repositories_languages
+        ON repositories_languages.repo_id = repositories.id
+    LEFT OUTER JOIN languages
+        ON repositories_languages.language_id = languages.id
+WHERE repositories.user_owner = $1 AND repositories.name = $2
+GROUP BY repositories.name, repositories.description, repositories.likes
+`

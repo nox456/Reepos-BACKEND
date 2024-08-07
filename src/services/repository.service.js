@@ -303,43 +303,6 @@ export default class RepositoryService {
         };
     }
     /**
-     * Get files by repository name
-     * @param {string} repoName - Repository name
-     * @return {Promise<ServiceResult>} Service result object
-     * @async
-     * */
-    static async getFiles(repoName) {
-        const repoName_validation = await Repository.validateRepoName(repoName);
-        if (repoName_validation.error)
-            return {
-                success: false,
-                error: {
-                    message: repoName_validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
-
-        const exists = await Repository.checkIfExistsInDb(repoName);
-
-        if (!exists)
-            return {
-                success: false,
-                error: {
-                    message: "Repository doesn't exists in database!",
-                    type: NOT_FOUND,
-                },
-                data: null,
-            };
-
-        const files = await Repository.getFiles(repoName);
-        return {
-            success: true,
-            error: null,
-            data: files,
-        };
-    }
-    /**
      * Generate a zip file with the repository content
      * @param {string} repoName - Repository name
      * @return {Promise<ServiceResult>} Service result object
@@ -393,9 +356,7 @@ export default class RepositoryService {
 
         const files = await Repository.getFiles(repoName);
 
-        const urls = await Repository.getFilesUrls(repoName, files, token_validation.data);
-
-        const zip_file = await downloadFiles(urls, repoName);
+        const zip_file = await downloadFiles(files, repoName);
         return {
             success: true,
             error: null,
@@ -757,6 +718,77 @@ export default class RepositoryService {
             success: true,
             error: null,
             data: null
+        }
+    }
+    /**
+     * Get full information of repository
+     * @param {string} repoName - Repository name
+     * @param {string} username - User owner name
+     * @return {Promise<ServiceResult>} Service result object
+     * @async
+     * */
+    static async getInfo(repoName, username) {
+        const repoName_validation = await Repository.validateRepoName(repoName)
+        if (repoName_validation.error) return {
+            success: false,
+            error: {
+                message: repoName_validation.error,
+                type: BAD_REQUEST
+            },
+            data: null
+        }
+
+        const username_validation = await User.validateUsername(username)
+        if (username_validation.error) return {
+            success: false,
+            error: {
+                message: username_validation.error,
+                type: BAD_REQUEST
+            },
+            data: null
+        }
+
+        const existsDb = await Repository.checkIfExistsInDb(repoName)
+        if (!existsDb) return {
+            success: false,
+            error: {
+                message: "Repository doesn't exists!",
+                type: NOT_FOUND
+            },
+            data: null
+        }
+
+        const user_exists = await User.checkIfExistsByUsername(username)
+        if (!user_exists) return {
+            success: false,
+            error: {
+                message: "User doesn't exists!",
+                type: NOT_FOUND
+            },
+            data: null
+        }
+
+        const user = await User.getByUsername(username)
+
+        const userHasRepo = await Repository.checkIfUserHasRepo(repoName,user.id)
+        if (!userHasRepo) return {
+            success: false,
+            error: {
+                message: "User doesn't have the repository",
+                type: FORBIDDEN
+            },
+            data: null
+        }
+
+        const info = await Repository.getFullInfo(repoName,user.id)
+        const files = await Repository.getFiles(repoName, user.id)
+        return {
+            success: true,
+            error: null,
+            data: {
+                ...info,
+                files
+            }
         }
     }
 }

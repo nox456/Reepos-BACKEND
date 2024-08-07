@@ -9,8 +9,6 @@ const router = Router()
 router.post("/create", RepositoryController.create)
 // Upload a repository to supabase
 router.post("/upload-cloud", RepositoryController.uploadCloud)
-// Get files of repository from cloud
-router.get("/get-files", RepositoryController.getFiles)
 // Get download link of a repository
 router.get("/download", RepositoryController.download)
 // Like a repository
@@ -25,5 +23,7 @@ router.get("/search", RepositoryController.search)
 router.put("/change-name", RepositoryController.changeName)
 // Change description of repository
 router.put("/change-description", RepositoryController.changeDescription)
+// Get full information of repository
+router.get("/info", RepositoryController.getInfo)
 
 export default router

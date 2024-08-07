@@ -8,6 +8,7 @@ import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import {
     REPOSITORIES_FILES,
+    REPOSITORY_INFO,
     SEARCH_REPOSITORIES,
     USER_REPOSITORIES,
 } from "./queries.js";
@@ -132,41 +133,22 @@ export default class Repository {
      * @return {Promise<File[]>} Files
      * @async
      * */
-    static async getFiles(repoName) {
+    static async getFiles(repoName, userId) {
         let files;
         try {
-            const result_id = await db.query(
-                "SELECT id FROM repositories WHERE name = $1",
-                [repoName],
-            );
-            const id = result_id.rows[0].id;
-            const result_files = await db.query(REPOSITORIES_FILES, [id]);
+            const result_files = await db.query(REPOSITORIES_FILES, [userId, repoName]);
             files = result_files.rows;
-        } catch (e) {
-            console.error(e);
-        }
-        return files;
-    }
-    /**
-     * Get public URLs of repository files
-     * @param {string} repoName - Repository name
-     * @param {File[]} files - Files
-     * @return {Promise<string[]>} Files URLs
-     * @async
-     * */
-    static async getFilesUrls(repoName, files, userId) {
-        const urls = [];
-        try {
             for (const file of files) {
                 const url = supabase.storage
                     .from(SUPABASE_REPOSITORY_BUCKET)
-                    .getPublicUrl(`${userId}/${repoName}/${file.path}`).data.publicUrl;
-                urls.push(url);
+                    .getPublicUrl(`${userId}/${repoName}/${file.path}`)
+                    .data.publicUrl;
+                file.url = url
             }
         } catch (e) {
             console.error(e);
         }
-        return urls;
+        return files;
     }
     /**
      * Check if the repository exists in cloud storage
@@ -174,7 +156,7 @@ export default class Repository {
      * @return {Promise<boolean>} True if the repository exists or False if not
      * @async
      * */
-    static async checkIfExistsInCloud(repoName,userId) {
+    static async checkIfExistsInCloud(repoName, userId) {
         let repos;
         try {
             const result = await supabase.storage
@@ -369,9 +351,28 @@ export default class Repository {
      * */
     static async changeDescription(newDescription, repoName, userId) {
         try {
-            await db.query("UPDATE repositories SET description = $1 WHERE name = $2 AND user_owner = $3", [newDescription, repoName,userId])
-        } catch(e) {
-            console.error(e)
+            await db.query(
+                "UPDATE repositories SET description = $1 WHERE name = $2 AND user_owner = $3",
+                [newDescription, repoName, userId],
+            );
+        } catch (e) {
+            console.error(e);
         }
+    }
+    /**
+     * Get full information of repository by name and user owner ID
+     * */
+    static async getFullInfo(repoName, userId) {
+        let info;
+        try {
+            const info_result = await db.query(REPOSITORY_INFO, [
+                userId,
+                repoName,
+            ]);
+            info = info_result.rows[0];
+        } catch (e) {
+            console.error(e);
+        }
+        return info;
     }
 }
