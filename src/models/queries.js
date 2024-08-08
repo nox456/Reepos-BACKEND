@@ -120,6 +120,7 @@ export const USER_REPOSITORIES = `
 SELECT
     repositories.name as name,
     repositories.description as description,
+    repositories.created_at as created_at,
     coalesce(array_length(repositories.likes,1),0) as likes,
     array_agg(languages.name) as languages
 FROM repositories
@@ -128,7 +129,7 @@ FROM repositories
     LEFT OUTER JOIN languages
         ON repositories_languages.language_id = languages.id
 WHERE repositories.user_owner = $1
-GROUP BY repositories.name, repositories.description, repositories.likes
+GROUP BY repositories.name, repositories.description, repositories.likes, repositories.created_at
 `
 
 export const SEARCH_REPOSITORIES = `
@@ -136,6 +137,7 @@ SELECT
     users.username as user,
     repositories.name as name,
     repositories.description as description,
+    repositories.created_at as created_at,
     coalesce(array_length(repositories.likes,1),0) as likes,
     array_agg(languages.name) as languages
 FROM repositories
@@ -146,7 +148,7 @@ FROM repositories
     LEFT OUTER JOIN languages
         ON repositories_languages.language_id = languages.id
 WHERE repositories.name ILIKE $1
-GROUP BY repositories.name, repositories.description, repositories.likes, users.username`
+GROUP BY repositories.name, repositories.description, repositories.likes, users.username, repositories.created_at`
 
 export const REPOSITORY_INFO = `
 SELECT
