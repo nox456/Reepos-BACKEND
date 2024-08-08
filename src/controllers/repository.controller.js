@@ -151,10 +151,10 @@ export default class RepositoryController {
      * Get repositories from an user
      * */
     static async getFromUser(req, res) {
-        const { token } = req.cookies;
+        const { username } = req.query;
         let result;
         try {
-            result = await RepositoryService.getFromUser(token);
+            result = await RepositoryService.getFromUser(username);
         } catch (e) {
             console.error(e);
             return ResponseHandler.error(

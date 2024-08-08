@@ -508,23 +508,22 @@ export default class RepositoryService {
     }
     /**
      * Get repositories from an user by ID
-     * @param {string} token - JWT Token
+     * @param {string} username - User owner name
      * @return {Promise<ServiceResult>} Service result object
      * @async
      * */
-    static async getFromUser(token) {
-        const token_validation = Auth.validateToken(token);
-        if (token_validation.error)
-            return {
-                success: false,
-                error: {
-                    message: token_validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
+    static async getFromUser(username) {
+        const username_validation = await User.validateUsername(username)
+        if (username_validation.error) return {
+            success: false,
+            error: {
+                message: username_validation.error,
+                type: BAD_REQUEST
+            },
+            data: null
+        }
 
-        const user_exists = await User.checkIfExistsById(token_validation.data);
+        const user_exists = await User.checkIfExistsByUsername(username);
         if (!user_exists)
             return {
                 success: false,
@@ -535,7 +534,7 @@ export default class RepositoryService {
                 data: null,
             };
 
-        const repos = await Repository.getFromUser(token_validation.data);
+        const repos = await Repository.getFromUser(username);
 
         if (repos.length == 0)
             return {

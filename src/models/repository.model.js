@@ -290,13 +290,15 @@ export default class Repository {
      * */
     /**
      * Get repositories from an user by ID
-     * @param {string} userId - User owner ID
+     * @param {string} username - User owner name
      * @return {Promise<Repository[]>} User's repositories
      * @async
      * */
-    static async getFromUser(userId) {
+    static async getFromUser(username) {
         let repos;
         try {
+            const userId_result = await db.query("SELECT id FROM users WHERE username = $1", [username])
+            const userId = userId_result.rows[0].id
             const repos_result = await db.query(USER_REPOSITORIES, [userId]);
             repos = repos_result.rows;
         } catch (e) {
