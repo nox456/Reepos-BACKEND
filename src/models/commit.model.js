@@ -1,5 +1,6 @@
 import db from "../connections/database.js";
-import { REPOSITORIES_COMMITS } from "./queries.js";
+import {z} from "zod"
+import { COMMIT_INFO, REPOSITORIES_COMMITS } from "./queries.js";
 
 /**
  * Git Commit class
@@ -63,5 +64,76 @@ export default class Commit {
             console.error(e)
         }
         return commits
+    }
+    /**
+     * @typedef {Object} CommitFile
+     * @property {string} name - File name
+     * @property {string} size - File size
+     * @property {string} type - Modification type
+     *
+     * @typedef {Object} CommitInfo
+     * @property {string} hash - Hash
+     * @property {string} title - Title
+     * @property {string} content - Content
+     * @property {string} created_at - Date and Time of creation
+     * @property {string} author - Author name
+     * @property {string} branch - Branch name
+     * @property {CommitFile[]} files - Commit files
+     * @property {string} prev_commit_hash - Hash of the previous commit
+     * @property {string} next_commit_hash - Hash of the next commit
+     * */
+    /**
+     * Get full information of commit by hash
+     * @param {string} hash - Commit hash
+     * @return {Promise<CommitInfo>} Commit information object
+     * @async
+     * */
+    static async getFullInfo(hash) {
+        let info
+        try {
+            const info_result = await db.query(COMMIT_INFO,[hash])
+            info = info_result.rows[0]
+            if (!info.files[0].name) {
+                info.files = []
+            }
+        } catch(e) {
+            console.error(e)
+        }
+        return info
+    }
+    /**
+     * @typedef {Object} Result
+     * @property {?string} error - Error message 
+     * */
+    /**
+     * Validate hash
+     * @param {string} hash 
+     * @return {Promise<Result>} Result Data
+     * @async
+     * */
+    static async validateHash(hash) {
+        const schema = z.string({required_error: "Hash required!", invalid_type_error: "Hash must be a string!"})
+        const validation = await schema.safeParseAsync(hash)
+        let error = null
+        if (!validation.success) {
+            error = validation.error.issues[0].message
+        }
+        return {error}
+    }
+    /**
+     * Check if commit exists by hash
+     * @param {string} hash - Commit hash
+     * @return {Promise<boolean>} True if the commit exists and False if not
+     * @async
+     * */
+    static async checkIfExists(hash) {
+        let exists
+        try {
+            const result = await db.query("SELECT count(*) FROM commits WHERE hash = $1",[hash])
+            exists = result.rows[0].count > 0
+        } catch(e) {
+            console.error(e)
+        }
+        return exists
     }
 }

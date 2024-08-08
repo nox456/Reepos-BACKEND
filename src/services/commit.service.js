@@ -78,4 +78,38 @@ export default class CommitService {
             data: commits
         }
     }
+    /**
+     * Get full information of commit by hash
+     * @param {string} hash - Commit hash
+     * @return {Promise<ServiceResult>} Service result object
+     * @async
+     * */
+    static async getInfo(hash) {
+        const hash_validation = await Commit.validateHash(hash)
+        if (hash_validation.error) return {
+            success: false,
+            error: {
+                message: hash_validation.error,
+                type: BAD_REQUEST
+            },
+            data: null
+        }
+
+        const exists = await Commit.checkIfExists(hash)
+        if (!exists) return {
+            success: false,
+            error: {
+                message: "Commit doesn't exists!",
+                type: NOT_FOUND
+            },
+            data: null
+        }
+
+        const info = await Commit.getFullInfo(hash)
+        return {
+            success: true,
+            error: null,
+            data: info
+        }
+    }
 }

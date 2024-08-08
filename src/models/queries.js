@@ -202,3 +202,50 @@ FROM repositories
 WHERE repositories.user_owner = $1 AND repositories.name = $2
 GROUP BY repositories.name, repositories.description, repositories.likes
 `
+
+export const COMMIT_INFO = `
+SELECT
+    commits.hash as hash,
+    commits.title as title,
+    commits.content as content,
+    commits.created_at as created_at,
+    contributors.name as author,
+    branches.name as branch,
+    (
+    SELECT
+        array_agg(json_build_object(
+            'name',files.name,
+            'size',files.size,
+            'type',modifications.type
+        )) as files
+    FROM commits
+        LEFT OUTER JOIN modifications 
+            ON modifications.commit = commits.id
+        LEFT OUTER JOIN files 
+            ON modifications.file = files.id 
+    WHERE commits.hash = $1
+    ), 
+    (
+    SELECT 
+        hash as prev_commit_hash 
+    FROM commits c 
+    WHERE c.created_at < commits.created_at 
+    LIMIT 1
+    ), 
+    (
+    SELECT 
+        hash as next_commit_hash 
+    FROM commits c 
+    WHERE c.created_at > commits.created_at 
+    ORDER BY c.created_at ASC 
+    LIMIT 1
+    )
+FROM commits 
+    LEFT OUTER JOIN contributors 
+        ON contributors.id = commits.author 
+    LEFT OUTER JOIN commits_branches 
+        ON commits_branches.commit = commits.id 
+    LEFT OUTER JOIN branches 
+        ON commits_branches.branch = branches.id 
+WHERE commits.hash = $1
+`
