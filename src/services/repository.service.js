@@ -380,7 +380,7 @@ export default class RepositoryService {
      * @return {Promise<ServiceResult>} Service result object
      * @async
      * */
-    static async delete(repoName, token) {
+    static async delete(repoName, token, password) {
         const repoName_validation = await Repository.validateRepoName(repoName);
         if (repoName_validation.error)
             return {
@@ -413,6 +413,28 @@ export default class RepositoryService {
                 },
                 data: null,
             };
+
+        const password_validation = await User.validatePassword(password)
+        if (password_validation.error) return {
+            success: false,
+            error: {
+                message: password_validation.error,
+                type: BAD_REQUEST
+            },
+            data: null
+        }
+
+        const user = await User.getById(token_validation.data)
+
+        const match_password = await Auth.comparePassword(password,user.password)
+        if (!match_password) return {
+            success: false,
+            error: {
+                message: "Invalid Password!",
+                type: FORBIDDEN
+            },
+            data: null
+        }
 
         await Repository.deleteDb(repoName, token_validation.data);
         await Repository.deleteCloud(repoName, token_validation.data);

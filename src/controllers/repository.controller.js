@@ -100,11 +100,11 @@ export default class RepositoryController {
      * Delete a repository from database and cloud storage
      * */
     static async delete(req, res) {
-        const { repoName } = req.body;
+        const { repoName, password } = req.body;
         const { token } = req.cookies;
         let result;
         try {
-            result = await RepositoryService.delete(repoName, token);
+            result = await RepositoryService.delete(repoName, token,password);
         } catch (e) {
             console.error(e);
             return ResponseHandler.error(
