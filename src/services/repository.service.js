@@ -11,6 +11,7 @@ import Language from "../models/language.model.js";
 import User from "../models/user.model.js";
 import repoInfo from "../lib/getReposInfo.js";
 import downloadFiles from "../lib/downloadFiles.js";
+import validationHandler from "../lib/validationHandler.js"
 import { BAD_REQUEST, FORBIDDEN, NOT_FOUND } from "../lib/constants/errors.js";
 
 /**
@@ -42,16 +43,21 @@ export default class RepositoryService {
     static async createRepository(repoData, token) {
         const { name, description, languages } = repoData;
 
-        const repoName_validation = await Repository.validateRepoName(name);
-        if (repoName_validation.error)
-            return {
-                success: false,
-                error: {
-                    message: repoName_validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
+
+        const validation = validationHandler([
+            await Repository.validateRepoName(name),
+            Auth.validateToken(token),
+            await Repository.validateDescription(description),
+            await Repository.validateLanguages(languages)
+        ])
+        if (validation.error) return {
+            success: false,
+            error: {
+                message: validation.error,
+                type: BAD_REQUEST
+            },
+            data: null
+        }
 
         const existsBackend = await Repository.checkIfExistsInBackend(name);
         if (!existsBackend)
@@ -64,50 +70,15 @@ export default class RepositoryService {
                 data: null,
             };
 
-        const token_validation = Auth.validateToken(token);
-        if (token_validation.error)
-            return {
-                success: false,
-                error: {
-                    message: token_validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
-
         const userHasRepo = await Repository.checkIfUserHasRepo(
             name,
-            token_validation.data,
+            validation.data,
         );
         if (userHasRepo)
             return {
                 success: false,
                 error: {
                     message: "User has repository!",
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
-
-        const description_validation =
-            await Repository.validateDescription(description);
-        if (description_validation.error)
-            return {
-                success: false,
-                error: {
-                    message: description_validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
-
-        const languages_validation =
-            await Repository.validateLanguages(languages);
-        if (languages_validation.error)
-            return {
-                success: false,
-                error: {
-                    message: languages_validation.error,
                     type: BAD_REQUEST,
                 },
                 data: null,
@@ -262,27 +233,18 @@ export default class RepositoryService {
      * @async
      * */
     static async uploadRepository(repoName, token) {
-        const repoName_validation = await Repository.validateRepoName(repoName);
-        if (repoName_validation.error)
-            return {
-                success: false,
-                error: {
-                    message: repoName_validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
-
-        const token_validation = Auth.validateToken(token);
-        if (token_validation.error)
-            return {
-                success: false,
-                error: {
-                    message: token_validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
+        const validation = validationHandler([
+            await Repository.validateRepoName(repoName),
+            Auth.validateToken(token)
+        ])
+        if (validation.error) return {
+            success: false,
+            error: {
+                message: validation.error,
+                type: BAD_REQUEST
+            },
+            data: null
+        }
 
         const repoExists = await Repository.checkIfExistsInBackend(repoName);
         if (!repoExists)
@@ -295,7 +257,7 @@ export default class RepositoryService {
                 data: null,
             };
 
-        await Repository.upload(repoName, token_validation.data);
+        await Repository.upload(repoName, validation.data);
         return {
             success: true,
             error: null,
@@ -309,16 +271,18 @@ export default class RepositoryService {
      * @async
      * */
     static async download(repoName, token) {
-        const repoName_validation = await Repository.validateRepoName(repoName);
-        if (repoName_validation.error)
-            return {
-                success: false,
-                error: {
-                    message: repoName_validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
+        const validation = validationHandler([
+            await Repository.validateRepoName(repoName),
+            Auth.validateToken(token)
+        ])
+        if (validation.error) return {
+            success: false,
+            error: {
+                message: validation.error,
+                type: BAD_REQUEST
+            },
+            data: null
+        }
 
         const existsDb = await Repository.checkIfExistsInDb(repoName);
 
@@ -332,17 +296,7 @@ export default class RepositoryService {
                 data: null,
             };
 
-        const token_validation = Auth.validateToken(token)
-        if (token_validation.error) return {
-            success: false,
-            error: {
-                message: token_validation.error,
-                type: BAD_REQUEST
-            },
-            data: null
-        }
-
-        const userHasRepo = await Repository.checkIfUserHasRepo(repoName,token_validation.data)
+        const userHasRepo = await Repository.checkIfUserHasRepo(repoName,validation.data)
         if (!userHasRepo) return {
             success: false,
             error: {
@@ -352,7 +306,7 @@ export default class RepositoryService {
             data: null
         }
 
-        const existsCloud = await Repository.checkIfExistsInCloud(repoName, token_validation.data);
+        const existsCloud = await Repository.checkIfExistsInCloud(repoName, validation.data);
 
         if (!existsCloud)
             return {
@@ -364,7 +318,7 @@ export default class RepositoryService {
                 data: null,
             };
 
-        const files = await Repository.getFiles(repoName,token_validation.data);
+        const files = await Repository.getFiles(repoName,validation.data);
 
         const zip_file = await downloadFiles(files, repoName);
         return {
@@ -381,50 +335,21 @@ export default class RepositoryService {
      * @async
      * */
     static async delete(repoName, token, password) {
-        const repoName_validation = await Repository.validateRepoName(repoName);
-        if (repoName_validation.error)
-            return {
-                success: false,
-                error: {
-                    message: repoName_validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
-
-        const token_validation = Auth.validateToken(token);
-        if (token_validation.error)
-            return {
-                success: false,
-                error: {
-                    message: token_validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
-
-        const userId_validation = await User.validateId(token_validation.data);
-        if (userId_validation.error)
-            return {
-                success: false,
-                error: {
-                    message: userId_validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
-
-        const password_validation = await User.validatePassword(password)
-        if (password_validation.error) return {
+        const validation = validationHandler([
+            await Repository.validateRepoName(repoName),
+            Auth.validateToken(token),
+            await User.validatePassword(password)
+        ])
+        if (validation.error) return {
             success: false,
             error: {
-                message: password_validation.error,
+                message: validation.error,
                 type: BAD_REQUEST
             },
             data: null
         }
 
-        const user = await User.getById(token_validation.data)
+        const user = await User.getById(validation.data)
 
         const match_password = await Auth.comparePassword(password,user.password)
         if (!match_password) return {
@@ -436,8 +361,8 @@ export default class RepositoryService {
             data: null
         }
 
-        await Repository.deleteDb(repoName, token_validation.data);
-        await Repository.deleteCloud(repoName, token_validation.data);
+        await Repository.deleteDb(repoName, validation.data);
+        await Repository.deleteCloud(repoName, validation.data);
         return {
             success: true,
             error: null,
@@ -452,16 +377,18 @@ export default class RepositoryService {
      * @async
      * */
     static async like(repoName, token) {
-        const repoName_validation = await Repository.validateRepoName(repoName);
-        if (repoName_validation.error)
-            return {
-                success: false,
-                error: {
-                    message: repoName_validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
+        const validation = validationHandler([
+            await Repository.validateRepoName(repoName),
+            Auth.validateToken(token)
+        ])
+        if (validation.error) return {
+            success: false,
+            error: {
+                message: validation.error,
+                type: BAD_REQUEST
+            },
+            data: null
+        }
 
         const existsDb = await Repository.checkIfExistsInDb(repoName);
         if (!existsDb)
@@ -474,20 +401,9 @@ export default class RepositoryService {
                 data: null,
             };
 
-        const token_validation = Auth.validateToken(token);
-        if (token_validation.error)
-            return {
-                success: false,
-                error: {
-                    message: token_validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
-
         const userHasRepo = await Repository.checkIfUserHasRepo(
             repoName,
-            token_validation.data,
+            validation.data,
         );
         if (!userHasRepo)
             return {
@@ -499,7 +415,7 @@ export default class RepositoryService {
                 data: null,
             };
 
-        await Repository.like(repoName, token_validation.data);
+        await Repository.like(repoName, validation.data);
         return {
             success: true,
             error: null,
@@ -513,11 +429,13 @@ export default class RepositoryService {
      * @async
      * */
     static async getFromUser(username) {
-        const username_validation = await User.validateUsername(username)
-        if (username_validation.error) return {
+        const validation = validationHandler([
+            await User.validateUsername(username)
+        ])
+        if (validation.error) return {
             success: false,
             error: {
-                message: username_validation.error,
+                message: validation.error,
                 type: BAD_REQUEST
             },
             data: null
@@ -557,16 +475,17 @@ export default class RepositoryService {
      * @return {Promise<ServiceResult>} Service result object
      * */
     static async search(repoName) {
-        const repoName_validation = await Repository.validateRepoName(repoName);
-        if (repoName_validation.error)
-            return {
-                success: false,
-                error: {
-                    message: repoName_validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
+        const validation = validationHandler([
+            await Repository.validateRepoName(repoName)
+        ])
+        if (validation.error) return {
+            success: false,
+            error: {
+                message: validation.error,
+                type: BAD_REQUEST
+            },
+            data: null
+        }
 
         const repos = await Repository.search(repoName);
 
@@ -594,28 +513,19 @@ export default class RepositoryService {
      * @async
      * */
     static async changeName(newRepoName, repoName, token) {
-        const newRepoName_validation =
-            await Repository.validateRepoName(newRepoName);
-        if (newRepoName_validation.error)
-            return {
-                success: false,
-                error: {
-                    message: newRepoName_validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
-
-        const repoName_validation = await Repository.validateRepoName(repoName);
-        if (repoName_validation.error)
-            return {
-                success: false,
-                error: {
-                    message: repoName_validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
+        const validation = validationHandler([
+            await Repository.validateRepoName(newRepoName),
+            await Repository.validateRepoName(repoName),
+            Auth.validateToken(token)
+        ])
+        if (validation.error) return {
+            success: false,
+            error: {
+                message: validation.error,
+                type: BAD_REQUEST
+            },
+            data: null
+        }
 
         const existsDb = await Repository.checkIfExistsInDb(repoName);
         if (!existsDb)
@@ -624,17 +534,6 @@ export default class RepositoryService {
                 error: {
                     message: "Repository doesn't exists!",
                     type: NOT_FOUND,
-                },
-                data: null,
-            };
-
-        const token_validation = Auth.validateToken(token);
-        if (token_validation.error)
-            return {
-                success: false,
-                error: {
-                    message: token_validation.error,
-                    type: BAD_REQUEST,
                 },
                 data: null,
             };
@@ -684,21 +583,15 @@ export default class RepositoryService {
      * @async
      * */
     static async changeDescription(newDescription, repoName, token) {
-        const newDescription_validation = await Repository.validateDescription(newDescription)
-        if (newDescription_validation.error) return {
+        const validation = validationHandler([
+            await Repository.validateDescription(newDescription),
+            await Repository.validateRepoName(repoName),
+            Auth.validateToken(token)
+        ])
+        if (validation.error) return {
             success: false,
             error: {
-                message: newDescription_validation.error,
-                type: BAD_REQUEST
-            },
-            data: null
-        }
-
-        const repoName_validation = await Repository.validateRepoName(repoName)
-        if (repoName_validation.error) return {
-            success: false,
-            error: {
-                message: repoName_validation.error,
+                message: validation.error,
                 type: BAD_REQUEST
             },
             data: null
@@ -710,16 +603,6 @@ export default class RepositoryService {
             error: {
                 message: "Repository doesn't exists!",
                 type: NOT_FOUND
-            },
-            data: null
-        }
-
-        const token_validation = Auth.validateToken(token)
-        if (token_validation.error) return {
-            success: false,
-            error: {
-                message: token_validation.error,
-                type: BAD_REQUEST
             },
             data: null
         }
@@ -759,21 +642,14 @@ export default class RepositoryService {
      * @async
      * */
     static async getInfo(repoName, username) {
-        const repoName_validation = await Repository.validateRepoName(repoName)
-        if (repoName_validation.error) return {
+        const validation = validationHandler([
+            await Repository.validateRepoName(repoName),
+            await User.validateUsername(username)
+        ])
+        if (validation.error) return {
             success: false,
             error: {
-                message: repoName_validation.error,
-                type: BAD_REQUEST
-            },
-            data: null
-        }
-
-        const username_validation = await User.validateUsername(username)
-        if (username_validation.error) return {
-            success: false,
-            error: {
-                message: username_validation.error,
+                message: validation.error,
                 type: BAD_REQUEST
             },
             data: null

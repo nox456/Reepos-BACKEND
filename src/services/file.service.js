@@ -2,6 +2,7 @@ import File from "../models/file.model.js";
 import Auth from "../models/auth.model.js";
 import Repository from "../models/repository.model.js";
 import User from "../models/user.model.js";
+import validationHandler from "../lib/validationHandler.js";
 import { BAD_REQUEST, FORBIDDEN, NOT_FOUND } from "../lib/constants/errors.js";
 
 /**
@@ -27,16 +28,19 @@ export default class FileService {
      * @async
      * */
     static async download(id, repoName, token) {
-        const id_validation = await File.validateId(id);
-        if (id_validation.error)
-            return {
-                success: false,
-                error: {
-                    message: id_validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
+        const validation = validationHandler([
+            await File.validateId(id),
+            Auth.validateToken(token),
+            await Repository.validateRepoName(repoName)
+        ])
+        if (validation.error) return {
+            success: false,
+            error: {
+                message: validation.error,
+                type: BAD_REQUEST
+            },
+            data: null
+        }
 
         const existsInDb = await File.checkIfExistsInDb(id);
         if (!existsInDb)
@@ -49,18 +53,7 @@ export default class FileService {
                 data: null,
             };
 
-        const token_validation = Auth.validateToken(token);
-        if (token_validation.error)
-            return {
-                success: false,
-                error: {
-                    message: token_validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
-
-        const existsInCloud = await File.checkIfExistsInCloud(repoName, id,token_validation.data);
+        const existsInCloud = await File.checkIfExistsInCloud(repoName, id,validation.data);
         if (!existsInCloud)
             return {
                 success: false,
@@ -71,7 +64,7 @@ export default class FileService {
                 data: null,
             };
 
-        const user_exists = await User.checkIfExistsById(token_validation.data);
+        const user_exists = await User.checkIfExistsById(validation.data);
         if (!user_exists)
             return {
                 success: false,
@@ -84,7 +77,7 @@ export default class FileService {
 
         const userHasRepo = await Repository.checkIfUserHasRepo(
             repoName,
-            token_validation.data,
+            validation.data,
         );
         if (!userHasRepo)
             return {
@@ -99,7 +92,7 @@ export default class FileService {
         const fileUrl = await File.download(
             id,
             repoName,
-            token_validation.data,
+            validation.data,
         );
         return {
             success: true,

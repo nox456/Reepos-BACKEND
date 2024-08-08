@@ -1,6 +1,7 @@
 import Contributor from "../models/contributor.model.js";
 import Auth from "../models/auth.model.js"
 import Repository from "../models/repository.model.js"
+import validationHandler from "../lib/validationHandler.js"
 import {BAD_REQUEST, NOT_FOUND} from "../lib/constants/errors.js"
 
 /**
@@ -30,11 +31,14 @@ export default class ContributorService {
      * @async
      * */
     static async getAll(repoName, token) {
-        const repoName_validation = await Repository.validateRepoName(repoName)
-        if (repoName_validation.error) return {
+        const validation = validationHandler([
+            await Repository.validateRepoName(repoName),
+            Auth.validateToken(token)
+        ])
+        if (validation.error) return {
             success: false,
             error: {
-                message: repoName_validation.error,
+                message: validation.error,
                 type: BAD_REQUEST
             },
             data: null
@@ -50,17 +54,7 @@ export default class ContributorService {
             data: null
         }
 
-        const token_validation = Auth.validateToken(token)
-        if (token_validation.error) return {
-            success: false,
-            error: {
-                message: token_validation.error,
-                type: BAD_REQUEST
-            },
-            data: null
-        }
-
-        const userHasRepo = await Repository.checkIfUserHasRepo(repoName, token_validation.data)
+        const userHasRepo = await Repository.checkIfUserHasRepo(repoName, validation.data)
         if (!userHasRepo) return {
             success: false,
             error: {
@@ -70,7 +64,7 @@ export default class ContributorService {
             data: null
         }
 
-        const contributors = await Contributor.getAll(repoName,token_validation.data)
+        const contributors = await Contributor.getAll(repoName,validation.data)
         return {
             success: true,
             error: null,

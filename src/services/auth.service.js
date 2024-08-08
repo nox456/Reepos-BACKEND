@@ -1,5 +1,6 @@
 import User from "../models/user.model.js";
 import Auth from "../models/auth.model.js";
+import validationHandler from "../lib/validationHandler.js"
 import { BAD_REQUEST, FORBIDDEN, NOT_FOUND } from "../lib/constants/errors.js";
 
 /**
@@ -29,27 +30,18 @@ export default class AuthService {
     static async signupUser(userData) {
         const { username, password } = userData;
 
-        const username_validation = await User.validateUsername(username);
-        if (username_validation.error)
-            return {
-                success: false,
-                error: {
-                    message: username_validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
-
-        const password_validation = await User.validatePassword(password);
-        if (password_validation.error)
-            return {
-                success: false,
-                error: {
-                    message: password_validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
+        const validation = validationHandler([
+            await User.validateUsername(username),
+            await User.validatePassword(password)
+        ])
+        if (validation.error) return {
+            success: false,
+            error: {
+                message: validation.error,
+                type: BAD_REQUEST
+            },
+            data: null
+        }
 
         const userExists = await User.checkIfExistsByUsername(username);
 
@@ -84,27 +76,18 @@ export default class AuthService {
     static async signinUser(userData) {
         const { username, password } = userData;
 
-        const username_validation = await User.validateUsername(username);
-        if (username_validation.error)
-            return {
-                success: false,
-                error: {
-                    message: username_validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
-
-        const password_validation = await User.validatePassword(password);
-        if (password_validation.error)
-            return {
-                success: false,
-                error: {
-                    message: password_validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
+        const validation = validationHandler([
+            await User.validateUsername(username),
+            await User.validatePassword(password)
+        ])
+        if (validation.error) return {
+            success: false,
+            error: {
+                message: validation.error,
+                type: BAD_REQUEST
+            },
+            data: null
+        }
 
         const userExists = await User.checkIfExistsByUsername(username);
 

@@ -1,6 +1,7 @@
 import User from "../models/user.model.js"
 import Auth from "../models/auth.model.js"
-import { NOT_FOUND } from "../lib/constants/errors.js"
+import validationHandler from "../lib/validationHandler.js"
+import { BAD_REQUEST, NOT_FOUND } from "../lib/constants/errors.js"
 
 /**
  * Service to handle user proccesses
@@ -24,37 +25,20 @@ export default class UserService {
      * @async
      * */
     static async deleteUser(token, password) {
-        const token_validation = Auth.validateToken(token)
-        if (token_validation.error) return {
+        const validation = validationHandler([
+            Auth.validateToken(token),
+            await User.validatePassword(password)
+        ])
+        if (validation.error) return {
             success: false,
             error: {
-                message: token_validation.error,
-                type: NOT_FOUND
+                message: validation.error,
+                type: BAD_REQUEST
             },
             data: null
         }
 
-        const id_validation = await User.validateId(token_validation.data)
-        if (id_validation.error) return {
-            success: false,
-            error: {
-                message: id_validation.error,
-                type: NOT_FOUND
-            },
-            data: null
-        }
-
-        const password_validation = await User.validatePassword(password)
-        if (password_validation.error) return {
-            success: false,
-            error: {
-                message: password_validation.error,
-                type: FORBIDDEN
-            },
-            data: null
-        }
-
-        const userExists = await User.checkIfExistsById(token_validation.data)
+        const userExists = await User.checkIfExistsById(validation.data)
 
         if (!userExists) return {
             success: false,
@@ -65,7 +49,7 @@ export default class UserService {
             data: null
         }
 
-        const storedUser = await User.getById(token_validation.data)
+        const storedUser = await User.getById(validation.data)
 
         const storedPassword = storedUser.password
 
@@ -80,7 +64,7 @@ export default class UserService {
             data: null
         }
 
-        await User.delete(token_validation.data)
+        await User.delete(validation.data)
         return {
             success: true,
             error: null,
@@ -96,47 +80,21 @@ export default class UserService {
      * @async
      * */
     static async changeUsername(newUsername, token, password) {
-        const token_validation = Auth.validateToken(token)
-        if (token_validation.error) return {
+        const validation = validationHandler([
+            Auth.validateToken(token),
+            await User.validateUsername(newUsername),
+            await User.validatePassword(password)
+        ])
+        if (validation.error) return {
             success: false,
             error: {
-                message: token_validation.error,
-                type: NOT_FOUND
+                message: validation.error,
+                type: BAD_REQUEST
             },
             data: null
         }
 
-        const username_validation = await User.validateUsername(newUsername)
-        if (username_validation.error) return {
-            success: false,
-            error: {
-                message: username_validation.error,
-                type: NOT_FOUND
-            },
-            data: null
-        }
-
-        const id_validation = await User.validateId(token_validation.data)
-        if (id_validation.error) return {
-            success: false,
-            error: {
-                message: id_validation.error,
-                type: NOT_FOUND
-            },
-            data: null
-        }
-
-        const password_validation = await User.validatePassword(password)
-        if (password_validation.error) return {
-            success: false,
-            error: {
-                message: password_validation.error,
-                type: NOT_FOUND
-            },
-            data: null
-        }
-
-        const userExists = await User.checkIfExistsById(token_validation.data)
+        const userExists = await User.checkIfExistsById(validation.data)
 
         if (!userExists) return {
             success: false,
@@ -147,7 +105,7 @@ export default class UserService {
             data: null
         }
 
-        const user = await User.getById(token_validation.data)
+        const user = await User.getById(validation.data)
 
         const matchPassword = await Auth.comparePassword(password, user.password)
 
@@ -160,7 +118,7 @@ export default class UserService {
             data: null
         }
 
-        await User.changeUsername(newUsername, token_validation.data)
+        await User.changeUsername(newUsername, validation.data)
         return {
             success: true,
             error: null,
@@ -176,47 +134,21 @@ export default class UserService {
      * @async
      * */
     static async changePassword(newPassword, token, password) {
-        const token_validation = Auth.validateToken(token)
-        if (token_validation.error) return {
+        const validation = validationHandler([
+            Auth.validateToken(token),
+            await User.validatePassword(newPassword),
+            await User.validatePassword(password)
+        ])
+        if (validation.error) return {
             success: false,
             error: {
-                message: token_validation.error,
-                type: NOT_FOUND
+                message: validation.error,
+                type: BAD_REQUEST
             },
             data: null
         }
 
-        const newPassword_validation = await User.validatePassword(newPassword)
-        if (newPassword_validation.error) return {
-            success: false,
-            error: {
-                message: newPassword_validation.error,
-                type: NOT_FOUND
-            },
-            data: null
-        }
-
-        const id_validation = await User.validateId(token_validation.data)
-        if (id_validation.error) return {
-            success: false,
-            error: {
-                message: id_validation.error,
-                type: NOT_FOUND
-            },
-            data: null
-        }
-
-        const password_validation = await User.validatePassword(password)
-        if (password_validation.error) return {
-            success: false,
-            error: {
-                message: password_validation.error,
-                type: NOT_FOUND
-            },
-            data: null
-        }
-
-        const userExists = await User.checkIfExistsById(token_validation.data)
+        const userExists = await User.checkIfExistsById(validation.data)
 
         if (!userExists) return {
             success: false,
@@ -227,7 +159,7 @@ export default class UserService {
             data: null
         }
 
-        const user = await User.getById(token_validation.data)
+        const user = await User.getById(validation.data)
 
         const matchPassword = await Auth.comparePassword(password, user.password)
 
@@ -242,7 +174,7 @@ export default class UserService {
 
         const encryptedPassword = await Auth.encryptPassword(newPassword)
 
-        await User.changePassword(encryptedPassword, token_validation.data)
+        await User.changePassword(encryptedPassword, validation.data)
         return {
             success: true,
             error: null,
@@ -257,37 +189,20 @@ export default class UserService {
      * @async
      * */
     static async changeDescription(newDescription, token) {
-        const token_validation = Auth.validateToken(token)
-        if (token_validation.error) return {
+        const validation = validationHandler([
+            Auth.validateToken(token),
+            await User.validateDescription(newDescription)
+        ])
+        if (validation.error) return {
             success: false,
             error: {
-                message: token_validation.error,
-                type: NOT_FOUND
+                message: validation.error,
+                type: BAD_REQUEST
             },
             data: null
         }
 
-        const id_validation = await User.validateId(token_validation.data)
-        if (id_validation.error) return {
-            success: false,
-            error: {
-                message: id_validation.error,
-                type: NOT_FOUND
-            },
-            data: null
-        }
-
-        const description_validation = await User.validateDescription(newDescription)
-        if (description_validation.error) return {
-            success: false,
-            error: {
-                message: description_validation.error,
-                type: NOT_FOUND
-            },
-            data: null
-        }
-
-        const userExists = await User.checkIfExistsById(token_validation.data)
+        const userExists = await User.checkIfExistsById(validation.data)
 
         if (!userExists) return {
             success: false,
@@ -298,7 +213,7 @@ export default class UserService {
             data: null
         }
 
-        await User.changeDescription(newDescription, token_validation.data)
+        await User.changeDescription(newDescription, validation.data)
         return {
             success: true,
             error: null,
@@ -313,27 +228,19 @@ export default class UserService {
      * @async
      * */
     static async changeImage(image, token) {
-        const token_validation = Auth.validateToken(token)
-        if (token_validation.error) return {
+        const validation = validationHandler([
+            Auth.validateToken(token)
+        ])
+        if (validation.error) return {
             success: false,
             error: {
-                message: token_validation.error,
-                type: NOT_FOUND
+                message: validation.error,
+                type: BAD_REQUEST
             },
             data: null
         }
 
-        const id_validation = await User.validateId(token_validation.data)
-        if (id_validation.error) return {
-            success: false,
-            error: {
-                message: id_validation.error,
-                type: NOT_FOUND
-            },
-            data: null
-        }
-
-        const userExists = await User.checkIfExistsById(token_validation.data)
+        const userExists = await User.checkIfExistsById(validation.data)
 
         if (!userExists) return {
             success: false,
@@ -344,7 +251,7 @@ export default class UserService {
             data: null
         }
 
-        const imageUrl = await User.changeImage(image, token_validation.data)
+        const imageUrl = await User.changeImage(image, validation.data)
         return {
             success: true,
             error: null,
@@ -359,27 +266,19 @@ export default class UserService {
      * @async
      * */
     static async followUser(username, token) {
-        const token_validation = Auth.validateToken(token)
-        if (token_validation.error) return {
+        const validation = validationHandler([
+            Auth.validateToken(token)
+        ])
+        if (validation.error) return {
             success: false,
             error: {
-                message: token_validation.error,
-                type: NOT_FOUND
+                message: validation.error,
+                type: BAD_REQUEST
             },
             data: null
         }
 
-        const userFollowerId_validation = await User.validateId(token_validation.data)
-        if (userFollowerId_validation.error) return {
-            success: false,
-            error: {
-                message: userFollowerId_validation.error,
-                type: NOT_FOUND
-            },
-            data: null
-        }
-
-        const userExists = await User.checkIfExistsById(token_validation.data)
+        const userExists = await User.checkIfExistsById(validation.data)
 
         if (!userExists) return {
             success: false,
@@ -400,7 +299,7 @@ export default class UserService {
             data: null
         }
 
-        await User.followUser(token_validation.data,username)
+        await User.followUser(validation.data,username)
         return {
             success: true,
             error: null,
@@ -478,16 +377,6 @@ export default class UserService {
             success: false,
             error: {
                 message: token_validation.error,
-                type: NOT_FOUND
-            },
-            data: null
-        }
-
-        const id_validation = await User.validateId(token_validation.data)
-        if (id_validation.error) return {
-            success: false,
-            error: {
-                message: id_validation.error,
                 type: NOT_FOUND
             },
             data: null
