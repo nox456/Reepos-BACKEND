@@ -27,7 +27,7 @@ FROM users usr
         ON ARRAY[follower.id] && usr.followers 
     LEFT OUTER JOIN repositories 
         ON repositories.user_owner = follower.id 
-WHERE usr.id = $1 
+WHERE usr.username = $1 
 GROUP BY 
     follower.username, 
     follower.img, 
@@ -47,7 +47,7 @@ FROM users
         ON users.id = repositories.user_owner 
     FULL OUTER JOIN users usrs 
         ON ARRAY[users.id] && usrs.followers
-WHERE users.id = $1
+WHERE users.username = $1
 GROUP BY
     users.username,
     users.description,
@@ -162,6 +162,7 @@ SELECT
     FROM repositories 
         LEFT OUTER JOIN commits 
             ON commits.repo = repositories.id
+    WHERE repositories.user_owner = $1 AND repositories.name = $2
     ),
     (
     SELECT  
@@ -169,6 +170,7 @@ SELECT
     FROM repositories 
         LEFT OUTER JOIN contributors 
             ON contributors.repo = repositories.id
+    WHERE repositories.user_owner = $1 AND repositories.name = $2
     ),
     (
     SELECT 
@@ -179,6 +181,7 @@ SELECT
     FROM repositories 
         LEFT OUTER JOIN branches 
             ON branches.repo = repositories.id
+    WHERE repositories.user_owner = $1 AND repositories.name = $2
     ),
     (
     SELECT 
@@ -192,6 +195,7 @@ SELECT
             ON commits.repo = repositories.id 
         LEFT OUTER JOIN contributors 
             ON contributors.id = commits.author 
+    WHERE repositories.user_owner = $1 AND repositories.name = $2
     ORDER BY commits.created_at DESC LIMIT 1
     )
 FROM repositories

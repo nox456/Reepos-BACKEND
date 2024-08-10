@@ -1,6 +1,6 @@
 import Commit from "../models/commit.model.js";
-import Auth from "../models/auth.model.js";
 import Repository from "../models/repository.model.js"
+import User from "../models/user.model.js"
 import validationHandler from "../lib/validationHandler.js";
 import {BAD_REQUEST, NOT_FOUND} from "../lib/constants/errors.js"
 
@@ -31,10 +31,10 @@ export default class CommitService {
      * @return {Promise<ServiceResult>} Service result object
      * @async
      * */
-    static async getAll(repoName, token) {
+    static async getAll(repoName, username) {
         const validation = validationHandler([
             await Repository.validateRepoName(repoName),
-            Auth.validateToken(token)
+            await User.validateUsername(username)
         ])
         if (validation.error) return {
             success: false,
@@ -55,7 +55,19 @@ export default class CommitService {
             data: null
         }
 
-        const userHasRepo = await Repository.checkIfUserHasRepo(repoName,validation.data)
+        const user_exists = await User.checkIfExistsByUsername(username)
+        if (!user_exists) return {
+            success: false,
+            error: {
+                message: "User doesn't exists!",
+                type: NOT_FOUND
+            },
+            data: null
+        }
+
+        const user = await User.getByUsername(username)
+
+        const userHasRepo = await Repository.checkIfUserHasRepo(repoName,user.id)
         if (!userHasRepo) return {
             success: false,
             error: {
@@ -65,7 +77,7 @@ export default class CommitService {
             data: null
         }
 
-        const commits = await Commit.getAll(repoName,validation.data)
+        const commits = await Commit.getAll(repoName,user.id)
         return {
             success: true,
             error: null,

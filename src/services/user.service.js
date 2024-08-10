@@ -332,23 +332,24 @@ export default class UserService {
     }
     /**
      * Get followers of a user by username
-     * @param {string} token - JWT Token
      * @param {string} username - User name
      * @return {Promise<ServiceResult>} Service result object
      * @async
      * */
-    static async getFollowers(token) {
-        const token_validation = Auth.validateToken(token)
-        if (token_validation.error) return {
+    static async getFollowers(username) {
+        const validation = validationHandler([
+            await User.validateUsername(username)
+        ])
+        if (validation.error) return {
             success: false,
             error: {
-                message: token_validation.error,
-                type: NOT_FOUND
+                message: validation.error,
+                type: BAD_REQUEST
             },
             data: null
         }
 
-        const userExists = await User.checkIfExistsById(token_validation.data)
+        const userExists = await User.checkIfExistsByUsername(username)
         if (!userExists) return {
             success: false,
             error: {
@@ -358,7 +359,7 @@ export default class UserService {
             data: null
         }
 
-        const followers = await User.getFollowers(token_validation.data)
+        const followers = await User.getFollowers(username)
         return {
             success: true,
             error: null,
@@ -367,22 +368,24 @@ export default class UserService {
     }
     /**
      * Get user profile information
-     * @param {string} token - JWT Token
+     * @param {string} username - User name
      * @return {Promise<ServiceResult>} Service result object
      * @async
      * */
-    static async getProfileInfo(token) {
-        const token_validation = Auth.validateToken(token)
-        if (token_validation.error) return {
+    static async getProfileInfo(username) {
+        const validation = validationHandler([
+            await User.validateUsername(username)
+        ])
+        if (validation.error) return {
             success: false,
             error: {
-                message: token_validation.error,
-                type: NOT_FOUND
+                message: validation.error,
+                type: BAD_REQUEST
             },
             data: null
         }
 
-        const userExists = await User.checkIfExistsById(token_validation.data)
+        const userExists = await User.checkIfExistsByUsername(username)
         if (!userExists) return {
             success: false,
             error: {
@@ -392,7 +395,7 @@ export default class UserService {
             data: null
         }
         
-        const profileInfo = await User.getProfileInfo(token_validation.data)
+        const profileInfo = await User.getProfileInfo(username)
         return {
             success: true,
             error: null,

@@ -22,16 +22,11 @@ export default class User {
      * */
     static async save(data) {
         const { username, password } = data;
-        let user;
-        try {
-            const user_response = await db.query(
-                "INSERT INTO users VALUES (DEFAULT,$1,$2,DEFAULT,DEFAULT,DEFAULT,DEFAULT) RETURNING id",
-                [username, password]
-            );
-            user = user_response.rows[0];
-        } catch (e) {
-            console.error(e);
-        }
+        const user_response = await db.query(
+            "INSERT INTO users VALUES (DEFAULT,$1,$2,DEFAULT,DEFAULT,DEFAULT,DEFAULT) RETURNING id",
+            [username, password]
+        );
+        const user = user_response.rows[0];
         return user;
     }
     /**
@@ -50,13 +45,8 @@ export default class User {
      * @async
      * */
     static async getByUsername(username) {
-        let user
-        try {
-            const user_response = await db.query("SELECT * FROM users WHERE username = $1", [username])
-            user = user_response.rows[0]
-        } catch (e) {
-            console.error(e)
-        }
+        const user_response = await db.query("SELECT * FROM users WHERE username = $1", [username])
+        const user = user_response.rows[0]
         return user
     }
     /**
@@ -66,13 +56,8 @@ export default class User {
      * @async
      * */
     static async getById(id) {
-        let user
-        try {
-            const user_response = await db.query("SELECT * FROM users WHERE id = $1", [id])
-            user = user_response.rows[0]
-        } catch (e) {
-            console.error(e)
-        }
+        const user_response = await db.query("SELECT * FROM users WHERE id = $1", [id])
+        const user = user_response.rows[0]
         return user
     }
     /**
@@ -81,11 +66,7 @@ export default class User {
      * @async
      * */
     static async delete(id) {
-        try {
-            await db.query("DELETE FROM users WHERE id = $1", [id])
-        } catch (e) {
-            console.error(e)
-        }
+        await db.query("DELETE FROM users WHERE id = $1", [id])
     }
     /**
      * Check if the user exists by username
@@ -94,13 +75,8 @@ export default class User {
      * @async
      * */
     static async checkIfExistsById(id) {
-        let usersExists
-        try {
-            const user_response = await db.query("SELECT id FROM users WHERE id = $1", [id])
-            usersExists = user_response.rows.length > 0
-        } catch (e) {
-            console.error(e)
-        }
+        const user_response = await db.query("SELECT id FROM users WHERE id = $1", [id])
+        const usersExists = user_response.rows.length > 0
         return usersExists
     }
     /**
@@ -110,13 +86,8 @@ export default class User {
      * @async
      * */
     static async checkIfExistsByUsername(username) {
-        let usersExists
-        try {
-            const user_response = await db.query("SELECT username FROM users WHERE username = $1", [username])
-            usersExists = user_response.rows.length > 0
-        } catch (e) {
-            console.error(e)
-        }
+        const user_response = await db.query("SELECT username FROM users WHERE username = $1", [username])
+        const usersExists = user_response.rows.length > 0
         return usersExists
     }
     /**
@@ -126,11 +97,7 @@ export default class User {
      * @async
      * */
     static async changeUsername(newUsername, id) {
-        try {
-            await db.query("UPDATE users SET username = $1 WHERE id = $2", [newUsername, id])
-        } catch (e) {
-            console.error(e)
-        }
+        await db.query("UPDATE users SET username = $1 WHERE id = $2", [newUsername, id])
     }
     /**
      * Change password of user
@@ -152,11 +119,7 @@ export default class User {
      * @async
      * */
     static async changeDescription(newDescription, id) {
-        try {
-            await db.query("UPDATE users SET description = $1 WHERE id = $2", [newDescription, id])
-        } catch (e) {
-            console.error(e)
-        }
+        await db.query("UPDATE users SET description = $1 WHERE id = $2", [newDescription, id])
     }
     /**
      * Change image of user
@@ -167,14 +130,10 @@ export default class User {
      * */
     static async changeImage(image, id) {
         const ext = extname(image.originalname)
-        let imageUrl
-        try {
-            const imageUploaded = await supabase.storage.from(SUPABASE_IMAGE_BUCKET).upload(`users-images/${id}${ext}`, image.buffer)
-            imageUrl = supabase.storage.from(SUPABASE_IMAGE_BUCKET).getPublicUrl(imageUploaded.data.path)
-            await db.query("UPDATE users SET img = $1 WHERE id = $2", [imageUrl.data.publicUrl, id])
-        } catch (e) {
-            console.error(e)
-        }
+        const imageUploaded = await supabase.storage.from(SUPABASE_IMAGE_BUCKET).upload(`users-images/${id}${ext}`, image.buffer)
+        if (imageUploaded.error) throw imageUploaded.error
+        const imageUrl = supabase.storage.from(SUPABASE_IMAGE_BUCKET).getPublicUrl(imageUploaded.data.path)
+        await db.query("UPDATE users SET img = $1 WHERE id = $2", [imageUrl.data.publicUrl, id])
         return imageUrl.data.publicUrl
     }
     /**
@@ -184,16 +143,12 @@ export default class User {
      * @async
      * */
     static async followUser(followerId, followedName) {
-        try {
-            const followers_response = await db.query("SELECT followers FROM users WHERE username = $1", [followedName])
-            const followers = followers_response.rows[0].followers
+        const followers_response = await db.query("SELECT followers FROM users WHERE username = $1", [followedName])
+        const followers = followers_response.rows[0].followers
 
-            followers.push(followerId)
+        followers.push(followerId)
 
-            await db.query("UPDATE users SET followers = $1 WHERE username = $2", [followers, followedName])
-        } catch(e) {
-            console.error(e)
-        }
+        await db.query("UPDATE users SET followers = $1 WHERE username = $2", [followers, followedName])
     }
     /**
      * @typedef {Object} Result
@@ -290,13 +245,8 @@ export default class User {
      * @async
      * */
     static async search(username) {
-        let usersFounded
-        try {
-            const users_response = await db.query(SEARCH_USERS, [`%${username}%`])
-            usersFounded = users_response.rows
-        } catch (e) {
-            console.error(e)
-        }
+        const users_response = await db.query(SEARCH_USERS, [`%${username}%`])
+        const  usersFounded = users_response.rows
         return usersFounded
     }
     /**
@@ -308,18 +258,13 @@ export default class User {
      * */
     /**
      * Get followers
-     * @param {string} user_id - User ID
+     * @param {string} username - User name
      * @return {Promise<Follower[]>} Followers founded
      * @async
      * */
-    static async getFollowers(user_id) {
-        let followers
-        try {
-            const followers_response = await db.query(USER_FOLLOWERS, [user_id])
-            followers = followers_response.rows.map(f => f.followers)
-        } catch (e) {
-            console.error(e)
-        }
+    static async getFollowers(username) {
+        const followers_response = await db.query(USER_FOLLOWERS, [username])
+        const followers = followers_response.rows.map(f => f.followers)
         return followers[0].username ? followers : []
     }
     /**
@@ -333,18 +278,13 @@ export default class User {
      * */
     /**
      * Get user's profile info
-     * @param {string} user_id - User ID
+     * @param {string} username - User name
      * @return {Promise<ProfileInfo>} Profile info
      * @async
      * */
-    static async getProfileInfo(user_id) {
-        let profileInfo
-        try {
-            const profile_response = await db.query(PROFILE_INFO,[user_id])
-            profileInfo = profile_response.rows[0]
-        } catch(e) {
-            console.error(e)
-        }
+    static async getProfileInfo(username) {
+        const profile_response = await db.query(PROFILE_INFO,[username])
+        const profileInfo = profile_response.rows[0]
         return profileInfo
     }
 }

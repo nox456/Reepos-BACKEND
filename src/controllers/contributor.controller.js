@@ -8,11 +8,10 @@ import { INTERNAL_SERVER_ERROR } from "../lib/constants/errors.js";
  * */
 export default class ContributorController {
     static async getAll(req, res) {
-        const { repoName } = req.query;
-        const { token } = req.cookies;
+        const { repoName, username } = req.query;
         let result;
         try {
-            result = await ContributorService.getAll(repoName, token);
+            result = await ContributorService.getAll(repoName, username);
         } catch (e) {
             console.error(e);
             return ResponseHandler.error(

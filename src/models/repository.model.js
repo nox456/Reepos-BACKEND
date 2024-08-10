@@ -41,16 +41,11 @@ export default class Repository {
      * */
     static async save(repoData) {
         const { name, description, user_owner } = repoData;
-        let repoSaved;
-        try {
-            const result = await db.query(
-                "INSERT INTO repositories VALUES (DEFAULT,$1,$2,$3,DEFAULT,DEFAULT) RETURNING *",
-                [name, description, user_owner],
-            );
-            repoSaved = result.rows[0];
-        } catch (e) {
-            console.error(e);
-        }
+        const result = await db.query(
+            "INSERT INTO repositories VALUES (DEFAULT,$1,$2,$3,DEFAULT,DEFAULT) RETURNING *",
+            [name, description, user_owner],
+        );
+        const repoSaved = result.rows[0];
         return repoSaved;
     }
     /**
@@ -63,9 +58,10 @@ export default class Repository {
         const path = join(reposPath, repoName);
         const files = await getReposFiles(path);
         for (const file of files) {
-            await supabase.storage
+            const { error } = await supabase.storage
                 .from(SUPABASE_REPOSITORY_BUCKET)
                 .upload(`${userId}/${repoName}/${file.path}`, file.buffer);
+            if (error) throw error
         }
     }
     /**
@@ -107,16 +103,11 @@ export default class Repository {
      * @async
      * */
     static async checkIfExistsInDb(repoName) {
-        let exists;
-        try {
-            const result = await db.query(
-                "SELECT count(*) FROM repositories WHERE name = $1",
-                [repoName],
-            );
-            exists = result.rows[0].count > 0;
-        } catch (e) {
-            console.error(e);
-        }
+        const result = await db.query(
+            "SELECT count(*) FROM repositories WHERE name = $1",
+            [repoName],
+        );
+        const exists = result.rows[0].count > 0;
         return exists;
     }
     /**
@@ -137,19 +128,17 @@ export default class Repository {
      * @async
      * */
     static async getFiles(repoName, userId) {
-        let files;
-        try {
-            const result_files = await db.query(REPOSITORIES_FILES, [userId, repoName]);
-            files = result_files.rows;
-            for (const file of files) {
-                const url = supabase.storage
-                    .from(SUPABASE_REPOSITORY_BUCKET)
-                    .getPublicUrl(`${userId}/${repoName}/${file.path}`)
-                    .data.publicUrl;
-                file.url = url
-            }
-        } catch (e) {
-            console.error(e);
+        const result_files = await db.query(REPOSITORIES_FILES, [
+            userId,
+            repoName,
+        ]);
+        const files = result_files.rows;
+        for (const file of files) {
+            const url = supabase.storage
+                .from(SUPABASE_REPOSITORY_BUCKET)
+                .getPublicUrl(`${userId}/${repoName}/${file.path}`)
+                .data.publicUrl;
+            file.url = url;
         }
         return files;
     }
@@ -161,15 +150,11 @@ export default class Repository {
      * @async
      * */
     static async checkIfExistsInCloud(repoName, userId) {
-        let repos;
-        try {
-            const result = await supabase.storage
-                .from(SUPABASE_REPOSITORY_BUCKET)
-                .list(userId);
-            repos = result.data.map((p) => p.name);
-        } catch (e) {
-            console.error(e);
-        }
+        const {data,error} = await supabase.storage
+            .from(SUPABASE_REPOSITORY_BUCKET)
+            .list(userId);
+        if (error) throw error
+        const repos = data.map((p) => p.name);
         return repos.includes(repoName);
     }
     /**
@@ -218,16 +203,11 @@ export default class Repository {
      * @async
      * */
     static async checkIfUserHasRepo(name, userId) {
-        let hasRepo;
-        try {
-            const result = await db.query(
-                "SELECT count(*) FROM repositories WHERE name = $1 AND user_owner = $2",
-                [name, userId],
-            );
-            hasRepo = result.rows[0].count == 1;
-        } catch (e) {
-            console.error(e);
-        }
+        const result = await db.query(
+            "SELECT count(*) FROM repositories WHERE name = $1 AND user_owner = $2",
+            [name, userId],
+        );
+        const hasRepo = result.rows[0].count == 1;
         return hasRepo;
     }
     /**
@@ -237,14 +217,10 @@ export default class Repository {
      * @async
      * */
     static async deleteDb(repoName, userId) {
-        try {
-            await db.query(
-                "DELETE FROM repositories WHERE name = $1 AND user_owner = $2",
-                [repoName, userId],
-            );
-        } catch (e) {
-            console.error(e);
-        }
+        await db.query(
+            "DELETE FROM repositories WHERE name = $1 AND user_owner = $2",
+            [repoName, userId],
+        );
     }
     /**
      * Delete a repository by name and user ID from cloud storage
@@ -253,11 +229,17 @@ export default class Repository {
      * @aync
      * */
     static async deleteCloud(repoName, userId) {
-        const path = join(reposPath, repoName);
-        const files = await getReposFiles(path);
-        await supabase.storage
+        const files_result = await db.query(REPOSITORIES_FILES, [
+            userId,
+            repoName,
+        ]);
+        const files = files_result.rows.map(
+            (f) => `${userId}/${repoName}/${f.path}`,
+        );
+        const { error } = await supabase.storage
             .from(SUPABASE_REPOSITORY_BUCKET)
-            .remove(files.map((f) => `${userId}/${repoName}/${f.path}`));
+            .remove(files);
+        if (error) throw error;
     }
     /**
      * Like the repository by name and user owner ID
@@ -266,20 +248,16 @@ export default class Repository {
      * @async
      * */
     static async like(repoName, userId) {
-        try {
-            const result = await db.query(
-                "SELECT likes FROM repositories WHERE name = $1 AND user_owner = $2",
-                [repoName, userId],
-            );
-            const users_liked = result.rows[0].likes;
-            users_liked.push(userId);
-            await db.query(
-                "UPDATE repositories SET likes = $1 WHERE name = $2 AND user_owner = $3",
-                [users_liked, repoName, userId],
-            );
-        } catch (e) {
-            console.error(e);
-        }
+        const result = await db.query(
+            "SELECT likes FROM repositories WHERE name = $1 AND user_owner = $2",
+            [repoName, userId],
+        );
+        const users_liked = result.rows[0].likes;
+        users_liked.push(userId);
+        await db.query(
+            "UPDATE repositories SET likes = $1 WHERE name = $2 AND user_owner = $3",
+            [users_liked, repoName, userId],
+        );
     }
     /**
      * @typedef {Object} Repository
@@ -295,15 +273,13 @@ export default class Repository {
      * @async
      * */
     static async getFromUser(username) {
-        let repos;
-        try {
-            const userId_result = await db.query("SELECT id FROM users WHERE username = $1", [username])
-            const userId = userId_result.rows[0].id
-            const repos_result = await db.query(USER_REPOSITORIES, [userId]);
-            repos = repos_result.rows;
-        } catch (e) {
-            console.error(e);
-        }
+        const userId_result = await db.query(
+            "SELECT id FROM users WHERE username = $1",
+            [username],
+        );
+        const userId = userId_result.rows[0].id;
+        const repos_result = await db.query(USER_REPOSITORIES, [userId]);
+        const repos = repos_result.rows;
         return repos;
     }
     /**
@@ -321,15 +297,10 @@ export default class Repository {
      * @async
      * */
     static async search(repoName) {
-        let repos;
-        try {
-            const repos_result = await db.query(SEARCH_REPOSITORIES, [
-                `%${repoName}%`,
-            ]);
-            repos = repos_result.rows;
-        } catch (e) {
-            console.error(e);
-        }
+        const repos_result = await db.query(SEARCH_REPOSITORIES, [
+            `%${repoName}%`,
+        ]);
+        const repos = repos_result.rows;
         return repos;
     }
     /**
@@ -339,14 +310,10 @@ export default class Repository {
      * @async
      * */
     static async changeName(newRepoName, repoName, userId) {
-        try {
-            await db.query(
-                "UPDATE repositories SET name = $1 WHERE name = $2 AND user_owner = $3",
-                [newRepoName, repoName, userId],
-            );
-        } catch (e) {
-            console.error(e);
-        }
+        await db.query(
+            "UPDATE repositories SET name = $1 WHERE name = $2 AND user_owner = $3",
+            [newRepoName, repoName, userId],
+        );
     }
     /**
      * Change description of repository
@@ -356,14 +323,10 @@ export default class Repository {
      * @async
      * */
     static async changeDescription(newDescription, repoName, userId) {
-        try {
-            await db.query(
-                "UPDATE repositories SET description = $1 WHERE name = $2 AND user_owner = $3",
-                [newDescription, repoName, userId],
-            );
-        } catch (e) {
-            console.error(e);
-        }
+        await db.query(
+            "UPDATE repositories SET description = $1 WHERE name = $2 AND user_owner = $3",
+            [newDescription, repoName, userId],
+        );
     }
     /**
      * @typedef {Object} Branch
@@ -393,16 +356,11 @@ export default class Repository {
      * @async
      * */
     static async getFullInfo(repoName, userId) {
-        let info;
-        try {
-            const info_result = await db.query(REPOSITORY_INFO, [
-                userId,
-                repoName,
-            ]);
-            info = info_result.rows[0];
-        } catch (e) {
-            console.error(e);
-        }
+        const info_result = await db.query(REPOSITORY_INFO, [
+            userId,
+            repoName,
+        ]);
+        const info = info_result.rows[0];
         return info;
     }
 }

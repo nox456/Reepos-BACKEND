@@ -25,13 +25,8 @@ export default class Branch {
      * */
     static async save(branchData) {
         const { name, repo, type } = branchData
-        let branchSaved
-        try {
-            const result = await db.query("INSERT INTO branches VALUES (DEFAULT,$1,$2,$3) RETURNING *", [name, repo, type])
-            branchSaved = result.rows[0]
-        } catch (e) {
-            console.error(e)
-        }
+        const result = await db.query("INSERT INTO branches VALUES (DEFAULT,$1,$2,$3) RETURNING *", [name, repo, type])
+        const branchSaved = result.rows[0]
         return branchSaved
     }
 }

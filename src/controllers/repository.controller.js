@@ -69,11 +69,10 @@ export default class RepositoryController {
      * Generate a zip file with repository content and get url to download
      * */
     static async download(req, res) {
-        const { repoName } = req.query;
-        const { token } = req.cookies;
+        const { repoName, username } = req.query;
         let result;
         try {
-            result = await RepositoryService.download(repoName, token);
+            result = await RepositoryService.download(repoName, username);
         } catch (e) {
             console.error(e);
             return ResponseHandler.error(
@@ -124,11 +123,10 @@ export default class RepositoryController {
         }
     }
     static async like(req, res) {
-        const { repoName } = req.body;
-        const { token } = req.cookies;
+        const { repoName, username } = req.body;
         let result;
         try {
-            result = await RepositoryService.like(repoName, token);
+            result = await RepositoryService.like(repoName, username);
         } catch (e) {
             console.error(e);
             return ResponseHandler.error(

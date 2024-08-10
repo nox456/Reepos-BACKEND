@@ -104,7 +104,7 @@ export default class RepositoryService {
         const repoSaved = await Repository.save({
             name,
             description,
-            user_owner: token_validation.data,
+            user_owner: validation.data,
         });
 
         // Relate languages with repository
@@ -270,10 +270,10 @@ export default class RepositoryService {
      * @return {Promise<ServiceResult>} Service result object
      * @async
      * */
-    static async download(repoName, token) {
+    static async download(repoName, username) {
         const validation = validationHandler([
             await Repository.validateRepoName(repoName),
-            Auth.validateToken(token)
+            await User.validateUsername(username)
         ])
         if (validation.error) return {
             success: false,
@@ -296,7 +296,19 @@ export default class RepositoryService {
                 data: null,
             };
 
-        const userHasRepo = await Repository.checkIfUserHasRepo(repoName,validation.data)
+        const user_exists = await User.checkIfExistsByUsername(username)
+        if (!user_exists) return {
+            success: false,
+            error: {
+                message: "User doesn't exists!",
+                type: NOT_FOUND
+            },
+            data: null
+        }
+
+        const user = await User.getByUsername(username)
+
+        const userHasRepo = await Repository.checkIfUserHasRepo(repoName,user.id)
         if (!userHasRepo) return {
             success: false,
             error: {
@@ -306,7 +318,7 @@ export default class RepositoryService {
             data: null
         }
 
-        const existsCloud = await Repository.checkIfExistsInCloud(repoName, validation.data);
+        const existsCloud = await Repository.checkIfExistsInCloud(repoName, user.id);
 
         if (!existsCloud)
             return {
@@ -318,7 +330,7 @@ export default class RepositoryService {
                 data: null,
             };
 
-        const files = await Repository.getFiles(repoName,validation.data);
+        const files = await Repository.getFiles(repoName,user.id);
 
         const zip_file = await downloadFiles(files, repoName);
         return {
@@ -361,8 +373,8 @@ export default class RepositoryService {
             data: null
         }
 
-        await Repository.deleteDb(repoName, validation.data);
         await Repository.deleteCloud(repoName, validation.data);
+        await Repository.deleteDb(repoName, validation.data);
         return {
             success: true,
             error: null,
@@ -372,14 +384,14 @@ export default class RepositoryService {
     /**
      * Like a repository by name and user token
      * @param {string} repoName - Repository name
-     * @param {string} token - JWT Token
+     * @param {string} username - User owner name
      * @return {Promise<ServiceResult>} Service result object
      * @async
      * */
-    static async like(repoName, token) {
+    static async like(repoName, username) {
         const validation = validationHandler([
             await Repository.validateRepoName(repoName),
-            Auth.validateToken(token)
+            await User.validateUsername(username)
         ])
         if (validation.error) return {
             success: false,
@@ -401,9 +413,21 @@ export default class RepositoryService {
                 data: null,
             };
 
+        const user_exists = await User.checkIfExistsByUsername(username)
+        if (!user_exists) return {
+            success: false,
+            error: {
+                message: "User doesn't exists!",
+                type: NOT_FOUND
+            },
+            data: null
+        }
+
+        const user = await User.getByUsername(username)
+
         const userHasRepo = await Repository.checkIfUserHasRepo(
             repoName,
-            validation.data,
+            user.id,
         );
         if (!userHasRepo)
             return {
@@ -415,7 +439,7 @@ export default class RepositoryService {
                 data: null,
             };
 
-        await Repository.like(repoName, validation.data);
+        await Repository.like(repoName, user.id);
         return {
             success: true,
             error: null,

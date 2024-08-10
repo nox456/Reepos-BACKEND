@@ -16,4 +16,5 @@ export default function validationHandler(validations) {
     for (const validation of validations) {
         if (validation.data) return validation;
     }
+    return { error: null }
 }

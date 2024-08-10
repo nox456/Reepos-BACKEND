@@ -155,17 +155,17 @@ export default class UserController {
         if (!result.success) {
             return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
         } else {
-            return ResponseHandler.ok("Users Founded!", null, res);
+            return ResponseHandler.ok("Users Founded!", result.data, res);
         }
     }
     /**
      * Get followers of a user by username
      * */
     static async getFollowers(req, res) {
-        const { token } = req.cookies;
+        const { username } = req.query;
         let result;
         try {
-            result = await UserService.getFollowers(token);
+            result = await UserService.getFollowers(username);
         } catch (e) {
             console.error(e);
             return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res)
@@ -181,10 +181,10 @@ export default class UserController {
      * Get profile info of user validating token
      * */
     static async getProfileInfo(req, res) {
-        const { token } = req.cookies;
+        const { username } = req.query;
         let result;
         try {
-            result = await UserService.getProfileInfo(token);
+            result = await UserService.getProfileInfo(username);
         } catch (e) {
             console.error(e);
             return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res)

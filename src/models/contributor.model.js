@@ -23,13 +23,8 @@ export default class Contributor {
      * */
     static async save(contributorData) {
         const { name, repo } = contributorData
-        let contributorSaved
-        try {
-            const result = await db.query("INSERT INTO contributors VALUES (DEFAULT,$1,$2) RETURNING *", [name, repo])
-            contributorSaved = result.rows[0]
-        } catch (e) {
-            console.error(e)
-        }
+        const result = await db.query("INSERT INTO contributors VALUES (DEFAULT,$1,$2) RETURNING *", [name, repo])
+        const contributorSaved = result.rows[0]
         return contributorSaved
     }
     /**
@@ -46,13 +41,8 @@ export default class Contributor {
      * @async
      * */
     static async getAll(repoName, userId) {
-        let contributors
-        try {
-            const result = await db.query(REPOSITORIES_CONTRIBUTORS, [repoName, userId])
-            contributors = result.rows
-        } catch(e) {
-            console.error(e)
-        }
+        const result = await db.query(REPOSITORIES_CONTRIBUTORS, [repoName, userId])
+        const contributors = result.rows
         return contributors
     }
 }

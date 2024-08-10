@@ -11,11 +11,10 @@ export default class CommitController {
      * Get all commits from a repository
      * */
     static async getAll(req, res) {
-        const { repoName } = req.query;
-        const { token } = req.cookies;
+        const { repoName, username } = req.query;
         let result;
         try {
-            result = await CommitService.getAll(repoName, token);
+            result = await CommitService.getAll(repoName, username);
         } catch (e) {
             return ResponseHandler.error(
                 errorCodes[INTERNAL_SERVER_ERROR],
