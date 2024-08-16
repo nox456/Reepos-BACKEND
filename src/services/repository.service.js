@@ -171,6 +171,7 @@ export default class RepositoryService {
                 size: file.size,
                 path: file.path,
                 repo: repoSaved.id,
+                content: file.content
             });
             filesSaved.push(fileSaved);
 

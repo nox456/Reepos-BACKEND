@@ -28,10 +28,10 @@ export default class File {
      * @async
      * */
     static async save(fileData) {
-        const { name, size, path, repo } = fileData;
+        const { name, size, path, repo, content } = fileData;
         const result = await db.query(
-            "INSERT INTO files VALUES (DEFAULT,$1,$2,$3,$4) RETURNING *",
-            [name, size, path, repo],
+            "INSERT INTO files VALUES (DEFAULT,$1,$2,$3,$4,$5) RETURNING *",
+            [name, size, path, repo, content],
         );
         const fileSaved = result.rows[0];
         return fileSaved;
