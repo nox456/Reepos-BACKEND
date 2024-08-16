@@ -447,54 +447,6 @@ export default class RepositoryService {
         };
     }
     /**
-     * Get repositories from an user by ID
-     * @param {string} username - User owner name
-     * @return {Promise<ServiceResult>} Service result object
-     * @async
-     * */
-    static async getFromUser(username) {
-        const validation = validationHandler([
-            await User.validateUsername(username)
-        ])
-        if (validation.error) return {
-            success: false,
-            error: {
-                message: validation.error,
-                type: BAD_REQUEST
-            },
-            data: null
-        }
-
-        const user_exists = await User.checkIfExistsByUsername(username);
-        if (!user_exists)
-            return {
-                success: false,
-                error: {
-                    message: "User doesn't exists!",
-                    type: NOT_FOUND,
-                },
-                data: null,
-            };
-
-        const repos = await Repository.getFromUser(username);
-
-        if (repos.length == 0)
-            return {
-                success: false,
-                error: {
-                    message: "User doesn't have repositories",
-                    type: NOT_FOUND,
-                },
-                data: null,
-            };
-
-        return {
-            success: true,
-            error: null,
-            data: repos,
-        };
-    }
-    /**
      * Search repositories by name
      * @return {Promise<ServiceResult>} Service result object
      * */

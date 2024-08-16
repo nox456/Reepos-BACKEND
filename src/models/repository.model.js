@@ -260,29 +260,6 @@ export default class Repository {
         );
     }
     /**
-     * @typedef {Object} Repository
-     * @property {string} name - Repository name
-     * @property {string} description- Repository description
-     * @property {int} likes - Repository likes
-     * @property {string[]} languages - Repository languages
-     * */
-    /**
-     * Get repositories from an user by ID
-     * @param {string} username - User owner name
-     * @return {Promise<Repository[]>} User's repositories
-     * @async
-     * */
-    static async getFromUser(username) {
-        const userId_result = await db.query(
-            "SELECT id FROM users WHERE username = $1",
-            [username],
-        );
-        const userId = userId_result.rows[0].id;
-        const repos_result = await db.query(USER_REPOSITORIES, [userId]);
-        const repos = repos_result.rows;
-        return repos;
-    }
-    /**
      * @typedef {Object} RepositoryFounded
      * @property {string} user - User owner name
      * @property {string} name - Repository name

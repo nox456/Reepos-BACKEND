@@ -146,36 +146,6 @@ export default class RepositoryController {
         }
     }
     /**
-     * Get repositories from an user
-     * */
-    static async getFromUser(req, res) {
-        const { username } = req.query;
-        let result;
-        try {
-            result = await RepositoryService.getFromUser(username);
-        } catch (e) {
-            console.error(e);
-            return ResponseHandler.error(
-                errorCodes[INTERNAL_SERVER_ERROR],
-                "Internal Server Error!",
-                res,
-            );
-        }
-        if (!result.success) {
-            return ResponseHandler.error(
-                errorCodes[result.error.type],
-                result.error.message,
-                res,
-            );
-        } else {
-            return ResponseHandler.ok(
-                "Repositories Founded!",
-                result.data,
-                res,
-            );
-        }
-    }
-    /**
      * Search repositories by name
      * */
     static async search(req, res) {

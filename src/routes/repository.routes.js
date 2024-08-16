@@ -3,8 +3,6 @@ import RepositoryController from "../controllers/repository.controller.js";
 
 const router = Router()
 
-
-
 // Create a repository in database
 router.post("/create", RepositoryController.create)
 // Upload a repository to supabase
@@ -15,8 +13,6 @@ router.get("/download", RepositoryController.download)
 router.put("/like", RepositoryController.like)
 // Deleted a repository
 router.delete("/", RepositoryController.delete)
-// Get from an user
-router.get("/", RepositoryController.getFromUser)
 // Search repositories by name
 router.get("/search", RepositoryController.search)
 // Change name of repository
