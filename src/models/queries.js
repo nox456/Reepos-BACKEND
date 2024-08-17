@@ -116,22 +116,6 @@ WHERE
         SELECT id FROM repositories WHERE repositories.name = $1 AND repositories.user_owner = $2
     )`;
 
-export const USER_REPOSITORIES = `
-SELECT
-    repositories.name as name,
-    repositories.description as description,
-    repositories.created_at as created_at,
-    coalesce(array_length(repositories.likes,1),0) as likes,
-    array_agg(languages.name) as languages
-FROM repositories
-    LEFT OUTER JOIN repositories_languages
-        ON repositories_languages.repo_id = repositories.id
-    LEFT OUTER JOIN languages
-        ON repositories_languages.language_id = languages.id
-WHERE repositories.user_owner = $1
-GROUP BY repositories.name, repositories.description, repositories.likes, repositories.created_at
-`
-
 export const SEARCH_REPOSITORIES = `
 SELECT
     users.username as user,
@@ -252,4 +236,30 @@ FROM commits
     LEFT OUTER JOIN branches 
         ON commits_branches.branch = branches.id 
 WHERE commits.hash = $1
+`
+
+export const FILE_INFO = `
+SELECT
+    files.name as name,
+    files.size as size,
+    files.path as path,
+    languages.name as language,
+    (
+    SELECT 
+        json_build_object(
+            'title',commits.title,
+            'created_at',commits.created_at
+        ) as last_commit
+    FROM files 
+    LEFT OUTER JOIN modifications
+        ON modifications.file = $1 
+    LEFT OUTER JOIN commits 
+        ON commits.id = modifications.commit 
+    ORDER BY commits.created_at DESC LIMIT 1
+    ) 
+FROM
+    files
+        LEFT OUTER JOIN languages
+            ON languages.id = files.language
+WHERE files.id = $1
 `

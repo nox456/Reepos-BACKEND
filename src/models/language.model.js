@@ -18,4 +18,14 @@ export default class Language {
         const exists = result.rows[0].count > 0;
         return exists;
     }
+    /**
+     * Get id by extension
+     * @param {string} ext - File extension
+     * @return {Promise<string>} Language ID
+     * @async
+     * */
+    static async getByExt(ext) {
+        const result = await db.query("SELECT id FROM languages WHERE ext = $1", [ext])
+        return result.rows[0]?.id
+    }
 }

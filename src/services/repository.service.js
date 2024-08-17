@@ -166,12 +166,17 @@ export default class RepositoryService {
         const filesSaved = [];
         const modificationsSaved = [];
         for (const file of files) {
+            // Relate with languages
+            const ext = file.name.slice(file.name.lastIndexOf(".") + 1)
+            const language_id = await Language.getByExt(ext)
+
             const fileSaved = await File.save({
                 name: file.name,
                 size: file.size,
                 path: file.path,
                 repo: repoSaved.id,
-                content: file.content
+                content: file.content,
+                language: language_id
             });
             filesSaved.push(fileSaved);
 
@@ -192,6 +197,7 @@ export default class RepositoryService {
                     }),
                 );
             }
+
         }
         // Save files deleted previously in database
         const deletedFilesModifications = modifications.filter(

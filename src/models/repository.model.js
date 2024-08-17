@@ -9,8 +9,7 @@ import { fileURLToPath } from "url";
 import {
     REPOSITORIES_FILES,
     REPOSITORY_INFO,
-    SEARCH_REPOSITORIES,
-    USER_REPOSITORIES,
+    SEARCH_REPOSITORIES
 } from "./queries.js";
 
 const reposPath = join(dirname(fileURLToPath(import.meta.url)), "../temp");

@@ -2,6 +2,7 @@ import db from "../connections/database.js";
 import supabase from "../connections/supabase.js";
 import { SUPABASE_REPOSITORY_BUCKET } from "../config/env.js";
 import { z } from "zod";
+import { FILE_INFO } from "./queries.js";
 
 /**
  * Repository File class
@@ -28,10 +29,10 @@ export default class File {
      * @async
      * */
     static async save(fileData) {
-        const { name, size, path, repo, content } = fileData;
+        const { name, size, path, repo, content, language } = fileData;
         const result = await db.query(
-            "INSERT INTO files VALUES (DEFAULT,$1,$2,$3,$4,$5) RETURNING *",
-            [name, size, path, repo, content],
+            "INSERT INTO files VALUES (DEFAULT,$1,$2,$3,$4,$5,$6) RETURNING *",
+            [name, size, path, repo, content,language],
         );
         const fileSaved = result.rows[0];
         return fileSaved;
@@ -114,5 +115,53 @@ export default class File {
         if (error) throw error
         const exists = data.length > 0;
         return exists;
+    }
+    /**
+     * @typedef {Object} LastCommit
+     * @property {string} title - Last commit title
+     * @property {string} created_at - Date of creation
+     *
+     * @typedef {Object} FileInfo
+     * @property {string} name - File name
+     * @property {string} size - File size
+     * @property {string} path - File path
+     * @property {string} content - File content
+     * @property {string} language - Language name
+     * @property {LastCommit} last_commit - Last commit
+     * */
+    /**
+     * Get info of file
+     * @param {string} id - File ID
+     * @return {Promise<FileInfo>}
+     * @async
+     * */
+    static async getInfo(id,repoName,userId) {
+        const result = await db.query(FILE_INFO, [id])
+        const fileInfo = result.rows[0]
+
+        const ext = fileInfo.path.slice(fileInfo.path.lastIndexOf(".") + 1);
+        const binExts = [
+            "png",
+            "jpg",
+            "mp3",
+            "mp4",
+            "exe",
+            "webp",
+            "gif",
+            "jpeg",
+            "ico",
+            "svg"
+        ];
+
+        if (!binExts.includes(ext)) {
+            const fileUrl = supabase.storage.from(SUPABASE_REPOSITORY_BUCKET).getPublicUrl(`${userId}/${repoName}/${fileInfo.path}`)
+            const file_result = await fetch(fileUrl.data.publicUrl)
+
+            console.log(`${userId}/${repoName}/${fileInfo.path}`)
+            fileInfo.content = await file_result.text()
+        } else {
+            fileInfo.content = null
+        }
+        return fileInfo
     }
 }

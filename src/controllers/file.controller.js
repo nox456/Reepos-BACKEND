@@ -34,4 +34,30 @@ export default class FileController {
             return ResponseHandler.ok("File founded!", result.data, res);
         }
     }
+    /**
+     * Get info
+     * */
+    static async getInfo(req, res) {
+        const { repoName, fileId, username } = req.query;
+        let result;
+        try {
+            result = await FileService.getInfo(fileId, repoName, username);
+        } catch (e) {
+            console.error(e);
+            return ResponseHandler.error(
+                errorCodes[INTERNAL_SERVER_ERROR],
+                "Internal Server Error!",
+                res,
+            );
+        }
+        if (!result.success) {
+            return ResponseHandler.error(
+                errorCodes[result.error.type],
+                result.error.message,
+                res,
+            );
+        } else {
+            return ResponseHandler.ok("File Info", result.data, res);
+        }
+    }
 }

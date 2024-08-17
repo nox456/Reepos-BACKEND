@@ -8,5 +8,7 @@ const router = Router()
 router.get("/download", FileController.download)
 // Upload file to backend
 router.post("/upload", MulterController.uploadFile)
+// Get file info
+router.get("/", FileController.getInfo)
 
 export default router

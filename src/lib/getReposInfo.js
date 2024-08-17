@@ -148,4 +148,3 @@ export default async function repoInfo(repoName) {
         modifications,
     };
 }
-console.log((await repoInfo("etirz")).files)
