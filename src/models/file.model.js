@@ -29,10 +29,10 @@ export default class File {
      * @async
      * */
     static async save(fileData) {
-        const { name, size, path, repo, content, language } = fileData;
+        const { name, size, path, repo, language } = fileData;
         const result = await db.query(
-            "INSERT INTO files VALUES (DEFAULT,$1,$2,$3,$4,$5,$6) RETURNING *",
-            [name, size, path, repo, content,language],
+            "INSERT INTO files VALUES (DEFAULT,$1,$2,$3,$4,$5) RETURNING *",
+            [name, size, path, repo, language],
         );
         const fileSaved = result.rows[0];
         return fileSaved;
@@ -157,7 +157,6 @@ export default class File {
             const fileUrl = supabase.storage.from(SUPABASE_REPOSITORY_BUCKET).getPublicUrl(`${userId}/${repoName}/${fileInfo.path}`)
             const file_result = await fetch(fileUrl.data.publicUrl)
 
-            console.log(`${userId}/${repoName}/${fileInfo.path}`)
             fileInfo.content = await file_result.text()
         } else {
             fileInfo.content = null

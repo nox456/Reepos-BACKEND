@@ -1,7 +1,6 @@
 import simpleGit from "simple-git";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
-import execCommand from "./exec.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -21,7 +20,6 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
  * @property {string} name - File name
  * @property {string} size - File size
  * @property {string} path - File path
- * @property {?string} content - File content
  *
  * @typedef {Object} Modification
  * @property {string} commit - Commit ID
@@ -88,32 +86,10 @@ export default async function repoInfo(repoName) {
             size = `${sizeBytes} B`;
         }
 
-        const ext = path.slice(path.lastIndexOf(".") + 1);
-        const binExts = [
-            "png",
-            "jpg",
-            "mp3",
-            "mp4",
-            "exe",
-            "webp",
-            "gif",
-            "jpeg",
-            "ico",
-            "svg"
-        ];
-        let content;
-
-        if (!binExts.includes(ext)) {
-            content = await execCommand(`cat ${join(repoPath,path)}`)
-        } else {
-            content = null
-        }
-
         files.push({
             name: path.slice(path.lastIndexOf("/") + 1),
             size,
-            path,
-            content
+            path
         });
     }
     const modifications = [];
