@@ -52,7 +52,8 @@ export default class File {
         const { path, name } = path_result.rows[0];
         const fileUrl = supabase.storage
             .from(SUPABASE_REPOSITORY_BUCKET)
-            .getPublicUrl(`${userId}/${repoName}/${path}`, { download: name }).data.publicUrl;
+            .getPublicUrl(`${userId}/${repoName}/${path}`, { download: name })
+            .data.publicUrl;
         return fileUrl;
     }
     /**
@@ -107,12 +108,15 @@ export default class File {
             [file_id],
         );
         const { name, path } = result_file.rows[0];
-        const {data,error} = await supabase.storage
+        const { data, error } = await supabase.storage
             .from(SUPABASE_REPOSITORY_BUCKET)
-            .list(`${userId}/${repoName}/${path.includes("/") ? path.slice(0, path.lastIndexOf("/")) : ""}`, {
-                search: name,
-            });
-        if (error) throw error
+            .list(
+                `${userId}/${repoName}/${path.includes("/") ? path.slice(0, path.lastIndexOf("/")) : ""}`,
+                {
+                    search: name,
+                },
+            );
+        if (error) throw error;
         const exists = data.length > 0;
         return exists;
     }
@@ -135,9 +139,9 @@ export default class File {
      * @return {Promise<FileInfo>}
      * @async
      * */
-    static async getInfo(id,repoName,userId) {
-        const result = await db.query(FILE_INFO, [id])
-        const fileInfo = result.rows[0]
+    static async getInfo(id, repoName, userId) {
+        const result = await db.query(FILE_INFO, [id]);
+        const fileInfo = result.rows[0];
 
         const ext = fileInfo.path.slice(fileInfo.path.lastIndexOf(".") + 1);
         const binExts = [
@@ -150,17 +154,26 @@ export default class File {
             "gif",
             "jpeg",
             "ico",
-            "svg"
+            "svg",
         ];
 
-        if (!binExts.includes(ext)) {
-            const fileUrl = supabase.storage.from(SUPABASE_REPOSITORY_BUCKET).getPublicUrl(`${userId}/${repoName}/${fileInfo.path}`)
-            const file_result = await fetch(fileUrl.data.publicUrl)
+        const fileDownloadUrl = supabase.storage
+            .from(SUPABASE_REPOSITORY_BUCKET)
+            .getPublicUrl(`${userId}/${repoName}/${fileInfo.path}`, {
+                download: fileInfo.name,
+            });
+        fileInfo.url = fileDownloadUrl.data.publicUrl;
 
-            fileInfo.content = await file_result.text()
+        if (!binExts.includes(ext)) {
+            const fileUrl = supabase.storage
+                .from(SUPABASE_REPOSITORY_BUCKET)
+                .getPublicUrl(`${userId}/${repoName}/${fileInfo.path}`);
+            const file_result = await fetch(fileUrl.data.publicUrl);
+
+            fileInfo.content = await file_result.text();
         } else {
-            fileInfo.content = null
+            fileInfo.content = null;
         }
-        return fileInfo
+        return fileInfo;
     }
 }
