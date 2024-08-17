@@ -49,7 +49,7 @@ export default class AuthService {
             return {
                 success: false,
                 error: {
-                    message: "User already exists!",
+                    message: "Usuario ya existe!",
                     type: BAD_REQUEST,
                 },
                 data: null,
@@ -95,7 +95,7 @@ export default class AuthService {
             return {
                 success: false,
                 error: {
-                    message: "User doesn't exists!",
+                    message: "Usuario no existe!",
                     type: NOT_FOUND,
                 },
                 data: null,
@@ -112,7 +112,7 @@ export default class AuthService {
             return {
                 success: false,
                 error: {
-                    message: "Invalid Password!",
+                    message: "Contraseña invalida!",
                     type: FORBIDDEN,
                 },
                 data: null,

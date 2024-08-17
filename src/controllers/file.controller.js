@@ -20,7 +20,7 @@ export default class FileController {
             console.error(e);
             return ResponseHandler.error(
                 errorCodes[INTERNAL_SERVER_ERROR],
-                "Internal Server Error!",
+                "Error del servidor!",
                 res,
             );
         }
@@ -31,7 +31,7 @@ export default class FileController {
                 res,
             );
         } else {
-            return ResponseHandler.ok("File founded!", result.data, res);
+            return ResponseHandler.ok("Archivo encontrado!", result.data, res);
         }
     }
     /**
@@ -46,7 +46,7 @@ export default class FileController {
             console.error(e);
             return ResponseHandler.error(
                 errorCodes[INTERNAL_SERVER_ERROR],
-                "Internal Server Error!",
+                "Error del servidor!",
                 res,
             );
         }
@@ -57,7 +57,7 @@ export default class FileController {
                 res,
             );
         } else {
-            return ResponseHandler.ok("File Info", result.data, res);
+            return ResponseHandler.ok("Información del archivo!", result.data, res);
         }
     }
 }

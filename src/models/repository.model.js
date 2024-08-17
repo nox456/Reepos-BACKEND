@@ -75,8 +75,8 @@ export default class Repository {
      * */
     static async validateRepoName(repoName) {
         const schema = z.string({
-            invalid_type_error: "Repository Name must be a string!",
-            required_error: "Repository Name required!",
+            invalid_type_error: "Nombre de repositorio debe ser un string!",
+            required_error: "Nombre de repositorio requerido!",
         });
         const validation = await schema.safeParseAsync(repoName);
         let error = null;
@@ -164,8 +164,8 @@ export default class Repository {
      * */
     static async validateDescription(description) {
         const schema = z.string({
-            required_error: "Description required!",
-            invalid_type_error: "Description must be a string!",
+            required_error: "Descripción requerida!",
+            invalid_type_error: "Descripción debe ser un string!",
         });
         const validation = await schema.safeParseAsync(description);
         let error = null;
@@ -183,8 +183,8 @@ export default class Repository {
     static async validateLanguages(languages) {
         const schema = z
             .string({
-                invalid_type_error: "Languages must be an array of strings!",
-                required_error: "Languages required!",
+                invalid_type_error: "Lenguajes debe ser un array de strings!",
+                required_error: "Lenguajes requeridos!",
             })
             .array();
         const validation = await schema.safeParseAsync(languages);

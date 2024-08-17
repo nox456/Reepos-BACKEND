@@ -43,7 +43,7 @@ export default class UserService {
         if (!userExists) return {
             success: false,
             error: {
-                message: "User doesn't exists",
+                message: "Usuario no existe!",
                 type: NOT_FOUND
             },
             data: null
@@ -58,7 +58,7 @@ export default class UserService {
         if (!matchPassword) return {
             success: false,
             error: {
-                message: "Invalid Password",
+                message: "Contraseña invalida!",
                 type: FORBIDDEN
             },
             data: null
@@ -99,7 +99,7 @@ export default class UserService {
         if (!userExists) return {
             success: false,
             error: {
-                message: "User doesn't exists!",
+                message: "Usuario no existe!",
                 type: NOT_FOUND
             },
             data: null
@@ -112,7 +112,7 @@ export default class UserService {
         if (!matchPassword) return {
             success: false,
             error: {
-                message: "Invalid Password!",
+                message: "Contraseña invalida!",
                 type: FORBIDDEN
             },
             data: null
@@ -153,7 +153,7 @@ export default class UserService {
         if (!userExists) return {
             success: false,
             error: {
-                message: "User doesn't exists!",
+                message: "Usuario no existe!",
                 type: NOT_FOUND
             },
             data: null
@@ -166,7 +166,7 @@ export default class UserService {
         if (!matchPassword) return {
             success: false,
             error: {
-                message: "Invalid Password!",
+                message: "Contraseña invalida!",
                 type: FORBIDDEN
             },
             data: null
@@ -207,7 +207,7 @@ export default class UserService {
         if (!userExists) return {
             success: false,
             error: {
-                message: "User doesn't exists!",
+                message: "Usuario no existe!",
                 type: NOT_FOUND
             },
             data: null
@@ -245,7 +245,7 @@ export default class UserService {
         if (!userExists) return {
             success: false,
             error: {
-                message: "User doesn't exists!",
+                message: "Usuario no existe!",
                 type: NOT_FOUND
             },
             data: null
@@ -283,7 +283,7 @@ export default class UserService {
         if (!userExists) return {
             success: false,
             error: {
-                message: "User doesn't exists!",
+                message: "Usuario no existe!",
                 type: NOT_FOUND
             },
             data: null
@@ -293,7 +293,7 @@ export default class UserService {
         if (!followerExists) return {
             success: false,
             error: {
-                message: "Follower doesn't exists!",
+                message: "Seguidor no existe!",
                 type: NOT_FOUND
             },
             data: null
@@ -353,7 +353,7 @@ export default class UserService {
         if (!userExists) return {
             success: false,
             error: {
-                message: "User doesn't exists!",
+                message: "Usuario no existe!",
                 type: NOT_FOUND
             },
             data: null
@@ -389,7 +389,7 @@ export default class UserService {
         if (!userExists) return {
             success: false,
             error: {
-                message: "User doesn't exists!",
+                message: "Usuario no existe!",
                 type: NOT_FOUND
             },
             data: null

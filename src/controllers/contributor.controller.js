@@ -16,7 +16,7 @@ export default class ContributorController {
             console.error(e);
             return ResponseHandler.error(
                 errorCodes[INTERNAL_SERVER_ERROR],
-                "Internal Server Error!",
+                "Error del servidor!",
                 res,
             );
         }
@@ -28,7 +28,7 @@ export default class ContributorController {
             );
         } else {
             return ResponseHandler.ok(
-                "Contributors Founded!",
+                "Contribuidores encontrados!",
                 result.data,
                 res,
             );

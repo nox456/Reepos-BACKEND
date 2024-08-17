@@ -69,10 +69,10 @@ export default class File {
     static async validateId(id) {
         const schema = z
             .string({
-                invalid_type_error: "ID must be a string!",
-                required_error: "ID required!",
+                invalid_type_error: "ID debe ser un string!",
+                required_error: "ID requerido!",
             })
-            .uuid({ message: "ID must be a UUID" });
+            .uuid({ message: "ID debe ser un UUID" });
         const validation = await schema.safeParseAsync(id);
         let error = null;
         if (!validation.success) {

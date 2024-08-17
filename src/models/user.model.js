@@ -162,8 +162,8 @@ export default class User {
      * */
     static async validateId(id) {
         const schema = z
-            .string({ invalid_type_error: "ID must be a string!", required_error: "ID required!" })
-            .uuid({ message: "ID must be a UUID" })
+            .string({ invalid_type_error: "ID debe ser un string!", required_error: "ID requerido!" })
+            .uuid({ message: "ID debe ser un UUID!" })
         const validation = await schema.safeParseAsync(id)
         let error = null
         if (!validation.success) {
@@ -181,9 +181,9 @@ export default class User {
      * */
     static async validateUsername(username) {
         const schema = z
-            .string({ invalid_type_error: "Username must be a string!", required_error: "Username required!" })
-            .min(3, { message: "Username must be 3 or more characters" })
-            .max(15, { message: "Username must be less than 15 characters" })
+            .string({ invalid_type_error: "Nombre de usuario debe ser un string!", required_error: "Nombre de usuario requerido!" })
+            .min(3, { message: "Nombre de usuario debe tener 3 o mas caracteres" })
+            .max(15, { message: "Nombre de usuario debe tener menos de 15 caracteres" })
         const validation = await schema.safeParseAsync(username)
         let error = null
         if (!validation.success) {
@@ -201,8 +201,8 @@ export default class User {
      * */
     static async validatePassword(password) {
         const schema = z
-            .string({ invalid_type_error: "Password must be a string!", required_error: "Password required!" })
-            .min(1, { message: "Password required!" })
+            .string({ invalid_type_error: "Contraseña debe ser un string!", required_error: "Contraseña requerida!" })
+            .min(1, { message: "Contraseña requerida!" })
         const validation = await schema.safeParseAsync(password)
         let error = null
         if (!validation.success) {
@@ -220,8 +220,8 @@ export default class User {
      * */
     static async validateDescription(description) {
         const schema = z
-            .string({ invalid_type_error: "Description must be a string!", required_error: "Description required!" })
-            .max(150, { message: "Description must be less than 150 characters" })
+            .string({ invalid_type_error: "Descripción debe ser un string!", required_error: "Descripción requerida!" })
+            .max(150, { message: "Descripción debe tener menos de 150 caracteres" })
         const validation = await schema.safeParseAsync(description)
         let error = null
         if (!validation.success) {

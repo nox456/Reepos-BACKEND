@@ -20,7 +20,7 @@ export default class RepositoryController {
             console.error(e);
             return ResponseHandler.error(
                 errorCodes[INTERNAL_SERVER_ERROR],
-                "Internal Server Error!",
+                "Error del servidor!",
                 res,
             );
         }
@@ -31,7 +31,7 @@ export default class RepositoryController {
                 res,
             );
         } else {
-            return ResponseHandler.ok("Created Repository!", null, res);
+            return ResponseHandler.ok("Repositorio creado!", null, res);
         }
     }
     /**
@@ -47,7 +47,7 @@ export default class RepositoryController {
             console.error(e);
             return ResponseHandler.error(
                 errorCodes[INTERNAL_SERVER_ERROR],
-                "Internal Server Error!",
+                "Error del servidor!",
                 res,
             );
         }
@@ -59,7 +59,7 @@ export default class RepositoryController {
             );
         } else {
             return ResponseHandler.ok(
-                "Repository Uploaded to Cloud!",
+                "Repositorio subido a la nube!",
                 null,
                 res,
             );
@@ -77,7 +77,7 @@ export default class RepositoryController {
             console.error(e);
             return ResponseHandler.error(
                 errorCodes[INTERNAL_SERVER_ERROR],
-                "Internal Server Error!",
+                "Error del servidor!",
                 res,
             );
         }
@@ -89,7 +89,7 @@ export default class RepositoryController {
             );
         } else {
             return ResponseHandler.ok(
-                "Repository downloaded!",
+                "Repositorio descargado!",
                 result.data,
                 res,
             );
@@ -108,7 +108,7 @@ export default class RepositoryController {
             console.error(e);
             return ResponseHandler.error(
                 errorCodes[INTERNAL_SERVER_ERROR],
-                "Internal Server Error!",
+                "Error del servidor!",
                 res,
             );
         }
@@ -119,7 +119,7 @@ export default class RepositoryController {
                 res,
             );
         } else {
-            return ResponseHandler.ok("Repository deleted!", null, res);
+            return ResponseHandler.ok("Repositorio eliminado!", null, res);
         }
     }
     static async like(req, res) {
@@ -131,7 +131,7 @@ export default class RepositoryController {
             console.error(e);
             return ResponseHandler.error(
                 errorCodes[INTERNAL_SERVER_ERROR],
-                "Internal Server Error!",
+                "Error del servidor!",
                 res,
             );
         }
@@ -142,7 +142,7 @@ export default class RepositoryController {
                 res,
             );
         } else {
-            return ResponseHandler.ok("Repository liked!", result.data, res);
+            return ResponseHandler.ok("Repositorio con like!", result.data, res);
         }
     }
     /**
@@ -157,7 +157,7 @@ export default class RepositoryController {
             console.error(e);
             return ResponseHandler.error(
                 errorCodes[INTERNAL_SERVER_ERROR],
-                "Internal Server Error!",
+                "Error del servidor!",
                 res,
             );
         }
@@ -169,7 +169,7 @@ export default class RepositoryController {
             );
         } else {
             return ResponseHandler.ok(
-                "Respositories Founded!",
+                "Repositorio encontrado!",
                 result.data,
                 res,
             );
@@ -192,7 +192,7 @@ export default class RepositoryController {
             console.error(e);
             return ResponseHandler.error(
                 errorCodes[INTERNAL_SERVER_ERROR],
-                "Internal Server Error!",
+                "Error del servidor!",
                 res,
             );
         }
@@ -204,7 +204,7 @@ export default class RepositoryController {
             );
         } else {
             return ResponseHandler.ok(
-                "Name of repository changed!",
+                "Nombre de repositorio cambiado!",
                 result.data,
                 res,
             );
@@ -227,7 +227,7 @@ export default class RepositoryController {
             console.error(e);
             return ResponseHandler.error(
                 errorCodes[INTERNAL_SERVER_ERROR],
-                "Internal Server Error!",
+                "Error del servidor!",
                 res,
             );
         }
@@ -239,7 +239,7 @@ export default class RepositoryController {
             );
         } else {
             return ResponseHandler.ok(
-                "Description of repository changed!",
+                "Descripción de repositorio cambiada!",
                 result.data,
                 res,
             );
@@ -252,12 +252,12 @@ export default class RepositoryController {
             result = await RepositoryService.getInfo(repoName,username)
         } catch(e) {
             console.error(e)
-            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res)
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Error del servidor!", res)
         }
         if (!result.success) {
             return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
         } else {
-            return ResponseHandler.ok("Info of repository!",result.data, res)
+            return ResponseHandler.ok("Información del repositorio!",result.data, res)
         }
     }
 }

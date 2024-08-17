@@ -4,7 +4,6 @@ import Repository from "../models/repository.model.js";
 import User from "../models/user.model.js";
 import validationHandler from "../lib/validationHandler.js";
 import { BAD_REQUEST, FORBIDDEN, NOT_FOUND } from "../lib/constants/errors.js";
-import { nullable } from "zod";
 
 /**
  * Service to handle files proccesses
@@ -48,8 +47,8 @@ export default class FileService {
             return {
                 success: false,
                 error: {
-                    message: "File doesn't exists in database!",
-                    type: "not found",
+                    message: "Archivo no existe en la base de datos!",
+                    type: NOT_FOUND,
                 },
                 data: null,
             };
@@ -59,7 +58,7 @@ export default class FileService {
             return {
                 success: false,
                 error: {
-                    message: "File doesn't exists in cloud storage",
+                    message: "Archivo no existe en el cloud!",
                     type: NOT_FOUND,
                 },
                 data: null,
@@ -70,7 +69,7 @@ export default class FileService {
             return {
                 success: false,
                 error: {
-                    message: "User doesn't exists!",
+                    message: "Usuario no existe!",
                     type: NOT_FOUND,
                 },
                 data: null,
@@ -84,7 +83,7 @@ export default class FileService {
             return {
                 success: false,
                 error: {
-                    message: "User doesn't have the repository!",
+                    message: "Usuario no tiene el repositorio!",
                     type: FORBIDDEN,
                 },
                 data: null,
@@ -128,7 +127,7 @@ export default class FileService {
         if (!exists) return {
             success: false,
             error: {
-                message: "File doesn't exists!",
+                message: "Archivo no existe en la base de datos!",
                 type: NOT_FOUND
             },
             data: null
@@ -138,7 +137,7 @@ export default class FileService {
         if (!repo_existsDb) return {
             success: false,
             error: {
-                message: "Repository doesn't exists in database!",
+                message: "Repositorio no existe en la base de datos!",
                 type: NOT_FOUND
             },
             data: null
@@ -148,7 +147,7 @@ export default class FileService {
         if (!user_exists) return {
             success: false,
             error: {
-                message: "User doesn't exists!",
+                message: "Usuario no existe!",
                 type: NOT_FOUND
             },
             data: null
@@ -160,7 +159,7 @@ export default class FileService {
         if (!userHasRepo) return {
             success: false,
             error: {
-                message: "User doesn't have the repository!",
+                message: "Usuario no tiene el repositorio!",
                 type: FORBIDDEN
             },
             data: null
@@ -170,7 +169,7 @@ export default class FileService {
         if (!repo_existsCloud) return {
             success: false,
             error: {
-                message: "Repository doesn't exists in cloud storage!",
+                message: "Repositorio no existe en el cloud!",
                 type: NOT_FOUND
             },
             data: null

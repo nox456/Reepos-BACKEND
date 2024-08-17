@@ -97,7 +97,7 @@ export default class Commit {
      * @async
      * */
     static async validateHash(hash) {
-        const schema = z.string({required_error: "Hash required!", invalid_type_error: "Hash must be a string!"})
+        const schema = z.string({required_error: "Hash requerido!", invalid_type_error: "Hash debe ser un string!"})
         const validation = await schema.safeParseAsync(hash)
         let error = null
         if (!validation.success) {

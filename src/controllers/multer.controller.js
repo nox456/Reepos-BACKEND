@@ -13,8 +13,8 @@ const fileStorage = multer.diskStorage({
     destination: async (req, file, cb) => {
         const { path, repoName } = req.body;
 
-        if (!path) return cb("Path required!");
-        if (!repoName) return cb("Repository Name required!");
+        if (!path) return cb("Path requerido!");
+        if (!repoName) return cb("Nombre de repositorio requerido!");
 
         await mkdir(join(reposPath, repoName, path), { recursive: true });
         return cb(null, join(reposPath, repoName, path));
@@ -38,7 +38,7 @@ export default class MulterController {
             if (exts_available.includes(ext)) {
                 return cb(null, true);
             } else {
-                return cb(new Error("Unsupported image extension!"));
+                return cb(new Error("Extensión de archivo no soportado!"));
             }
         },
     }).single("user_image");
@@ -57,7 +57,7 @@ export default class MulterController {
                 );
             }
             return ResponseHandler.ok(
-                "File Uploaded to Backend",
+                "Archivo subido al servidor!",
                 req.file.originalname,
                 res,
             );

@@ -21,7 +21,7 @@ export default class AuthController {
             });
         } catch (e) {
             console.error(e);
-            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res);
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Error del servidor!", res);
         }
         if (!result.success) {
             return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res);
@@ -31,7 +31,7 @@ export default class AuthController {
                 secure: COOKIES_SECURE === "true",
                 sameSite: COOKIES_SAMESITE,
             });
-            return ResponseHandler.ok("User Registered!", null, res);
+            return ResponseHandler.ok("Usuario registrado!", null, res);
         }
     }
     /**
@@ -47,7 +47,7 @@ export default class AuthController {
             });
         } catch (e) {
             console.error(e);
-            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res);
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Error del servidor!", res);
         }
         // Send response depending on validations
         if (!result.success) {
@@ -58,7 +58,7 @@ export default class AuthController {
                 secure: COOKIES_SECURE === "true",
                 sameSite: COOKIES_SAMESITE,
             });
-            return ResponseHandler.ok("User Authenticated!", null, res);
+            return ResponseHandler.ok("Usuario autorizado!", null, res);
         }
     }
     /**
@@ -71,12 +71,12 @@ export default class AuthController {
             result = AuthService.verifyToken(token);
         } catch (e) {
             console.error(e);
-            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!", res);
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Error del servidor!", res);
         }
         if (!result.success) {
             return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res);
         } else {
-            return ResponseHandler.ok("User Authenticated!", null, res);
+            return ResponseHandler.ok("Usuario autorizado!", null, res);
         }
     }
 }

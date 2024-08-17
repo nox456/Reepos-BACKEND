@@ -18,7 +18,7 @@ export default class CommitController {
         } catch (e) {
             return ResponseHandler.error(
                 errorCodes[INTERNAL_SERVER_ERROR],
-                "Internal Server Error!",
+                "Error del servidor!",
                 res,
             );
         }
@@ -29,7 +29,7 @@ export default class CommitController {
                 res,
             );
         } else {
-            return ResponseHandler.ok("Commits Founded!", result.data, res);
+            return ResponseHandler.ok("Commits encontrados!", result.data, res);
         }
     }
     /**
@@ -42,12 +42,12 @@ export default class CommitController {
             result = await CommitService.getInfo(hash)
         } catch(e) {
             console.error(e)
-            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Internal Server Error!",res)
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Error del servidor!",res)
         }
         if (!result.success) {
             return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
         } else {
-            return ResponseHandler.ok("Commit Info!",result.data, res)
+            return ResponseHandler.ok("Información del Commit!",result.data, res)
         }
     }
 }

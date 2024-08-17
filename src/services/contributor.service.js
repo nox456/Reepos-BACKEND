@@ -48,7 +48,7 @@ export default class ContributorService {
         if (!existsDb) return {
             success: false,
             error: {
-                message: "Repository doesn't exists!",
+                message: "Repositorio no existe!",
                 type: NOT_FOUND
             },
             data: null
@@ -58,7 +58,7 @@ export default class ContributorService {
         if (!user_exists) return {
             success: false,
             error: {
-                message: "User doesn't exists!",
+                message: "Usuario no existe!",
                 type: NOT_FOUND
             },
             data: null
@@ -70,7 +70,7 @@ export default class ContributorService {
         if (!userHasRepo) return {
             success: false,
             error: {
-                message: "User doesn't have the repository!",
+                message: "Usuario no tiene el repositorio!",
                 type: NOT_FOUND
             },
             data: null

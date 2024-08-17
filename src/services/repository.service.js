@@ -64,7 +64,7 @@ export default class RepositoryService {
             return {
                 success: false,
                 error: {
-                    message: "Repository doesn't exists in backend!",
+                    message: "Repositorio no existe en el servidor!",
                     type: NOT_FOUND,
                 },
                 data: null,
@@ -78,7 +78,7 @@ export default class RepositoryService {
             return {
                 success: false,
                 error: {
-                    message: "User has repository!",
+                    message: "Usuario no tiene el repositorio!",
                     type: BAD_REQUEST,
                 },
                 data: null,
@@ -90,7 +90,7 @@ export default class RepositoryService {
                 return {
                     success: false,
                     error: {
-                        message: `Language ${lang} doesn't exists in database!`,
+                        message: `Lenguaje ${lang} no existe en la base de datos!`,
                         type: NOT_FOUND,
                     },
                     data: null,
@@ -257,7 +257,7 @@ export default class RepositoryService {
             return {
                 success: false,
                 error: {
-                    message: "Repository doesn't exists in server!",
+                    message: "Repositorio no existe en el servidor!",
                     type: NOT_FOUND,
                 },
                 data: null,
@@ -296,7 +296,7 @@ export default class RepositoryService {
             return {
                 success: false,
                 error: {
-                    message: "Repository doesn't exists in database!",
+                    message: "Repositorio no existe en la base de datos!",
                     type: NOT_FOUND,
                 },
                 data: null,
@@ -306,7 +306,7 @@ export default class RepositoryService {
         if (!user_exists) return {
             success: false,
             error: {
-                message: "User doesn't exists!",
+                message: "Usuario no existe!",
                 type: NOT_FOUND
             },
             data: null
@@ -318,7 +318,7 @@ export default class RepositoryService {
         if (!userHasRepo) return {
             success: false,
             error: {
-                message: "User doesn't have the repository",
+                message: "Usuario no tiene el repositorio!",
                 type: FORBIDDEN
             },
             data: null
@@ -330,7 +330,7 @@ export default class RepositoryService {
             return {
                 success: false,
                 error: {
-                    message: "Repository doesn't exists in cloud storage!",
+                    message: "Repositorio no existe en el cloud!",
                     type: NOT_FOUND,
                 },
                 data: null,
@@ -373,7 +373,7 @@ export default class RepositoryService {
         if (!match_password) return {
             success: false,
             error: {
-                message: "Invalid Password!",
+                message: "Contraseña invalida!",
                 type: FORBIDDEN
             },
             data: null
@@ -413,7 +413,7 @@ export default class RepositoryService {
             return {
                 success: false,
                 error: {
-                    message: "Repository doesn't exists!",
+                    message: "Repositorio no existe en la base de datos!",
                     type: NOT_FOUND,
                 },
                 data: null,
@@ -423,7 +423,7 @@ export default class RepositoryService {
         if (!user_exists) return {
             success: false,
             error: {
-                message: "User doesn't exists!",
+                message: "Usuario no existe!",
                 type: NOT_FOUND
             },
             data: null
@@ -439,7 +439,7 @@ export default class RepositoryService {
             return {
                 success: false,
                 error: {
-                    message: "User doesn't have the repository!",
+                    message: "Usuario no tiene el repositorio!",
                     type: FORBIDDEN,
                 },
                 data: null,
@@ -475,7 +475,7 @@ export default class RepositoryService {
             return {
                 success: false,
                 error: {
-                    message: "Repositories not founded!",
+                    message: "No hay repositorios que coincidan con la búsqueda!",
                     type: NOT_FOUND,
                 },
                 data: null,
@@ -514,7 +514,7 @@ export default class RepositoryService {
             return {
                 success: false,
                 error: {
-                    message: "Repository doesn't exists!",
+                    message: "Repositorio no existe en la base de datos!",
                     type: NOT_FOUND,
                 },
                 data: null,
@@ -525,7 +525,7 @@ export default class RepositoryService {
             return {
                 success: false,
                 error: {
-                    message: "User doesn't exists!",
+                    message: "Usuario no existe!",
                     type: NOT_FOUND,
                 },
                 data: null,
@@ -539,7 +539,7 @@ export default class RepositoryService {
             return {
                 success: false,
                 error: {
-                    message: "User doesn't have the repository!",
+                    message: "Usuario no tiene el repositorio!",
                     type: FORBIDDEN,
                 },
                 data: null,
@@ -583,7 +583,7 @@ export default class RepositoryService {
         if (!existsDb) return {
             success: false,
             error: {
-                message: "Repository doesn't exists!",
+                message: "Repositorio no existe en la base de datos!",
                 type: NOT_FOUND
             },
             data: null
@@ -593,7 +593,7 @@ export default class RepositoryService {
         if (!user_exists) return {
             success: false,
             error: {
-                message: "User doesn't exists!",
+                message: "Usuario no existe!",
                 type: NOT_FOUND
             },
             data: null
@@ -603,7 +603,7 @@ export default class RepositoryService {
         if (!userHasRepo) return {
             success: false,
             error: {
-                message: "User doesn't have the repository!",
+                message: "Usuario no tiene el repositorio!",
                 type: FORBIDDEN
             },
             data: null
@@ -641,7 +641,7 @@ export default class RepositoryService {
         if (!existsDb) return {
             success: false,
             error: {
-                message: "Repository doesn't exists!",
+                message: "Repositorio no existe en la base de datos!",
                 type: NOT_FOUND
             },
             data: null
@@ -651,7 +651,7 @@ export default class RepositoryService {
         if (!user_exists) return {
             success: false,
             error: {
-                message: "User doesn't exists!",
+                message: "Usuario no existe!",
                 type: NOT_FOUND
             },
             data: null
@@ -663,7 +663,7 @@ export default class RepositoryService {
         if (!userHasRepo) return {
             success: false,
             error: {
-                message: "User doesn't have the repository",
+                message: "Usuario no tiene el repositorio!",
                 type: FORBIDDEN
             },
             data: null
