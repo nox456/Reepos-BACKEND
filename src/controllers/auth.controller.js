@@ -68,7 +68,7 @@ export default class AuthController {
         const { token } = req.cookies;
         let result;
         try {
-            result = AuthService.verifyToken(token);
+            result = await AuthService.isAuthenticated(token);
         } catch (e) {
             console.error(e);
             return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Error del servidor!", res);
@@ -76,7 +76,7 @@ export default class AuthController {
         if (!result.success) {
             return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res);
         } else {
-            return ResponseHandler.ok("Usuario autorizado!", null, res);
+            return ResponseHandler.ok("Usuario autorizado!", result.data, res);
         }
     }
 }

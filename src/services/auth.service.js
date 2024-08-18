@@ -127,11 +127,12 @@ export default class AuthService {
         };
     }
     /**
-     * Validate a JWT token
+     * Validate a JWT token and get user info
      * @param {string} token - JWT Token
-     * @return {ServiceResult} Service result object
+     * @return {Promise<ServiceResult>} Service result object
+     * @async
      * */
-    static verifyToken(token) {
+    static async isAuthenticated(token) {
         const token_validation = Auth.validateToken(token);
         if (token_validation.error) {
             return {
@@ -142,12 +143,14 @@ export default class AuthService {
                 },
                 data: null,
             };
-        } else {
-            return {
-                success: true,
-                error: null,
-                data: token_validation.data,
-            };
+        }
+        
+        const user = await User.getById(token_validation.data)
+
+        return {
+            success: true,
+            error: null,
+            data: user
         }
     }
 }
