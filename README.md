@@ -54,7 +54,7 @@ Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos H
         <td>Autenticar un usuario</td>
     </tr>
     <tr>
-        <td><code>POST</code></td>
+        <td><code>GET</code></td>
         <td><code>/is-authenticated</code></td>
         <td>
             <code>{}</code>
@@ -189,6 +189,12 @@ Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos H
         <td><code>{ "newDescription": "string", "repoName": "string" }</code></td>
         <td>Cambiar descripción de repositorio</td>
     </tr>
+    <tr>
+        <td><code>GET</code></td>
+        <td><code>/info</code></td>
+        <td><code>?repoName="string"&username="string"</code></td>
+        <td>Obtener información detallada de un repositorio a partir del nombre y nombre de usuario</td>
+    </tr>
 </table>
 
 ### Files
@@ -210,6 +216,12 @@ Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos H
         <td><code>POST</code></td>
         <td><code>/upload</code></td>
         <td><code>{ "path": "string", "repoName": "string", "file": "img" }</code></td>
+    </tr>
+    <tr>
+        <td><code>GET</code></td>
+        <td><code>/</code></td>
+        <td><code>?repoName="string"&fileId="string"&username="string"</code></td>
+        <td>Obtener información detallada sobre un archivo</td>
     </tr>
 </table>
 
@@ -245,5 +257,11 @@ Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos H
         <td><code>/</code></td>
         <td><code>?repoName="string"</code></td>
         <td>Obtener commits de un repositorio</td>
+    </tr>
+    <tr>
+        <td><code>GET</code></td>
+        <td><code>/info</code></td>
+        <td><code>?hash="string"</code></td>
+        <td>Obtener información detallada sobre un commit a partir del hash</td>
     </tr>
 </table>
