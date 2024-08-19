@@ -39,6 +39,6 @@ export default async function downloadFiles(files, repoName) {
 
         archive.append(content, { name: file.name, prefix: `${repoName}/${file.path.slice(0,file.path.indexOf(file.name))}` });
     }
-    archive.finalize();
+    await archive.finalize();
     return `${repoName}.zip`;
 }
