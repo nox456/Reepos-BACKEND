@@ -260,4 +260,34 @@ export default class RepositoryController {
             return ResponseHandler.ok("Información del repositorio!",result.data, res)
         }
     }
+    /**
+     * Get repositories from an user
+     * */
+    static async getFromUser(req, res) {
+        const { username } = req.query;
+        let result;
+        try {
+            result = await RepositoryService.getFromUser(username);
+        } catch (e) {
+            console.error(e);
+            return ResponseHandler.error(
+                errorCodes[INTERNAL_SERVER_ERROR],
+                "Error del Servidor!",
+                res,
+            );
+        }
+        if (!result.success) {
+            return ResponseHandler.error(
+                errorCodes[result.error.type],
+                result.error.message,
+                res,
+            );
+        } else {
+            return ResponseHandler.ok(
+                "Repositorios encontrados!",
+                result.data,
+                res,
+            );
+        }
+    }
 }

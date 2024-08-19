@@ -21,5 +21,7 @@ router.put("/change-name", RepositoryController.changeName)
 router.put("/change-description", RepositoryController.changeDescription)
 // Get full information of repository
 router.get("/info", RepositoryController.getInfo)
+// Get from an user
+router.get("/", RepositoryController.getFromUser)
 
 export default router

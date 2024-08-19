@@ -175,7 +175,7 @@ Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos H
         <td><code>GET</code></td>
         <td><code>/</code></td>
         <td><code>{}</code></td>
-        <td>Obtener repositorios de un usuario a partir del token</td>
+        <td>Obtener repositorios de un usuario a partir del nombre</td>
     </tr>
     <tr>
         <td><code>PUT</code></td>

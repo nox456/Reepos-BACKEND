@@ -9,7 +9,8 @@ import { fileURLToPath } from "url";
 import {
     REPOSITORIES_FILES,
     REPOSITORY_INFO,
-    SEARCH_REPOSITORIES
+    SEARCH_REPOSITORIES,
+    USER_REPOSITORIES
 } from "./queries.js";
 
 const reposPath = join(dirname(fileURLToPath(import.meta.url)), "../temp");
@@ -338,5 +339,28 @@ export default class Repository {
         ]);
         const info = info_result.rows[0];
         return info;
+    }
+    /**
+     * @typedef {Object} Repository
+     * @property {string} name - Repository name
+     * @property {string} description- Repository description
+     * @property {int} likes - Repository likes
+     * @property {string[]} languages - Repository languages
+     * */
+    /**
+     * Get repositories from an user by ID
+     * @param {string} username - User owner name
+     * @return {Promise<Repository[]>} User's repositories
+     * @async
+     * */
+    static async getFromUser(username) {
+        const userId_result = await db.query(
+            "SELECT id FROM users WHERE username = $1",
+            [username],
+        );
+        const userId = userId_result.rows[0].id;
+        const repos_result = await db.query(USER_REPOSITORIES, [userId]);
+        const repos = repos_result.rows;
+        return repos;
     }
 }
