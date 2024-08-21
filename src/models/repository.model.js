@@ -3,7 +3,7 @@ import supabase from "../connections/supabase.js";
 import { SUPABASE_REPOSITORY_BUCKET } from "../config/env.js";
 import getReposFiles from "../lib/getReposFiles.js";
 import { z } from "zod";
-import { readdir } from "fs/promises";
+import { readdir, rm } from "fs/promises";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import {
@@ -362,5 +362,13 @@ export default class Repository {
         const repos_result = await db.query(USER_REPOSITORIES, [userId]);
         const repos = repos_result.rows;
         return repos;
+    }
+    /**
+     * Delete a temp zip file of repository
+     * @param {string} fileName - Zip file name
+     * @async
+     * */
+    static async deleteZip(fileName) {
+        await rm(join(reposPath,"downloads", fileName), { recursive: true });
     }
 }

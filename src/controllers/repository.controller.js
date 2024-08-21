@@ -290,4 +290,18 @@ export default class RepositoryController {
             );
         }
     }
+    /**
+     * Delete temp zip file
+     * */
+    static async deleteZip(req,res) {
+        const {fileName} = req.body
+        let result
+        try {
+            result = await RepositoryService.deleteZip(fileName)
+        } catch(e) {
+            console.error(e)
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR],"Error del servidor!",res)
+        }
+        return ResponseHandler.ok("Archivo zip eliminado!",null,res)
+    }
 }

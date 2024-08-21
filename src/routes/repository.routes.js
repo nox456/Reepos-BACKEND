@@ -23,5 +23,7 @@ router.put("/change-description", RepositoryController.changeDescription)
 router.get("/info", RepositoryController.getInfo)
 // Get from an user
 router.get("/", RepositoryController.getFromUser)
+// Delete temp zip
+router.delete("/zip", RepositoryController.deleteZip)
 
 export default router

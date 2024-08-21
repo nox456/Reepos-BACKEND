@@ -728,4 +728,18 @@ export default class RepositoryService {
             data: repos,
         };
     }
+    /**
+     * Delete a temp zip file of repository
+     * @param {string} fileName - Zip file name
+     * @return {Promise<ServiceResult>} Service result object
+     * @async
+     * */
+    static async deleteZip(fileName) {
+        await Repository.deleteZip(fileName)
+        return {
+            success: true,
+            error: null,
+            data: null
+        }
+    }
 }

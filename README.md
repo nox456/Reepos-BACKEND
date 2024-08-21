@@ -156,7 +156,7 @@ Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos H
     <tr>
         <td><code>GET</code></td>
         <td><code>/download</code></td>
-        <td><code>?repoName="string"</code></td>
+        <td><code>?repoName="string"&username="string"</code></td>
         <td>Obtener la url pública de un repositorio comprimido en zip</td>
     </tr>
     <tr>

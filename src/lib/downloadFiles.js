@@ -1,5 +1,6 @@
 import archiver from "archiver";
 import { createWriteStream } from "fs";
+import { readdir } from "fs/promises";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -26,6 +27,9 @@ const downloadsDir = join(
  * @async
  * */
 export default async function downloadFiles(files, repoName) {
+    const downloads = await readdir(downloadsDir)
+    if (downloads.includes(`${repoName}.zip`)) return `${repoName}.zip`
+
     const zip = createWriteStream(join(downloadsDir, `${repoName}.zip`));
     const archive = archiver("zip", { zlib: { level: 5 } });
 
