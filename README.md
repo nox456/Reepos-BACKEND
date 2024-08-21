@@ -61,6 +61,12 @@ Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos H
         </td>
         <td>Comprobar con si existe un token de autenticación</td>
     </tr>
+    <tr>
+        <td><code>GET</code></td>
+        <td><code>/logout</code></td>
+        <td><code>{}</code></td>
+        <td>Cerrar sesión de usuario (eliminar token)</td>
+    </tr>
 </table>
 
 ---
