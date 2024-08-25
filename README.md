@@ -131,7 +131,7 @@ Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos H
     <tr>
         <td><code>GET</code></td>
         <td><code>/profile</code></td>
-        <td><code>{}</code></td>
+        <td><code>?username="string"</code></td>
         <td>Obtener información sobre el perfil del usuario</td>
     </tr>
 </table>
@@ -180,7 +180,7 @@ Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos H
     <tr>
         <td><code>GET</code></td>
         <td><code>/</code></td>
-        <td><code>{}</code></td>
+        <td><code>?username="string"</code></td>
         <td>Obtener repositorios de un usuario a partir del nombre</td>
     </tr>
     <tr>
@@ -200,6 +200,12 @@ Lista de recursos disponibles por la API junto a sus **endpoints**, **métodos H
         <td><code>/info</code></td>
         <td><code>?repoName="string"&username="string"</code></td>
         <td>Obtener información detallada de un repositorio a partir del nombre y nombre de usuario</td>
+    </tr>
+    <tr>
+        <td><code>GET</code></td>
+        <td><code>/search</code></td>
+        <td><code>?repoName="string"</code></td>
+        <td>Buscar repositorios por el nombre</td>
     </tr>
 </table>
 
