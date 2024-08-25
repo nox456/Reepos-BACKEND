@@ -394,10 +394,11 @@ export default class RepositoryService {
      * @return {Promise<ServiceResult>} Service result object
      * @async
      * */
-    static async like(repoName, username) {
+    static async like(username,repoName, userOwnerName) {
         const validation = validationHandler([
             await Repository.validateRepoName(repoName),
-            await User.validateUsername(username)
+            await User.validateUsername(username),
+            await User.validateUsername(userOwnerName)
         ])
         if (validation.error) return {
             success: false,
@@ -428,24 +429,43 @@ export default class RepositoryService {
             },
             data: null
         }
+        const userOwner_exists = await User.checkIfExistsByUsername(userOwnerName)
+        if (!userOwner_exists) return {
+            success: false,
+            error: {
+                message: "Usuario dueño del repositorio no existe!",
+                type: NOT_FOUND
+            },
+            data: null
+        }
 
-        const user = await User.getByUsername(username)
+        const userOwner = await User.getByUsername(userOwnerName)
 
         const userHasRepo = await Repository.checkIfUserHasRepo(
             repoName,
-            user.id,
+            userOwner.id,
         );
         if (!userHasRepo)
             return {
                 success: false,
                 error: {
-                    message: "Usuario no tiene el repositorio!",
+                    message: "Usuario dueño no tiene el repositorio!",
                     type: FORBIDDEN,
                 },
                 data: null,
             };
 
-        await Repository.like(repoName, user.id);
+        const hasUserLike = await Repository.checkIfLike(username,repoName,userOwner.id)
+        if (hasUserLike) return {
+            success: false,
+            error: {
+                message: "Usuario ya dió like al repositorio!",
+                type: BAD_REQUEST
+            },
+            data: null
+        }
+        const user = await User.getByUsername(username)
+        await Repository.like(user.id,repoName, userOwner.id);
         return {
             success: true,
             error: null,

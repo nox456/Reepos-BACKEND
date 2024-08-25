@@ -123,10 +123,10 @@ export default class RepositoryController {
         }
     }
     static async like(req, res) {
-        const { repoName, username } = req.body;
+        const { repoName, username, userOwnerName } = req.body;
         let result;
         try {
-            result = await RepositoryService.like(repoName, username);
+            result = await RepositoryService.like(username,repoName, userOwnerName);
         } catch (e) {
             console.error(e);
             return ResponseHandler.error(

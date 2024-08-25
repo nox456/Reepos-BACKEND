@@ -8,6 +8,7 @@ import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import {
     REPOSITORIES_FILES,
+    REPOSITORIES_LIKES,
     REPOSITORY_INFO,
     SEARCH_REPOSITORIES,
     USER_REPOSITORIES
@@ -247,16 +248,16 @@ export default class Repository {
      * @param {string} userId - User owner ID
      * @async
      * */
-    static async like(repoName, userId) {
+    static async like(userId,repoName, userOwnerId) {
         const result = await db.query(
             "SELECT likes FROM repositories WHERE name = $1 AND user_owner = $2",
-            [repoName, userId],
+            [repoName, userOwnerId],
         );
         const users_liked = result.rows[0].likes;
         users_liked.push(userId);
         await db.query(
             "UPDATE repositories SET likes = $1 WHERE name = $2 AND user_owner = $3",
-            [users_liked, repoName, userId],
+            [users_liked, repoName, userOwnerId],
         );
     }
     /**
@@ -370,5 +371,18 @@ export default class Repository {
      * */
     static async deleteZip(fileName) {
         await rm(join(reposPath,"downloads", fileName), { recursive: true });
+    }
+    /**
+     * Check if a user already like a repo
+     * @param {string} username - User name that will like
+     * @param {string} repoName - Repository name
+     * @param {string} usernameOwner - User owner name
+     * @return {Promise<boolean>} True if user liked the repo and False if not
+     * @async
+     * */
+    static async checkIfLike(username,repoName,userOwnerId) {
+        const result = await db.query(REPOSITORIES_LIKES,[repoName,userOwnerId])
+        const users_likes = result.rows.map(r => r.username)
+        return users_likes.includes(username)
     }
 }

@@ -278,3 +278,17 @@ FROM repositories
 WHERE repositories.user_owner = $1
 GROUP BY repositories.name, repositories.description, repositories.likes, repositories.created_at
 `
+export const REPOSITORIES_LIKES = `
+SELECT 
+    users.username
+FROM 
+    users
+        RIGHT OUTER JOIN (
+            SELECT 
+                unnest(likes) as id
+            FROM 
+                repositories
+            WHERE name = $1 AND user_owner = $2
+        ) as likes 
+        ON likes.id = users.id
+`
