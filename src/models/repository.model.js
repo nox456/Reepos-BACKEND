@@ -407,4 +407,12 @@ export default class Repository {
             [likes, repoName, userOwnerId],
         );
     }
+    /**
+     * Remove repository from temp directory
+     * @param {string} repoName - Repository name
+     * @async
+     * */
+    static async removeTemp(repoName) {
+        await rm(join(reposPath, repoName), { recursive: true });
+    }
 }

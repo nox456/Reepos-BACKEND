@@ -13,6 +13,7 @@ import repoInfo from "../lib/getReposInfo.js";
 import downloadFiles from "../lib/downloadFiles.js";
 import validationHandler from "../lib/validationHandler.js"
 import { BAD_REQUEST, FORBIDDEN, NOT_FOUND } from "../lib/constants/errors.js";
+import supabase from "../connections/supabase.js";
 
 /**
  * Service to handle repositories proccesses
@@ -839,6 +840,42 @@ export default class RepositoryService {
         const user = await User.getByUsername(username)
 
         await Repository.removeLike(repoName,userOwner.id,user.id)
+        return {
+            success: true,
+            error: null,
+            data: null
+        }
+    }
+    /**
+     * Remove repo from temp directory
+     * @param {string} repoName - Repository name
+     * @return {Promise<ServiceResult>} Service result object
+     * @async
+     * */
+    static async removeTemp(repoName) {
+        const validation = validationHandler([
+            await Repository.validateRepoName(repoName)
+        ])
+        if (validation.error) return {
+            success: false,
+            error: {
+                message: validation.error,
+                type: BAD_REQUEST
+            },
+            data: null
+        }
+
+        const exists = await Repository.checkIfExistsInBackend(repoName)
+        if (!exists) return {
+            success: false,
+            error: {
+                message: "Repositorio no existe en el servidor!",
+                type: NOT_FOUND
+            },
+            data: null
+        }
+
+        await Repository.removeTemp(repoName)
         return {
             success: true,
             error: null,

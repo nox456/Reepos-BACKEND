@@ -103,7 +103,7 @@ export default class RepositoryController {
         const { token } = req.cookies;
         let result;
         try {
-            result = await RepositoryService.delete(repoName, token,password);
+            result = await RepositoryService.delete(repoName, token, password);
         } catch (e) {
             console.error(e);
             return ResponseHandler.error(
@@ -126,7 +126,11 @@ export default class RepositoryController {
         const { repoName, username, userOwnerName } = req.body;
         let result;
         try {
-            result = await RepositoryService.like(username,repoName, userOwnerName);
+            result = await RepositoryService.like(
+                username,
+                repoName,
+                userOwnerName,
+            );
         } catch (e) {
             console.error(e);
             return ResponseHandler.error(
@@ -142,7 +146,11 @@ export default class RepositoryController {
                 res,
             );
         } else {
-            return ResponseHandler.ok("Repositorio con like!", result.data, res);
+            return ResponseHandler.ok(
+                "Repositorio con like!",
+                result.data,
+                res,
+            );
         }
     }
     /**
@@ -245,19 +253,31 @@ export default class RepositoryController {
             );
         }
     }
-    static async getInfo(req,res) {
-        const {repoName,username} = req.query
-        let result
+    static async getInfo(req, res) {
+        const { repoName, username } = req.query;
+        let result;
         try {
-            result = await RepositoryService.getInfo(repoName,username)
-        } catch(e) {
-            console.error(e)
-            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Error del servidor!", res)
+            result = await RepositoryService.getInfo(repoName, username);
+        } catch (e) {
+            console.error(e);
+            return ResponseHandler.error(
+                errorCodes[INTERNAL_SERVER_ERROR],
+                "Error del servidor!",
+                res,
+            );
         }
         if (!result.success) {
-            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
+            return ResponseHandler.error(
+                errorCodes[result.error.type],
+                result.error.message,
+                res,
+            );
         } else {
-            return ResponseHandler.ok("Información del repositorio!",result.data, res)
+            return ResponseHandler.ok(
+                "Información del repositorio!",
+                result.data,
+                res,
+            );
         }
     }
     /**
@@ -293,33 +313,79 @@ export default class RepositoryController {
     /**
      * Delete temp zip file
      * */
-    static async deleteZip(req,res) {
-        const {fileName} = req.body
-        let result
+    static async deleteZip(req, res) {
+        const { fileName } = req.body;
+        let result;
         try {
-            result = await RepositoryService.deleteZip(fileName)
-        } catch(e) {
-            console.error(e)
-            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR],"Error del servidor!",res)
+            result = await RepositoryService.deleteZip(fileName);
+        } catch (e) {
+            console.error(e);
+            return ResponseHandler.error(
+                errorCodes[INTERNAL_SERVER_ERROR],
+                "Error del servidor!",
+                res,
+            );
         }
-        return ResponseHandler.ok("Archivo zip eliminado!",null,res)
+        return ResponseHandler.ok("Archivo zip eliminado!", null, res);
     }
     /**
      * Remove like from repository
      * */
-    static async removeLike(req,res) {
-        const {repoName,userOwnerName,username} = req.body
-        let result
+    static async removeLike(req, res) {
+        const { repoName, userOwnerName, username } = req.body;
+        let result;
         try {
-            result = await RepositoryService.removeLike(repoName,userOwnerName,username)
-        } catch(e) {
-            console.error(e)
-            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR],"Error del Servidor!",res)
+            result = await RepositoryService.removeLike(
+                repoName,
+                userOwnerName,
+                username,
+            );
+        } catch (e) {
+            console.error(e);
+            return ResponseHandler.error(
+                errorCodes[INTERNAL_SERVER_ERROR],
+                "Error del Servidor!",
+                res,
+            );
         }
         if (!result.success) {
-            return ResponseHandler.error(errorCodes[result.error.type],result.error.message,res)
+            return ResponseHandler.error(
+                errorCodes[result.error.type],
+                result.error.message,
+                res,
+            );
         } else {
-            return ResponseHandler.ok("Me gusta removido!",null,res)
+            return ResponseHandler.ok("Me gusta removido!", null, res);
+        }
+    }
+    /**
+     * Remove repo from temp directory
+     * */
+    static async removeTemp(req, res) {
+        const { repoName } = req.body;
+        let result;
+        try {
+            result = await RepositoryService.removeTemp(repoName);
+        } catch (e) {
+            console.error(e);
+            return ResponseHandler.error(
+                errorCodes[INTERNAL_SERVER_ERROR],
+                "Error del Servidor!",
+                res,
+            );
+        }
+        if (!result.success) {
+            return ResponseHandler.error(
+                errorCodes[result.error.type],
+                result.error.message,
+                res,
+            );
+        } else {
+            return ResponseHandler.ok(
+                "Repositorio eliminado de la carpeta TEMP!",
+                null,
+                res,
+            );
         }
     }
 }
