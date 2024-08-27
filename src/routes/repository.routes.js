@@ -25,5 +25,7 @@ router.get("/info", RepositoryController.getInfo)
 router.get("/", RepositoryController.getFromUser)
 // Delete temp zip
 router.delete("/zip", RepositoryController.deleteZip)
+// Remove like from a repository
+router.put("/remove-like", RepositoryController.removeLike)
 
 export default router

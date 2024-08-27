@@ -11,7 +11,7 @@ import {
     REPOSITORIES_LIKES,
     REPOSITORY_INFO,
     SEARCH_REPOSITORIES,
-    USER_REPOSITORIES
+    USER_REPOSITORIES,
 } from "./queries.js";
 
 const reposPath = join(dirname(fileURLToPath(import.meta.url)), "../temp");
@@ -62,7 +62,7 @@ export default class Repository {
             const { error } = await supabase.storage
                 .from(SUPABASE_REPOSITORY_BUCKET)
                 .upload(`${userId}/${repoName}/${file.path}`, file.buffer);
-            if (error) throw error
+            if (error) throw error;
         }
     }
     /**
@@ -151,10 +151,10 @@ export default class Repository {
      * @async
      * */
     static async checkIfExistsInCloud(repoName, userId) {
-        const {data,error} = await supabase.storage
+        const { data, error } = await supabase.storage
             .from(SUPABASE_REPOSITORY_BUCKET)
             .list(userId);
-        if (error) throw error
+        if (error) throw error;
         const repos = data.map((p) => p.name);
         return repos.includes(repoName);
     }
@@ -248,7 +248,7 @@ export default class Repository {
      * @param {string} userId - User owner ID
      * @async
      * */
-    static async like(userId,repoName, userOwnerId) {
+    static async like(userId, repoName, userOwnerId) {
         const result = await db.query(
             "SELECT likes FROM repositories WHERE name = $1 AND user_owner = $2",
             [repoName, userOwnerId],
@@ -334,10 +334,7 @@ export default class Repository {
      * @async
      * */
     static async getFullInfo(repoName, userId) {
-        const info_result = await db.query(REPOSITORY_INFO, [
-            userId,
-            repoName,
-        ]);
+        const info_result = await db.query(REPOSITORY_INFO, [userId, repoName]);
         const info = info_result.rows[0];
         return info;
     }
@@ -370,19 +367,40 @@ export default class Repository {
      * @async
      * */
     static async deleteZip(fileName) {
-        await rm(join(reposPath,"downloads", fileName), { recursive: true });
+        await rm(join(reposPath, "downloads", fileName), { recursive: true });
     }
     /**
      * Check if a user already like a repo
      * @param {string} username - User name that will like
      * @param {string} repoName - Repository name
-     * @param {string} usernameOwner - User owner name
+     * @param {string} userOwnerId - User owner id
      * @return {Promise<boolean>} True if user liked the repo and False if not
      * @async
      * */
-    static async checkIfLike(username,repoName,userOwnerId) {
-        const result = await db.query(REPOSITORIES_LIKES,[repoName,userOwnerId])
-        const users_likes = result.rows.map(r => r.username)
-        return users_likes.includes(username)
+    static async checkIfLike(username, repoName, userOwnerId) {
+        const result = await db.query(REPOSITORIES_LIKES, [
+            repoName,
+            userOwnerId,
+        ]);
+        const users_likes = result.rows.map((r) => r.username);
+        return users_likes.includes(username);
+    }
+    /**
+     * Remove a like from repository of an user
+     * @param {string} repoName - Repository name
+     * @param {string} userOwnerId - User owner ID
+     * @param {string} userId - User ID
+     * @async
+     * */
+    static async removeLike(repoName, userOwnerId, userId) {
+        const res = await db.query(
+            "SELECT likes FROM repositories WHERE name = $1 AND user_owner = $2",
+            [repoName, userOwnerId],
+        );
+        const likes = res.rows[0].likes.filter((f) => f != userId);
+        await db.query(
+            "UPDATE repositories SET likes = $1 WHERE name = $2 AND user_owner = $3",
+            [likes, repoName, userOwnerId],
+        );
     }
 }

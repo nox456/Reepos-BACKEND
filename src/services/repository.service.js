@@ -762,4 +762,87 @@ export default class RepositoryService {
             data: null
         }
     }
+    /**
+     * Remove like from a repo
+     * @param {string} repoName - Repository name
+     * @param {string} userOwnerName - User owner name
+     * @param {string} username - User name
+     * @return {Promise<ServiceResult>} Service result object
+     * @async
+     * */
+    static async removeLike(repoName,userOwnerName,username) {
+        const validation = validationHandler([
+            await Repository.validateRepoName(repoName),
+            await User.validateUsername(userOwnerName),
+            await User.validateUsername(username)
+        ])
+        if (validation.error) return {
+            success: false,
+            error: {
+                message: validation.error,
+                type: BAD_REQUEST
+            },
+            data: null
+        }
+
+        const user_exists = await User.checkIfExistsByUsername(username)
+        if (!user_exists) return {
+            success: false,
+            error: {
+                message: "Usuario no existe!",
+                type: NOT_FOUND
+            },
+            data: null
+        }
+
+        const userOwner_exists = await User.checkIfExistsByUsername(userOwnerName)
+        if (!userOwner_exists) return {
+            success: false,
+            error: {
+                message: "Usuario dueño no existe!",
+                type: NOT_FOUND
+            },
+            data: null
+        }
+
+        const repo_exists = await Repository.checkIfExistsInDb(repoName)
+        if (!repo_exists) return {
+            success: false,
+            error: {
+                message: "Repositorio no existe!",
+                type: NOT_FOUND
+            },
+            data: null
+        }
+
+        const userOwner = await User.getByUsername(userOwnerName)
+        const userHasRepo = await Repository.checkIfUserHasRepo(repoName,userOwner.id)
+        if (!userHasRepo) return {
+            success: false,
+            error: {
+                message: "Usuario no tiene el repositorio!",
+                type: FORBIDDEN
+            },
+            data: null
+        }
+
+        const userHasLike = await Repository.checkIfLike(username,repoName,userOwner.id)
+        if (!userHasLike) return {
+            success: false,
+            error: {
+                message: "Usuario no ha dado me gusta!",
+                type: FORBIDDEN
+            },
+            data: null
+        }
+
+        const user = await User.getByUsername(username)
+
+        await Repository.removeLike(repoName,userOwner.id,user.id)
+        return {
+            success: true,
+            error: null,
+            data: null
+        }
+    }
 }

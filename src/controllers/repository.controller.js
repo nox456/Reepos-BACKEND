@@ -304,4 +304,22 @@ export default class RepositoryController {
         }
         return ResponseHandler.ok("Archivo zip eliminado!",null,res)
     }
+    /**
+     * Remove like from repository
+     * */
+    static async removeLike(req,res) {
+        const {repoName,userOwnerName,username} = req.body
+        let result
+        try {
+            result = await RepositoryService.removeLike(repoName,userOwnerName,username)
+        } catch(e) {
+            console.error(e)
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR],"Error del Servidor!",res)
+        }
+        if (!result.success) {
+            return ResponseHandler.error(errorCodes[result.error.type],result.error.message,res)
+        } else {
+            return ResponseHandler.ok("Me gusta removido!",null,res)
+        }
+    }
 }
