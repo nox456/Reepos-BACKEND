@@ -13,7 +13,6 @@ import repoInfo from "../lib/getReposInfo.js";
 import downloadFiles from "../lib/downloadFiles.js";
 import validationHandler from "../lib/validationHandler.js"
 import { BAD_REQUEST, FORBIDDEN, NOT_FOUND } from "../lib/constants/errors.js";
-import supabase from "../connections/supabase.js";
 
 /**
  * Service to handle repositories proccesses
@@ -864,6 +863,30 @@ export default class RepositoryService {
         }
 
         await Repository.removeTemp(repoName)
+        return {
+            success: true,
+            error: null,
+            data: null
+        }
+    }
+    /**
+     * Delete from database without password
+     * @param {string} repoName - Repository name
+     * @param {string} token - JWT Token
+     * @return {Promise<ServiceResult>} Service result object
+     * @async
+     * */
+    static async deleteDb(repoName,token) {
+        const validation = Auth.validateToken(token)
+        if (validation.error) return {
+            success: false,
+            error: {
+                message: validation.error,
+                type: BAD_REQUEST
+            },
+            data: null
+        }
+        await Repository.deleteDb(repoName,validation.data)
         return {
             success: true,
             error: null,

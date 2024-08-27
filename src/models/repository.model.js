@@ -192,7 +192,7 @@ export default class Repository {
                 invalid_type_error: "Lenguajes debe ser un array de strings!",
                 required_error: "Lenguajes requeridos!",
             })
-            .array();
+            .array().nonempty("El repositorio debe tener por lo menos 1 lenguaje!");
         const validation = await schema.safeParseAsync(languages);
         let error = null;
         if (!validation.success) {

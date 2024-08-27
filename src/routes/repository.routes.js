@@ -27,7 +27,9 @@ router.get("/", RepositoryController.getFromUser)
 router.delete("/zip", RepositoryController.deleteZip)
 // Remove like from a repository
 router.put("/remove-like", RepositoryController.removeLike)
-// Remvoe repository from temp directory
+// Remove repository from temp directory
 router.delete("/temp",RepositoryController.removeTemp)
+// Remove repository from cloud without password
+router.delete("/db", RepositoryController.deleteDb)
 
 export default router

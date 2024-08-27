@@ -388,4 +388,31 @@ export default class RepositoryController {
             );
         }
     }
+    /**
+     * Delete from database without password
+     * */
+    static async deleteDb(req,res) {
+        const {repoName} = req.body
+        const {token} = req.cookies
+        let result
+        try {
+            result = await RepositoryService.deleteDb(repoName,token)
+        } catch(e) {
+            console.error(e)
+            return ResponseHandler.error(
+                errorCodes[INTERNAL_SERVER_ERROR],
+                "Error del Servidor!",
+                res
+            );
+        }
+        if (!result.success) {
+            return ResponseHandler.error(
+                errorCodes[result.error.type],
+                result.error.message,
+                res,
+            );
+        } else {
+            return ResponseHandler.ok("Repositorio eliminado de la base de datos!",null,res)
+        }
+    }
 }
