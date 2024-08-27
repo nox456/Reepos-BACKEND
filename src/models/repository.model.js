@@ -76,10 +76,12 @@ export default class Repository {
      * @async
      * */
     static async validateRepoName(repoName) {
-        const schema = z.string({
-            invalid_type_error: "Nombre de repositorio debe ser un string!",
-            required_error: "Nombre de repositorio requerido!",
-        });
+        const schema = z
+            .string({
+                invalid_type_error: "Nombre de repositorio debe ser un string!",
+                required_error: "Nombre de repositorio requerido!",
+            })
+            .max(25, "Nombre de repositorio debe tener 25 o menos caracteres");
         const validation = await schema.safeParseAsync(repoName);
         let error = null;
         if (!validation.success) {
@@ -165,10 +167,12 @@ export default class Repository {
      * @async
      * */
     static async validateDescription(description) {
-        const schema = z.string({
-            required_error: "Descripción requerida!",
-            invalid_type_error: "Descripción debe ser un string!",
-        });
+        const schema = z
+            .string({
+                required_error: "Descripción requerida!",
+                invalid_type_error: "Descripción debe ser un string!",
+            })
+            .max(200, "Descripción debe tener 200 o menos caracteres");
         const validation = await schema.safeParseAsync(description);
         let error = null;
         if (!validation.success) {
