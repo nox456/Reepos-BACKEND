@@ -853,18 +853,6 @@ export default class RepositoryService {
      * @async
      * */
     static async removeTemp(repoName) {
-        const validation = validationHandler([
-            await Repository.validateRepoName(repoName)
-        ])
-        if (validation.error) return {
-            success: false,
-            error: {
-                message: validation.error,
-                type: BAD_REQUEST
-            },
-            data: null
-        }
-
         const exists = await Repository.checkIfExistsInBackend(repoName)
         if (!exists) return {
             success: false,
