@@ -241,7 +241,7 @@ export default class User {
     /**
      * Search user by username
      * @param {string} username - User name
-     * @return {Promise<UserSearched>} User founded
+     * @return {Promise<UserSearched[]>} User founded
      * @async
      * */
     static async search(username) {

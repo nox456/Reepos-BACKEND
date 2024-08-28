@@ -318,12 +318,20 @@ export default class UserService {
             success: false,
             error: {
                 message: username_validation.error,
-                type: NOT_FOUND
+                type: BAD_REQUEST
             },
             data: null
         }
 
         const users = await User.search(username)
+        if (users.length == 0) return {
+            success: false,
+            error: {
+                message: "Usuarios no encontrados!",
+                type: NOT_FOUND
+            },
+            data: null
+        }
         return {
             success: true,
             error: null,
