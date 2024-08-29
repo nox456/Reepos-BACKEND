@@ -287,4 +287,16 @@ export default class User {
         const profileInfo = profile_response.rows[0]
         return profileInfo
     }
+    /**
+    * Check if an user already follows another
+    * @param {string} userFollowerId - User ID
+    * @param {string} userFollowedName - User name
+    * @return {Promise<boolean>} True if user already follows and False if not
+    * @async
+    * */
+    static async checkIfFollow(userFollowerId, userFollowedName) {
+        const result = await db.query("SELECT followers FROM users WHERE username = $1",[userFollowedName])
+        const followers = result.rows[0].followers
+        return followers.includes(userFollowerId)
+    }
 }

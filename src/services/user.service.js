@@ -299,6 +299,16 @@ export default class UserService {
             data: null
         }
 
+        const alreadyFollow = await User.checkIfFollow(validation.data,username)
+        if (alreadyFollow) return {
+            success: false,
+            error:  {
+                message: "Usuario ya seguido!",
+                type: BAD_REQUEST
+            },
+            data: null
+        }
+
         await User.followUser(validation.data,username)
         return {
             success: true,
@@ -313,16 +323,6 @@ export default class UserService {
      * @async
      * */
     static async search(username) {
-        const username_validation = await User.validateUsername(username)
-        if (username_validation.error) return {
-            success: false,
-            error: {
-                message: username_validation.error,
-                type: BAD_REQUEST
-            },
-            data: null
-        }
-
         const users = await User.search(username)
         if (users.length == 0) return {
             success: false,
