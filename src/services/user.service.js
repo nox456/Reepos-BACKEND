@@ -299,6 +299,16 @@ export default class UserService {
             data: null
         }
 
+        const user = await User.getByUsername(username)
+        if (user.id == validation.data) return {
+            success: false,
+            error: {
+                message: "Usuario no se puede seguir a si mismo!",
+                type: BAD_REQUEST
+            },
+            data: null
+        }
+
         const alreadyFollow = await User.checkIfFollow(validation.data,username)
         if (alreadyFollow) return {
             success: false,
