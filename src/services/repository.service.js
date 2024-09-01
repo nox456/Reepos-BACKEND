@@ -78,7 +78,7 @@ export default class RepositoryService {
             return {
                 success: false,
                 error: {
-                    message: "Usuario no tiene el repositorio!",
+                    message: "Usuario ya tiene el repositorio!",
                     type: BAD_REQUEST,
                 },
                 data: null,
