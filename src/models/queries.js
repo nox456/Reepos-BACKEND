@@ -39,12 +39,10 @@ SELECT
     users.username as user_name,
     users.description as user_description,
     users.img as user_img,
-    count(repositories) as repos_count,
+    (SELECT count(*) FROM repositories LEFT OUTER JOIN users ON users.id = repositories.user_owner WHERE users.username = $1) as repos_count,
     coalesce(array_length(users.followers,1),0) as followers_count, 
     count(usrs) as followed_count
 FROM users
-    FULL OUTER JOIN repositories
-        ON users.id = repositories.user_owner 
     FULL OUTER JOIN users usrs 
         ON ARRAY[users.id] && usrs.followers
 WHERE users.username = $1
