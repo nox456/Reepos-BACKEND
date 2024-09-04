@@ -1,7 +1,7 @@
-import User from "../models/user.model.js"
-import Auth from "../models/auth.model.js"
-import validationHandler from "../lib/validationHandler.js"
-import { BAD_REQUEST, NOT_FOUND } from "../lib/constants/errors.js"
+import User from "../models/user.model.js";
+import Auth from "../models/auth.model.js";
+import validationHandler from "../lib/validationHandler.js";
+import { BAD_REQUEST, NOT_FOUND, FORBIDDEN } from "../lib/constants/errors.js";
 
 /**
  * Service to handle user proccesses
@@ -27,49 +27,55 @@ export default class UserService {
     static async deleteUser(token, password) {
         const validation = validationHandler([
             Auth.validateToken(token),
-            await User.validatePassword(password)
-        ])
-        if (validation.error) return {
-            success: false,
-            error: {
-                message: validation.error,
-                type: BAD_REQUEST
-            },
-            data: null
-        }
+            await User.validatePassword(password),
+        ]);
+        if (validation.error)
+            return {
+                success: false,
+                error: {
+                    message: validation.error,
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
 
-        const userExists = await User.checkIfExistsById(validation.data)
+        const userExists = await User.checkIfExistsById(validation.data);
 
-        if (!userExists) return {
-            success: false,
-            error: {
-                message: "Usuario no existe!",
-                type: NOT_FOUND
-            },
-            data: null
-        }
+        if (!userExists)
+            return {
+                success: false,
+                error: {
+                    message: "Usuario no existe!",
+                    type: NOT_FOUND,
+                },
+                data: null,
+            };
 
-        const storedUser = await User.getById(validation.data)
+        const storedUser = await User.getById(validation.data);
 
-        const storedPassword = storedUser.password
+        const storedPassword = storedUser.password;
 
-        const matchPassword = await Auth.comparePassword(password, storedPassword)
+        const matchPassword = await Auth.comparePassword(
+            password,
+            storedPassword,
+        );
 
-        if (!matchPassword) return {
-            success: false,
-            error: {
-                message: "Contraseña invalida!",
-                type: FORBIDDEN
-            },
-            data: null
-        }
+        if (!matchPassword)
+            return {
+                success: false,
+                error: {
+                    message: "Contraseña invalida!",
+                    type: FORBIDDEN,
+                },
+                data: null,
+            };
 
-        await User.delete(validation.data)
+        await User.delete(validation.data);
         return {
             success: true,
             error: null,
-            data: null
-        }
+            data: null,
+        };
     }
     /**
      * Change username validating token and password
@@ -83,47 +89,53 @@ export default class UserService {
         const validation = validationHandler([
             Auth.validateToken(token),
             await User.validateUsername(newUsername),
-            await User.validatePassword(password)
-        ])
-        if (validation.error) return {
-            success: false,
-            error: {
-                message: validation.error,
-                type: BAD_REQUEST
-            },
-            data: null
-        }
+            await User.validatePassword(password),
+        ]);
+        if (validation.error)
+            return {
+                success: false,
+                error: {
+                    message: validation.error,
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
 
-        const userExists = await User.checkIfExistsById(validation.data)
+        const userExists = await User.checkIfExistsById(validation.data);
 
-        if (!userExists) return {
-            success: false,
-            error: {
-                message: "Usuario no existe!",
-                type: NOT_FOUND
-            },
-            data: null
-        }
+        if (!userExists)
+            return {
+                success: false,
+                error: {
+                    message: "Usuario no existe!",
+                    type: NOT_FOUND,
+                },
+                data: null,
+            };
 
-        const user = await User.getById(validation.data)
+        const user = await User.getById(validation.data);
 
-        const matchPassword = await Auth.comparePassword(password, user.password)
+        const matchPassword = await Auth.comparePassword(
+            password,
+            user.password,
+        );
 
-        if (!matchPassword) return {
-            success: false,
-            error: {
-                message: "Contraseña invalida!",
-                type: FORBIDDEN
-            },
-            data: null
-        }
+        if (!matchPassword)
+            return {
+                success: false,
+                error: {
+                    message: "Contraseña invalida!",
+                    type: FORBIDDEN,
+                },
+                data: null,
+            };
 
-        await User.changeUsername(newUsername, validation.data)
+        await User.changeUsername(newUsername, validation.data);
         return {
             success: true,
             error: null,
-            data: null
-        }
+            data: null,
+        };
     }
     /**
      * Change password validating token and password
@@ -137,49 +149,55 @@ export default class UserService {
         const validation = validationHandler([
             Auth.validateToken(token),
             await User.validatePassword(newPassword),
-            await User.validatePassword(password)
-        ])
-        if (validation.error) return {
-            success: false,
-            error: {
-                message: validation.error,
-                type: BAD_REQUEST
-            },
-            data: null
-        }
+            await User.validatePassword(password),
+        ]);
+        if (validation.error)
+            return {
+                success: false,
+                error: {
+                    message: validation.error,
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
 
-        const userExists = await User.checkIfExistsById(validation.data)
+        const userExists = await User.checkIfExistsById(validation.data);
 
-        if (!userExists) return {
-            success: false,
-            error: {
-                message: "Usuario no existe!",
-                type: NOT_FOUND
-            },
-            data: null
-        }
+        if (!userExists)
+            return {
+                success: false,
+                error: {
+                    message: "Usuario no existe!",
+                    type: NOT_FOUND,
+                },
+                data: null,
+            };
 
-        const user = await User.getById(validation.data)
+        const user = await User.getById(validation.data);
 
-        const matchPassword = await Auth.comparePassword(password, user.password)
+        const matchPassword = await Auth.comparePassword(
+            password,
+            user.password,
+        );
 
-        if (!matchPassword) return {
-            success: false,
-            error: {
-                message: "Contraseña invalida!",
-                type: FORBIDDEN
-            },
-            data: null
-        }
+        if (!matchPassword)
+            return {
+                success: false,
+                error: {
+                    message: "Contraseña invalida!",
+                    type: FORBIDDEN,
+                },
+                data: null,
+            };
 
-        const encryptedPassword = await Auth.encryptPassword(newPassword)
+        const encryptedPassword = await Auth.encryptPassword(newPassword);
 
-        await User.changePassword(encryptedPassword, validation.data)
+        await User.changePassword(encryptedPassword, validation.data);
         return {
             success: true,
             error: null,
-            data: null
-        }
+            data: null,
+        };
     }
     /**
      * Change description validating token
@@ -191,34 +209,36 @@ export default class UserService {
     static async changeDescription(newDescription, token) {
         const validation = validationHandler([
             Auth.validateToken(token),
-            await User.validateDescription(newDescription)
-        ])
-        if (validation.error) return {
-            success: false,
-            error: {
-                message: validation.error,
-                type: BAD_REQUEST
-            },
-            data: null
-        }
+            await User.validateDescription(newDescription),
+        ]);
+        if (validation.error)
+            return {
+                success: false,
+                error: {
+                    message: validation.error,
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
 
-        const userExists = await User.checkIfExistsById(validation.data)
+        const userExists = await User.checkIfExistsById(validation.data);
 
-        if (!userExists) return {
-            success: false,
-            error: {
-                message: "Usuario no existe!",
-                type: NOT_FOUND
-            },
-            data: null
-        }
+        if (!userExists)
+            return {
+                success: false,
+                error: {
+                    message: "Usuario no existe!",
+                    type: NOT_FOUND,
+                },
+                data: null,
+            };
 
-        await User.changeDescription(newDescription, validation.data)
+        await User.changeDescription(newDescription, validation.data);
         return {
             success: true,
             error: null,
-            data: null
-        }
+            data: null,
+        };
     }
     /**
      * Change image validating token
@@ -228,35 +248,35 @@ export default class UserService {
      * @async
      * */
     static async changeImage(image, token) {
-        const validation = validationHandler([
-            Auth.validateToken(token)
-        ])
-        if (validation.error) return {
-            success: false,
-            error: {
-                message: validation.error,
-                type: BAD_REQUEST
-            },
-            data: null
-        }
+        const validation = validationHandler([Auth.validateToken(token)]);
+        if (validation.error)
+            return {
+                success: false,
+                error: {
+                    message: validation.error,
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
 
-        const userExists = await User.checkIfExistsById(validation.data)
+        const userExists = await User.checkIfExistsById(validation.data);
 
-        if (!userExists) return {
-            success: false,
-            error: {
-                message: "Usuario no existe!",
-                type: NOT_FOUND
-            },
-            data: null
-        }
+        if (!userExists)
+            return {
+                success: false,
+                error: {
+                    message: "Usuario no existe!",
+                    type: NOT_FOUND,
+                },
+                data: null,
+            };
 
-        const imageUrl = await User.changeImage(image, validation.data)
+        const imageUrl = await User.changeImage(image, validation.data);
         return {
             success: true,
             error: null,
-            data: imageUrl
-        }
+            data: imageUrl,
+        };
     }
     /**
      * Add a user has follower
@@ -266,65 +286,71 @@ export default class UserService {
      * @async
      * */
     static async followUser(username, token) {
-        const validation = validationHandler([
-            Auth.validateToken(token)
-        ])
-        if (validation.error) return {
-            success: false,
-            error: {
-                message: validation.error,
-                type: BAD_REQUEST
-            },
-            data: null
-        }
+        const validation = validationHandler([Auth.validateToken(token)]);
+        if (validation.error)
+            return {
+                success: false,
+                error: {
+                    message: validation.error,
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
 
-        const userExists = await User.checkIfExistsById(validation.data)
+        const userExists = await User.checkIfExistsById(validation.data);
 
-        if (!userExists) return {
-            success: false,
-            error: {
-                message: "Usuario no existe!",
-                type: NOT_FOUND
-            },
-            data: null
-        }
+        if (!userExists)
+            return {
+                success: false,
+                error: {
+                    message: "Usuario no existe!",
+                    type: NOT_FOUND,
+                },
+                data: null,
+            };
 
-        const followerExists = await User.checkIfExistsByUsername(username)
-        if (!followerExists) return {
-            success: false,
-            error: {
-                message: "Seguidor no existe!",
-                type: NOT_FOUND
-            },
-            data: null
-        }
+        const followerExists = await User.checkIfExistsByUsername(username);
+        if (!followerExists)
+            return {
+                success: false,
+                error: {
+                    message: "Seguidor no existe!",
+                    type: NOT_FOUND,
+                },
+                data: null,
+            };
 
-        const user = await User.getByUsername(username)
-        if (user.id == validation.data) return {
-            success: false,
-            error: {
-                message: "Usuario no se puede seguir a si mismo!",
-                type: BAD_REQUEST
-            },
-            data: null
-        }
+        const user = await User.getByUsername(username);
+        if (user.id == validation.data)
+            return {
+                success: false,
+                error: {
+                    message: "Usuario no se puede seguir a si mismo!",
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
 
-        const alreadyFollow = await User.checkIfFollow(validation.data,username)
-        if (alreadyFollow) return {
-            success: false,
-            error:  {
-                message: "Usuario ya seguido!",
-                type: BAD_REQUEST
-            },
-            data: null
-        }
+        const alreadyFollow = await User.checkIfFollow(
+            validation.data,
+            username,
+        );
+        if (alreadyFollow)
+            return {
+                success: false,
+                error: {
+                    message: "Usuario ya seguido!",
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
 
-        await User.followUser(validation.data,username)
+        await User.followUser(validation.data, username);
         return {
             success: true,
             error: null,
-            data: null
-        }
+            data: null,
+        };
     }
     /**
      * Search a user by username
@@ -333,20 +359,21 @@ export default class UserService {
      * @async
      * */
     static async search(username) {
-        const users = await User.search(username)
-        if (users.length == 0) return {
-            success: false,
-            error: {
-                message: "Usuarios no encontrados!",
-                type: NOT_FOUND
-            },
-            data: null
-        }
+        const users = await User.search(username);
+        if (users.length == 0)
+            return {
+                success: false,
+                error: {
+                    message: "Usuarios no encontrados!",
+                    type: NOT_FOUND,
+                },
+                data: null,
+            };
         return {
             success: true,
             error: null,
-            data: users
-        }
+            data: users,
+        };
     }
     /**
      * Get followers of a user by username
@@ -356,33 +383,35 @@ export default class UserService {
      * */
     static async getFollowers(username) {
         const validation = validationHandler([
-            await User.validateUsername(username)
-        ])
-        if (validation.error) return {
-            success: false,
-            error: {
-                message: validation.error,
-                type: BAD_REQUEST
-            },
-            data: null
-        }
+            await User.validateUsername(username),
+        ]);
+        if (validation.error)
+            return {
+                success: false,
+                error: {
+                    message: validation.error,
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
 
-        const userExists = await User.checkIfExistsByUsername(username)
-        if (!userExists) return {
-            success: false,
-            error: {
-                message: "Usuario no existe!",
-                type: NOT_FOUND
-            },
-            data: null
-        }
+        const userExists = await User.checkIfExistsByUsername(username);
+        if (!userExists)
+            return {
+                success: false,
+                error: {
+                    message: "Usuario no existe!",
+                    type: NOT_FOUND,
+                },
+                data: null,
+            };
 
-        const followers = await User.getFollowers(username)
+        const followers = await User.getFollowers(username);
         return {
             success: true,
             error: null,
-            data: followers
-        }
+            data: followers,
+        };
     }
     /**
      * Get user profile information
@@ -392,33 +421,35 @@ export default class UserService {
      * */
     static async getProfileInfo(username) {
         const validation = validationHandler([
-            await User.validateUsername(username)
-        ])
-        if (validation.error) return {
-            success: false,
-            error: {
-                message: validation.error,
-                type: BAD_REQUEST
-            },
-            data: null
-        }
+            await User.validateUsername(username),
+        ]);
+        if (validation.error)
+            return {
+                success: false,
+                error: {
+                    message: validation.error,
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
 
-        const userExists = await User.checkIfExistsByUsername(username)
-        if (!userExists) return {
-            success: false,
-            error: {
-                message: "Usuario no existe!",
-                type: NOT_FOUND
-            },
-            data: null
-        }
-        
-        const profileInfo = await User.getProfileInfo(username)
+        const userExists = await User.checkIfExistsByUsername(username);
+        if (!userExists)
+            return {
+                success: false,
+                error: {
+                    message: "Usuario no existe!",
+                    type: NOT_FOUND,
+                },
+                data: null,
+            };
+
+        const profileInfo = await User.getProfileInfo(username);
         return {
             success: true,
             error: null,
-            data: profileInfo
-        }
+            data: profileInfo,
+        };
     }
     /**
      * Unfollow an user
@@ -427,46 +458,49 @@ export default class UserService {
      * @return {Promise<ServiceResult>} Service result object
      * @async
      * */
-    static async unfollow(username,token) {
+    static async unfollow(username, token) {
         const validation = validationHandler([
             await User.validateUsername(username),
-            Auth.validateToken(token)
-        ])
-        if (validation.error) return {
-            success: false,
-            error: {
-                message: validation.error,
-                type: BAD_REQUEST
-            },
-            data: null
-        }
+            Auth.validateToken(token),
+        ]);
+        if (validation.error)
+            return {
+                success: false,
+                error: {
+                    message: validation.error,
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
 
-        const exists = await User.checkIfExistsByUsername(username)
-        if (!exists) return {
-            success: false,
-            error: {
-                message: "Usuario no existe!",
-                type: NOT_FOUND
-            },
-            data: null
-        }
+        const exists = await User.checkIfExistsByUsername(username);
+        if (!exists)
+            return {
+                success: false,
+                error: {
+                    message: "Usuario no existe!",
+                    type: NOT_FOUND,
+                },
+                data: null,
+            };
 
-        const isFollowing = await User.checkIfFollow(validation.data,username)
-        if (!isFollowing) return {
-            success: false,
-            error: {
-                message: "Usuario no lo sigue!",
-                type: BAD_REQUEST
-            },
-            data: null
-        }
+        const isFollowing = await User.checkIfFollow(validation.data, username);
+        if (!isFollowing)
+            return {
+                success: false,
+                error: {
+                    message: "Usuario no lo sigue!",
+                    type: BAD_REQUEST,
+                },
+                data: null,
+            };
 
-        await User.unfollowUser(validation.data,username)
-        
+        await User.unfollowUser(validation.data, username);
+
         return {
             success: true,
             error: null,
-            data: null
-        }
+            data: null,
+        };
     }
 }
