@@ -196,4 +196,23 @@ export default class UserController {
             return ResponseHandler.ok("Información del perfil!", result.data, res);
         }
     }
+    /**
+     * Unfollow an user
+     * */
+    static async unfollow(req,res) {
+        const { username } = req.body
+        const { token } = req.cookies
+        let result
+        try {
+            result = await UserService.unfollow(username,token)
+        } catch(e) {
+            console.error(e)
+            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR],"Error del servidor!", res)
+        }
+        if (!result.success) {
+            return ResponseHandler.error(errorCodes[result.error.type],result.error.message,res)
+        } else {
+            return ResponseHandler.ok("Usuario dejado de seguir",null,res)
+        }
+    }
 }

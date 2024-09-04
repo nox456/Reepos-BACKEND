@@ -22,5 +22,7 @@ router.post("/follow-user", UserController.followUser)
 router.get("/followers", UserController.getFollowers)
 // Get profile info of a user by id field
 router.get("/profile", UserController.getProfileInfo)
+// Unfollow an user
+router.put("/unfollow", UserController.unfollow)
 
 export default router

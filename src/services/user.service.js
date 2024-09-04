@@ -420,4 +420,53 @@ export default class UserService {
             data: profileInfo
         }
     }
+    /**
+     * Unfollow an user
+     * @param {string} username - User name
+     * @param {string} token - JWT Token
+     * @return {Promise<ServiceResult>} Service result object
+     * @async
+     * */
+    static async unfollow(username,token) {
+        const validation = validationHandler([
+            await User.validateUsername(username),
+            Auth.validateToken(token)
+        ])
+        if (validation.error) return {
+            success: false,
+            error: {
+                message: validation.error,
+                type: BAD_REQUEST
+            },
+            data: null
+        }
+
+        const exists = await User.checkIfExistsByUsername(username)
+        if (!exists) return {
+            success: false,
+            error: {
+                message: "Usuario no existe!",
+                type: NOT_FOUND
+            },
+            data: null
+        }
+
+        const isFollowing = await User.checkIfFollow(validation.data,username)
+        if (!isFollowing) return {
+            success: false,
+            error: {
+                message: "Usuario no lo sigue!",
+                type: BAD_REQUEST
+            },
+            data: null
+        }
+
+        await User.unfollowUser(validation.data,username)
+        
+        return {
+            success: true,
+            error: null,
+            data: null
+        }
+    }
 }
