@@ -31,5 +31,7 @@ router.put("/remove-like", RepositoryController.removeLike)
 router.delete("/temp",RepositoryController.removeTemp)
 // Remove repository from cloud without password
 router.delete("/db", RepositoryController.deleteDb)
+// Get README images
+router.get("/readme", RepositoryController.readme)
 
 export default router
