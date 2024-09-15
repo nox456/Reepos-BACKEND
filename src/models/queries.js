@@ -116,7 +116,7 @@ WHERE
 
 export const SEARCH_REPOSITORIES = `
 SELECT
-    users.username as user,
+    users.username as username,
     repositories.name as name,
     repositories.description as description,
     repositories.created_at as created_at,
