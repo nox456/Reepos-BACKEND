@@ -941,4 +941,66 @@ export default class RepositoryService {
             data: content
         }
     }
+    /**
+     * Check if an user already liked a repository
+     * @param {string} token - JWT Token
+     * @param {string} repoName - Repository name
+     * @return {Promise<ServiceResult>} Service result object
+     * @async
+     * */
+    static async checkIfLike(token, repoName, userOwnerName) {
+        const validation = validationHandler([
+            Auth.validateToken(token),
+            await Repository.validateRepoName(repoName),
+            await User.validateUsername(userOwnerName)
+        ])
+        if (validation.error) return {
+            success: false,
+            error: {
+                message: validation.error,
+                type: BAD_REQUEST
+            },
+            data: null
+        }
+
+        const repoExists = await Repository.checkIfExistsInDb(repoName)
+        if (!repoExists) return {
+            success: false,
+            error: {
+                message: "Repositorio no existe!",
+                type: NOT_FOUND
+            },
+            data: null
+        }
+
+        const userExists = await User.checkIfExistsById(validation.data)
+        if (!userExists) return {
+            success: false,
+            error: {
+                message: "Usuario no existe!",
+                type: NOT_FOUND
+            },
+            data: null
+        }
+
+        const userOwnerExists = await User.checkIfExistsByUsername(userOwnerName)
+        if (!userOwnerExists) return {
+            success: false,
+            error: {
+                message: "Usuario dueño no existe!",
+                type: NOT_FOUND
+            },
+            data: null
+        }
+
+        const user = await User.getById(validation.data)
+        const userOwner = await User.getByUsername(userOwnerName)
+        const alreadyLike = await Repository.checkIfLike(user.username,repoName,userOwner.id)
+
+        return {
+            success: true,
+            error: null,
+            data: alreadyLike
+        }
+    }
 }

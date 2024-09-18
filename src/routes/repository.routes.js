@@ -33,5 +33,7 @@ router.delete("/temp",RepositoryController.removeTemp)
 router.delete("/db", RepositoryController.deleteDb)
 // Get README images
 router.get("/readme", RepositoryController.readme)
+// Check if an user already like a repository
+router.get("/like", RepositoryController.checkIfLike)
 
 export default router

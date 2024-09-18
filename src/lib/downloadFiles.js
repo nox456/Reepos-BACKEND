@@ -1,6 +1,6 @@
 import archiver from "archiver";
 import { createWriteStream } from "fs";
-import { readdir } from "fs/promises";
+import { readdir, mkdir } from "fs/promises";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -27,6 +27,10 @@ const downloadsDir = join(
  * @async
  * */
 export default async function downloadFiles(files, repoName) {
+    const tempDir = await readdir(join(dirname(fileURLToPath(import.meta.url)),"../temp"))
+    if (!tempDir.includes("downloads")) {
+        await mkdir(downloadsDir)
+    }
     const downloads = await readdir(downloadsDir)
     if (downloads.includes(`${repoName}.zip`)) return `${repoName}.zip`
 

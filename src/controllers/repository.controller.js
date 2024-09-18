@@ -315,9 +315,8 @@ export default class RepositoryController {
      * */
     static async deleteZip(req, res) {
         const { fileName } = req.body;
-        let result;
         try {
-            result = await RepositoryService.deleteZip(fileName);
+            await RepositoryService.deleteZip(fileName);
         } catch (e) {
             console.error(e);
             return ResponseHandler.error(
@@ -444,6 +443,43 @@ export default class RepositoryController {
             );
         } else {
             return ResponseHandler.ok("Imagenes del README!", result.data, res);
+        }
+    }
+    /**
+     * Check if an user already liked a repository
+     * */
+    static async checkIfLike(req, res) {
+        const { repoName, userOwnerName } = req.query;
+        const { token } = req.cookies;
+        let result;
+        try {
+            result = await RepositoryService.checkIfLike(
+                token,
+                repoName,
+                userOwnerName,
+            );
+        } catch (e) {
+            console.error(e);
+            return ResponseHandler.error(
+                errorCodes[INTERNAL_SERVER_ERROR],
+                "Error del Servidor!",
+                res,
+            );
+        }
+        if (!result.success) {
+            return ResponseHandler.error(
+                errorCodes[result.error.type],
+                result.error.message,
+                res,
+            );
+        } else {
+            return ResponseHandler.ok(
+                result.data
+                    ? "Usuario ya dió like!"
+                    : "Usuario no ha dado like!",
+                result.data,
+                res,
+            );
         }
     }
 }
