@@ -419,33 +419,6 @@ export default class RepositoryController {
         }
     }
     /**
-     * Get images used in README
-     * */
-    static async readme(req, res) {
-        const { token } = req.cookies;
-        const { repoName } = req.query;
-        let result;
-        try {
-            result = await RepositoryService.readme(token, repoName);
-        } catch (e) {
-            console.error(e);
-            return ResponseHandler.error(
-                errorCodes[INTERNAL_SERVER_ERROR],
-                "Error del Servidor!",
-                res,
-            );
-        }
-        if (!result.success) {
-            return ResponseHandler.error(
-                errorCodes[result.error.type],
-                result.error.message,
-                res,
-            );
-        } else {
-            return ResponseHandler.ok("Imagenes del README!", result.data, res);
-        }
-    }
-    /**
      * Check if an user already liked a repository
      * */
     static async checkIfLike(req, res) {

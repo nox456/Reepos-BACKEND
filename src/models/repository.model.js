@@ -340,6 +340,34 @@ export default class Repository {
     static async getFullInfo(repoName, userId) {
         const info_result = await db.query(REPOSITORY_INFO, [userId, repoName]);
         const info = info_result.rows[0];
+
+        const readme_url = supabase.storage.from(SUPABASE_REPOSITORY_BUCKET).getPublicUrl(`${userId}/${repoName}/README.md`).data.publicUrl
+        const res = await fetch(readme_url)
+        const content = await res.text()
+        const linesMatches = content.split("\n").filter((line) => line.includes("<img") || line.startsWith("!["))
+
+        let readme_with_urls
+        if (linesMatches.length == 0) {
+            readme_with_urls = content
+        }
+
+        readme_with_urls = content.split("\n").map(line => {
+            if (line.includes("<img") || line.startsWith("![")) {
+                let path
+                if (line.startsWith("![")) {
+                    path = line.slice(line.indexOf("(") + 1,line.lastIndexOf(")"))
+                } else {
+                    path = line.slice(line.indexOf("=") + 2, line.lastIndexOf("\""))
+                }
+                const url = supabase.storage.from(SUPABASE_REPOSITORY_BUCKET).getPublicUrl(join(`${userId}/${repoName}`,path)).data.publicUrl
+                return line.replace(path,url)
+            } else {
+                return line
+            }
+        }).join("\n")
+
+        info.readme = readme_with_urls
+
         return info;
     }
     /**
@@ -414,39 +442,5 @@ export default class Repository {
      * */
     static async removeTemp(repoName) {
         await rm(join(reposPath, repoName), { recursive: true });
-    }
-    /**
-     * Get images used in README
-     * @param {string} userId - User ID
-     * @param {string} repoName - Repository name
-     * @return {Promise<string>} Readme with images url
-     * @async
-     * */
-    static async readme(userId, repoName) {
-        const readme_url = supabase.storage.from(SUPABASE_REPOSITORY_BUCKET).getPublicUrl(`${userId}/${repoName}/README.md`).data.publicUrl
-        const res = await fetch(readme_url)
-        const content = await res.text()
-        const linesMatches = content.split("\n").filter((line) => line.includes("<img") || line.startsWith("!["))
-
-        if (linesMatches.length == 0) {
-            return content
-        }
-
-        const readme_with_urls = content.split("\n").map(line => {
-            if (line.includes("<img") || line.startsWith("![")) {
-                let path
-                if (line.startsWith("![")) {
-                    path = line.slice(line.indexOf("(") + 1,line.lastIndexOf(")"))
-                } else {
-                    path = line.slice(line.indexOf("=") + 2, line.lastIndexOf("\""))
-                }
-                const url = supabase.storage.from(SUPABASE_REPOSITORY_BUCKET).getPublicUrl(join(`${userId}/${repoName}`,path)).data.publicUrl
-                return line.replace(path,url)
-            } else {
-                return line
-            }
-        }).join("\n")
-
-        return readme_with_urls
     }
 }

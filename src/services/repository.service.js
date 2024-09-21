@@ -894,54 +894,6 @@ export default class RepositoryService {
         }
     }
     /**
-     * Get images used in README
-     * @param {string} token - JWT Token
-     * @param {string} repoName - Repository name
-     * @return {Promise<ServiceResult>} Service result object
-     * @async
-     * */
-    static async readme(token,repoName) {
-        const validation = validationHandler([
-            Auth.validateToken(token),
-            await Repository.validateRepoName(repoName)
-        ])
-        if (validation.error) return {
-            success: false,
-            error: {
-                message: validation.error,
-                type: BAD_REQUEST
-            },
-            data: null
-        }
-
-        const userExists = await User.checkIfExistsById(validation.data)
-        if (!userExists) return {
-            success: false,
-            error: {
-                message: "Usuario no existe!",
-                type: NOT_FOUND
-            },
-            data: null
-        }
-
-        const repoExists = await Repository.checkIfExistsInCloud(repoName)
-        if (!repoExists) return {
-            success: false,
-            error: {
-                message: "Repositorio no existe!",
-                type: NOT_FOUND
-            },
-            data: null
-        }
-
-        const content = await Repository.readme(validation.data,repoName)
-        return {
-            success: true,
-            error: null,
-            data: content
-        }
-    }
-    /**
      * Check if an user already liked a repository
      * @param {string} token - JWT Token
      * @param {string} repoName - Repository name
