@@ -349,22 +349,22 @@ export default class Repository {
         let readme_with_urls
         if (linesMatches.length == 0) {
             readme_with_urls = content
-        }
-
-        readme_with_urls = content.split("\n").map(line => {
-            if (line.includes("<img") || line.startsWith("![")) {
-                let path
-                if (line.startsWith("![")) {
-                    path = line.slice(line.indexOf("(") + 1,line.lastIndexOf(")"))
+        } else {
+            readme_with_urls = content.split("\n").map(line => {
+                if (line.includes("<img") || line.startsWith("![")) {
+                    let path
+                    if (line.startsWith("![")) {
+                        path = line.slice(line.indexOf("(") + 1,line.lastIndexOf(")"))
+                    } else {
+                        path = line.slice(line.indexOf("=") + 2, line.lastIndexOf("\""))
+                    }
+                    const url = supabase.storage.from(SUPABASE_REPOSITORY_BUCKET).getPublicUrl(join(`${userId}/${repoName}`,path)).data.publicUrl
+                    return line.replace(path,url)
                 } else {
-                    path = line.slice(line.indexOf("=") + 2, line.lastIndexOf("\""))
+                    return line
                 }
-                const url = supabase.storage.from(SUPABASE_REPOSITORY_BUCKET).getPublicUrl(join(`${userId}/${repoName}`,path)).data.publicUrl
-                return line.replace(path,url)
-            } else {
-                return line
-            }
-        }).join("\n")
+            }).join("\n")
+        }
 
         info.readme = readme_with_urls
 
