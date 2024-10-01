@@ -2,6 +2,7 @@ import User from "../models/user.model.js";
 import Auth from "../models/auth.model.js";
 import validationHandler from "../lib/validationHandler.js";
 import { BAD_REQUEST, NOT_FOUND, FORBIDDEN } from "../lib/constants/errors.js";
+import ServiceError from "../lib/serviceError.js";
 
 /**
  * Service to handle user proccesses
@@ -29,27 +30,11 @@ export default class UserService {
             Auth.validateToken(token),
             await User.validatePassword(password),
         ]);
-        if (validation.error)
-            return {
-                success: false,
-                error: {
-                    message: validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
+        if (validation.error) return new ServiceError(validation.error,BAD_REQUEST)
 
         const userExists = await User.checkIfExistsById(validation.data);
 
-        if (!userExists)
-            return {
-                success: false,
-                error: {
-                    message: "Usuario no existe!",
-                    type: NOT_FOUND,
-                },
-                data: null,
-            };
+        if (!userExists) return new ServiceError("Usuario no existe!", NOT_FOUND)
 
         const storedUser = await User.getById(validation.data);
 
@@ -60,15 +45,7 @@ export default class UserService {
             storedPassword,
         );
 
-        if (!matchPassword)
-            return {
-                success: false,
-                error: {
-                    message: "Contraseña invalida!",
-                    type: FORBIDDEN,
-                },
-                data: null,
-            };
+        if (!matchPassword) return new ServiceError("Contraseña invalida!", FORBIDDEN)
 
         await User.delete(validation.data);
         return {
@@ -91,27 +68,11 @@ export default class UserService {
             await User.validateUsername(newUsername),
             await User.validatePassword(password),
         ]);
-        if (validation.error)
-            return {
-                success: false,
-                error: {
-                    message: validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
+        if (validation.error) return new ServiceError(validation.error, BAD_REQUEST)
 
         const userExists = await User.checkIfExistsById(validation.data);
 
-        if (!userExists)
-            return {
-                success: false,
-                error: {
-                    message: "Usuario no existe!",
-                    type: NOT_FOUND,
-                },
-                data: null,
-            };
+        if (!userExists) return new ServiceError("Usuario no existe!", NOT_FOUND)
 
         const user = await User.getById(validation.data);
 
@@ -120,15 +81,7 @@ export default class UserService {
             user.password,
         );
 
-        if (!matchPassword)
-            return {
-                success: false,
-                error: {
-                    message: "Contraseña invalida!",
-                    type: FORBIDDEN,
-                },
-                data: null,
-            };
+        if (!matchPassword) return new ServiceError("Contraseña invalida!", FORBIDDEN)
 
         await User.changeUsername(newUsername, validation.data);
         return {
@@ -151,27 +104,10 @@ export default class UserService {
             await User.validatePassword(newPassword),
             await User.validatePassword(password),
         ]);
-        if (validation.error)
-            return {
-                success: false,
-                error: {
-                    message: validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
+        if (validation.error) return new ServiceError(validation.error,BAD_REQUEST)
 
         const userExists = await User.checkIfExistsById(validation.data);
-
-        if (!userExists)
-            return {
-                success: false,
-                error: {
-                    message: "Usuario no existe!",
-                    type: NOT_FOUND,
-                },
-                data: null,
-            };
+        if (!userExists) return new ServiceError("Usuario no existe!", NOT_FOUND)
 
         const user = await User.getById(validation.data);
 
@@ -179,16 +115,7 @@ export default class UserService {
             password,
             user.password,
         );
-
-        if (!matchPassword)
-            return {
-                success: false,
-                error: {
-                    message: "Contraseña invalida!",
-                    type: FORBIDDEN,
-                },
-                data: null,
-            };
+        if (!matchPassword) return new ServiceError("Contraseña invalida!",FORBIDDEN)
 
         const encryptedPassword = await Auth.encryptPassword(newPassword);
 
@@ -211,27 +138,10 @@ export default class UserService {
             Auth.validateToken(token),
             await User.validateDescription(newDescription),
         ]);
-        if (validation.error)
-            return {
-                success: false,
-                error: {
-                    message: validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
+        if (validation.error) return new ServiceError(validation.error,BAD_REQUEST)
 
         const userExists = await User.checkIfExistsById(validation.data);
-
-        if (!userExists)
-            return {
-                success: false,
-                error: {
-                    message: "Usuario no existe!",
-                    type: NOT_FOUND,
-                },
-                data: null,
-            };
+        if (!userExists) return new ServiceError("Usuario no existe!", NOT_FOUND)
 
         await User.changeDescription(newDescription, validation.data);
         return {
@@ -249,27 +159,10 @@ export default class UserService {
      * */
     static async changeImage(image, token) {
         const validation = validationHandler([Auth.validateToken(token)]);
-        if (validation.error)
-            return {
-                success: false,
-                error: {
-                    message: validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
+        if (validation.error) return new ServiceError(validation.error,BAD_REQUEST)
 
         const userExists = await User.checkIfExistsById(validation.data);
-
-        if (!userExists)
-            return {
-                success: false,
-                error: {
-                    message: "Usuario no existe!",
-                    type: NOT_FOUND,
-                },
-                data: null,
-            };
+        if (!userExists) return new ServiceError("Usuario no existe!", NOT_FOUND)
 
         const imageUrl = await User.changeImage(image, validation.data);
         return {
@@ -287,63 +180,22 @@ export default class UserService {
      * */
     static async followUser(username, token) {
         const validation = validationHandler([Auth.validateToken(token)]);
-        if (validation.error)
-            return {
-                success: false,
-                error: {
-                    message: validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
+        if (validation.error) return new ServiceError(validation.error,BAD_REQUEST)
 
         const userExists = await User.checkIfExistsById(validation.data);
-
-        if (!userExists)
-            return {
-                success: false,
-                error: {
-                    message: "Usuario no existe!",
-                    type: NOT_FOUND,
-                },
-                data: null,
-            };
+        if (!userExists) return new ServiceError("Usuario no existe!", NOT_FOUND)
 
         const followerExists = await User.checkIfExistsByUsername(username);
-        if (!followerExists)
-            return {
-                success: false,
-                error: {
-                    message: "Seguidor no existe!",
-                    type: NOT_FOUND,
-                },
-                data: null,
-            };
+        if (!followerExists) return new ServiceError("Seguidor no existe!",NOT_FOUND)
 
         const user = await User.getByUsername(username);
-        if (user.id == validation.data)
-            return {
-                success: false,
-                error: {
-                    message: "Usuario no se puede seguir a si mismo!",
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
+        if (user.id == validation.data) return new ServiceError("Usuario no se puede seguir a si mismo!", BAD_REQUEST)
 
         const alreadyFollow = await User.checkIfFollow(
             validation.data,
             username,
         );
-        if (alreadyFollow)
-            return {
-                success: false,
-                error: {
-                    message: "Usuario ya seguido!",
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
+        if (alreadyFollow) return new ServiceError("Usuario ya seguido!", BAD_REQUEST)
 
         await User.followUser(validation.data, username);
         return {
@@ -360,15 +212,8 @@ export default class UserService {
      * */
     static async search(username) {
         const users = await User.search(username);
-        if (users.length == 0)
-            return {
-                success: false,
-                error: {
-                    message: "Usuarios no encontrados!",
-                    type: NOT_FOUND,
-                },
-                data: null,
-            };
+        if (users.length == 0) return new ServiceError("Usuarios no encontrados!", NOT_FOUND)
+
         return {
             success: true,
             error: null,
@@ -385,26 +230,10 @@ export default class UserService {
         const validation = validationHandler([
             await User.validateUsername(username),
         ]);
-        if (validation.error)
-            return {
-                success: false,
-                error: {
-                    message: validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
+        if (validation.error) return new ServiceError(validation.error, BAD_REQUEST)
 
         const userExists = await User.checkIfExistsByUsername(username);
-        if (!userExists)
-            return {
-                success: false,
-                error: {
-                    message: "Usuario no existe!",
-                    type: NOT_FOUND,
-                },
-                data: null,
-            };
+        if (!userExists) return new ServiceError("Usuario no existe!", NOT_FOUND)
 
         const followers = await User.getFollowers(username);
         return {
@@ -423,26 +252,10 @@ export default class UserService {
         const validation = validationHandler([
             await User.validateUsername(username),
         ]);
-        if (validation.error)
-            return {
-                success: false,
-                error: {
-                    message: validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
+        if (validation.error) return new ServiceError(validation.error, BAD_REQUEST)
 
         const userExists = await User.checkIfExistsByUsername(username);
-        if (!userExists)
-            return {
-                success: false,
-                error: {
-                    message: "Usuario no existe!",
-                    type: NOT_FOUND,
-                },
-                data: null,
-            };
+        if (!userExists) return new ServiceError("Usuario no existe!", NOT_FOUND)
 
         const profileInfo = await User.getProfileInfo(username);
         return {
@@ -463,37 +276,13 @@ export default class UserService {
             await User.validateUsername(username),
             Auth.validateToken(token),
         ]);
-        if (validation.error)
-            return {
-                success: false,
-                error: {
-                    message: validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
+        if (validation.error) return new ServiceError(validation.error,BAD_REQUEST)
 
         const exists = await User.checkIfExistsByUsername(username);
-        if (!exists)
-            return {
-                success: false,
-                error: {
-                    message: "Usuario no existe!",
-                    type: NOT_FOUND,
-                },
-                data: null,
-            };
+        if (!exists) return new ServiceError("Usuario no existe!", NOT_FOUND)
 
         const isFollowing = await User.checkIfFollow(validation.data, username);
-        if (!isFollowing)
-            return {
-                success: false,
-                error: {
-                    message: "Usuario no lo sigue!",
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
+        if (!isFollowing) return new ServiceError("Usuario no lo sigue!", BAD_REQUEST)
 
         await User.unfollowUser(validation.data, username);
 
