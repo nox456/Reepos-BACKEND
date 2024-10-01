@@ -1,7 +1,8 @@
 import User from "../models/user.model.js";
 import Auth from "../models/auth.model.js";
-import validationHandler from "../lib/validationHandler.js"
+import validationHandler from "../lib/validationHandler.js";
 import { BAD_REQUEST, FORBIDDEN, NOT_FOUND } from "../lib/constants/errors.js";
+import ServiceError from "../lib/serviceError.js";
 
 /**
  * Service to handle auth proccesses
@@ -32,28 +33,13 @@ export default class AuthService {
 
         const validation = validationHandler([
             await User.validateUsername(username),
-            await User.validatePassword(password)
-        ])
-        if (validation.error) return {
-            success: false,
-            error: {
-                message: validation.error,
-                type: BAD_REQUEST
-            },
-            data: null
-        }
+            await User.validatePassword(password),
+        ]);
+        if (validation.error) return new ServiceError(validation.error,BAD_REQUEST)
 
         const userExists = await User.checkIfExistsByUsername(username);
 
-        if (userExists)
-            return {
-                success: false,
-                error: {
-                    message: "Usuario ya existe!",
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
+        if (userExists) return new ServiceError("Usuario ya existe!", BAD_REQUEST);
 
         const passwordEncrypted = await Auth.encryptPassword(password);
 
@@ -69,7 +55,7 @@ export default class AuthService {
     }
     /**
      * Signin a user validating username and password
-     * @param {UserData} userData 
+     * @param {UserData} userData
      * @return {Promise<ServiceResult>} Service result object
      * @async
      * */
@@ -78,28 +64,13 @@ export default class AuthService {
 
         const validation = validationHandler([
             await User.validateUsername(username),
-            await User.validatePassword(password)
-        ])
-        if (validation.error) return {
-            success: false,
-            error: {
-                message: validation.error,
-                type: BAD_REQUEST
-            },
-            data: null
-        }
+            await User.validatePassword(password),
+        ]);
+        if (validation.error) return new ServiceError(validation.error,BAD_REQUEST)
 
         const userExists = await User.checkIfExistsByUsername(username);
 
-        if (!userExists)
-            return {
-                success: false,
-                error: {
-                    message: "Usuario no existe!",
-                    type: NOT_FOUND,
-                },
-                data: null,
-            };
+        if (!userExists) return new ServiceError("Usuario no existe!",NOT_FOUND)
 
         const user = await User.getByUsername(username);
 
@@ -108,15 +79,7 @@ export default class AuthService {
             user.password,
         );
 
-        if (!matchPassword)
-            return {
-                success: false,
-                error: {
-                    message: "Contraseña invalida!",
-                    type: FORBIDDEN,
-                },
-                data: null,
-            };
+        if (!matchPassword) return new ServiceError("Contraseña invalida!", FORBIDDEN)
 
         const token = Auth.generateToken(user.id);
 
@@ -134,23 +97,14 @@ export default class AuthService {
      * */
     static async isAuthenticated(token) {
         const token_validation = Auth.validateToken(token);
-        if (token_validation.error) {
-            return {
-                success: false,
-                error: {
-                    message: token_validation.error,
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
-        }
-        
-        const user = await User.getById(token_validation.data)
+        if (token_validation.error) return new ServiceError(token_validation.error,BAD_REQUEST)
+
+        const user = await User.getById(token_validation.data);
 
         return {
             success: true,
             error: null,
-            data: user
-        }
+            data: user,
+        };
     }
 }

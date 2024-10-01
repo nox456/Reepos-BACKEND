@@ -13,6 +13,7 @@ import repoInfo from "../lib/getReposInfo.js";
 import downloadFiles from "../lib/downloadFiles.js";
 import validationHandler from "../lib/validationHandler.js"
 import { BAD_REQUEST, FORBIDDEN, NOT_FOUND } from "../lib/constants/errors.js";
+import ServiceError from "../lib/serviceError.js"
 
 /**
  * Service to handle repositories proccesses
@@ -50,51 +51,20 @@ export default class RepositoryService {
             await Repository.validateDescription(description),
             await Repository.validateLanguages(languages)
         ])
-        if (validation.error) return {
-            success: false,
-            error: {
-                message: validation.error,
-                type: BAD_REQUEST
-            },
-            data: null
-        }
+        if (validation.error) return new ServiceError(validation.error,BAD_REQUEST)
 
         const existsBackend = await Repository.checkIfExistsInBackend(name);
-        if (!existsBackend)
-            return {
-                success: false,
-                error: {
-                    message: "Repositorio no existe en el servidor!",
-                    type: NOT_FOUND,
-                },
-                data: null,
-            };
+        if (!existsBackend) return new ServiceError("Repositorio no existe en el servidor!",NOT_FOUND)
 
         const userHasRepo = await Repository.checkIfUserHasRepo(
             name,
             validation.data,
         );
-        if (userHasRepo)
-            return {
-                success: false,
-                error: {
-                    message: "Usuario ya tiene el repositorio!",
-                    type: BAD_REQUEST,
-                },
-                data: null,
-            };
+        if (userHasRepo) return new ServiceError("Usuario ya tiene el repositorio!", BAD_REQUEST)
 
         for (const lang of languages) {
             const lang_exists = await Language.checkIfExists(lang);
-            if (!lang_exists)
-                return {
-                    success: false,
-                    error: {
-                        message: `Lenguaje ${lang} no existe en la base de datos!`,
-                        type: NOT_FOUND,
-                    },
-                    data: null,
-                };
+            if (!lang_exists) return new ServiceError(`Lenguaje ${lang} no existe en la base de datos!`, NOT_FOUND)
         }
 
         const { commits, files, branches, contributors, modifications } =
@@ -243,25 +213,10 @@ export default class RepositoryService {
             await Repository.validateRepoName(repoName),
             Auth.validateToken(token)
         ])
-        if (validation.error) return {
-            success: false,
-            error: {
-                message: validation.error,
-                type: BAD_REQUEST
-            },
-            data: null
-        }
+        if (validation.error) return new ServiceError(validation.error,BAD_REQUEST)
 
         const repoExists = await Repository.checkIfExistsInBackend(repoName);
-        if (!repoExists)
-            return {
-                success: false,
-                error: {
-                    message: "Repositorio no existe en el servidor!",
-                    type: NOT_FOUND,
-                },
-                data: null,
-            };
+        if (!repoExists) return new ServiceError("Repositorio no existe en el servidor!",NOT_FOUND)
 
         await Repository.upload(repoName, validation.data);
         return {
@@ -281,60 +236,23 @@ export default class RepositoryService {
             await Repository.validateRepoName(repoName),
             await User.validateUsername(username)
         ])
-        if (validation.error) return {
-            success: false,
-            error: {
-                message: validation.error,
-                type: BAD_REQUEST
-            },
-            data: null
-        }
+        if (validation.error) return new ServiceError(validation.error,BAD_REQUEST)
 
         const existsDb = await Repository.checkIfExistsInDb(repoName);
 
-        if (!existsDb)
-            return {
-                success: false,
-                error: {
-                    message: "Repositorio no existe en la base de datos!",
-                    type: NOT_FOUND,
-                },
-                data: null,
-            };
+        if (!existsDb) return new ServiceError("Repositorio no existe en la base de datos!", NOT_FOUND)
 
         const user_exists = await User.checkIfExistsByUsername(username)
-        if (!user_exists) return {
-            success: false,
-            error: {
-                message: "Usuario no existe!",
-                type: NOT_FOUND
-            },
-            data: null
-        }
+        if (!user_exists) return new ServiceError("Usuario no existe!",NOT_FOUND)
 
         const user = await User.getByUsername(username)
 
         const userHasRepo = await Repository.checkIfUserHasRepo(repoName,user.id)
-        if (!userHasRepo) return {
-            success: false,
-            error: {
-                message: "Usuario no tiene el repositorio!",
-                type: FORBIDDEN
-            },
-            data: null
-        }
+        if (!userHasRepo) return new ServiceError("Usuario no tiene el repositorio!",FORBIDDEN)
 
         const existsCloud = await Repository.checkIfExistsInCloud(repoName, user.id);
 
-        if (!existsCloud)
-            return {
-                success: false,
-                error: {
-                    message: "Repositorio no existe en el cloud!",
-                    type: NOT_FOUND,
-                },
-                data: null,
-            };
+        if (!existsCloud) return new ServiceError("Repositorio no existe en el cloud!", NOT_FOUND)
 
         const files = await Repository.getFiles(repoName,user.id);
 
@@ -358,26 +276,12 @@ export default class RepositoryService {
             Auth.validateToken(token),
             await User.validatePassword(password)
         ])
-        if (validation.error) return {
-            success: false,
-            error: {
-                message: validation.error,
-                type: BAD_REQUEST
-            },
-            data: null
-        }
+        if (validation.error) return new ServiceError(validation.error,BAD_REQUEST)
 
         const user = await User.getById(validation.data)
 
         const match_password = await Auth.comparePassword(password,user.password)
-        if (!match_password) return {
-            success: false,
-            error: {
-                message: "Contraseña invalida!",
-                type: FORBIDDEN
-            },
-            data: null
-        }
+        if (!match_password) return new ServiceError("Contraseña invalida!",FORBIDDEN)
 
         await Repository.deleteCloud(repoName, validation.data);
         await Repository.deleteDb(repoName, validation.data);
@@ -400,44 +304,16 @@ export default class RepositoryService {
             await User.validateUsername(username),
             await User.validateUsername(userOwnerName)
         ])
-        if (validation.error) return {
-            success: false,
-            error: {
-                message: validation.error,
-                type: BAD_REQUEST
-            },
-            data: null
-        }
+        if (validation.error) return new ServiceError(validation.error, BAD_REQUEST)
 
         const existsDb = await Repository.checkIfExistsInDb(repoName);
-        if (!existsDb)
-            return {
-                success: false,
-                error: {
-                    message: "Repositorio no existe en la base de datos!",
-                    type: NOT_FOUND,
-                },
-                data: null,
-            };
+        if (!existsDb) return new ServiceError("Repositorio no existe en la base de datos!", NOT_FOUND)
 
         const user_exists = await User.checkIfExistsByUsername(username)
-        if (!user_exists) return {
-            success: false,
-            error: {
-                message: "Usuario no existe!",
-                type: NOT_FOUND
-            },
-            data: null
-        }
+        if (!user_exists) return new ServiceError("Usuario no existe!", NOT_FOUND)
+
         const userOwner_exists = await User.checkIfExistsByUsername(userOwnerName)
-        if (!userOwner_exists) return {
-            success: false,
-            error: {
-                message: "Usuario dueño del repositorio no existe!",
-                type: NOT_FOUND
-            },
-            data: null
-        }
+        if (!userOwner_exists) return new ServiceError("Usuario dueño del repositorio no existe!", NOT_FOUND)
 
         const userOwner = await User.getByUsername(userOwnerName)
 
@@ -445,25 +321,11 @@ export default class RepositoryService {
             repoName,
             userOwner.id,
         );
-        if (!userHasRepo)
-            return {
-                success: false,
-                error: {
-                    message: "Usuario dueño no tiene el repositorio!",
-                    type: FORBIDDEN,
-                },
-                data: null,
-            };
+        if (!userHasRepo) return new ServiceError("Usuario dueño no tiene el repositorio!",FORBIDDEN)
 
         const hasUserLike = await Repository.checkIfLike(username,repoName,userOwner.id)
-        if (hasUserLike) return {
-            success: false,
-            error: {
-                message: "Usuario ya dió like al repositorio!",
-                type: BAD_REQUEST
-            },
-            data: null
-        }
+        if (hasUserLike) return new ServiceError("Usuario ya dió like al repositorio!", BAD_REQUEST)
+
         const user = await User.getByUsername(username)
         await Repository.like(user.id,repoName, userOwner.id);
         return {
@@ -480,26 +342,11 @@ export default class RepositoryService {
         const validation = validationHandler([
             await Repository.validateRepoName(repoName)
         ])
-        if (validation.error) return {
-            success: false,
-            error: {
-                message: validation.error,
-                type: BAD_REQUEST
-            },
-            data: null
-        }
+        if (validation.error) return new ServiceError(validation.error,BAD_REQUEST)
 
         const repos = await Repository.search(repoName);
 
-        if (repos.length == 0)
-            return {
-                success: false,
-                error: {
-                    message: "No hay repositorios que coincidan con la búsqueda!",
-                    type: NOT_FOUND,
-                },
-                data: null,
-            };
+        if (repos.length == 0) return new ServiceError("No hay repositorios que coincidan con la búsqueda!",NOT_FOUND)
 
         return {
             success: true,
@@ -520,50 +367,19 @@ export default class RepositoryService {
             await Repository.validateRepoName(repoName),
             Auth.validateToken(token)
         ])
-        if (validation.error) return {
-            success: false,
-            error: {
-                message: validation.error,
-                type: BAD_REQUEST
-            },
-            data: null
-        }
+        if (validation.error) return new ServiceError(validation.error,BAD_REQUEST)
 
         const existsDb = await Repository.checkIfExistsInDb(repoName);
-        if (!existsDb)
-            return {
-                success: false,
-                error: {
-                    message: "Repositorio no existe en la base de datos!",
-                    type: NOT_FOUND,
-                },
-                data: null,
-            };
+        if (!existsDb) return new ServiceError("Repositorio no existe en la base de datos!",NOT_FOUND)
 
         const user_exists = await User.checkIfExistsById(token_validation.data);
-        if (!user_exists)
-            return {
-                success: false,
-                error: {
-                    message: "Usuario no existe!",
-                    type: NOT_FOUND,
-                },
-                data: null,
-            };
+        if (!user_exists) return new ServiceError("Usuario no existe!",NOT_FOUND)
 
         const userHasRepo = await Repository.checkIfUserHasRepo(
             repoName,
             token_validation.data,
         );
-        if (!userHasRepo)
-            return {
-                success: false,
-                error: {
-                    message: "Usuario no tiene el repositorio!",
-                    type: FORBIDDEN,
-                },
-                data: null,
-            };
+        if (!userHasRepo) return new ServiceError("Usuario no tiene el repositorio!", FORBIDDEN)
 
         await Repository.changeName(
             newRepoName,

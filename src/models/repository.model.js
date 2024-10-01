@@ -192,7 +192,8 @@ export default class Repository {
                 invalid_type_error: "Lenguajes debe ser un array de strings!",
                 required_error: "Lenguajes requeridos!",
             })
-            .array().nonempty("El repositorio debe tener por lo menos 1 lenguaje!");
+            .array()
+            .nonempty("El repositorio debe tener por lo menos 1 lenguaje!");
         const validation = await schema.safeParseAsync(languages);
         let error = null;
         if (!validation.success) {
@@ -341,32 +342,56 @@ export default class Repository {
         const info_result = await db.query(REPOSITORY_INFO, [userId, repoName]);
         const info = info_result.rows[0];
 
-        const readme_url = supabase.storage.from(SUPABASE_REPOSITORY_BUCKET).getPublicUrl(`${userId}/${repoName}/README.md`).data.publicUrl
-        const res = await fetch(readme_url)
-        const content = await res.text()
-        const linesMatches = content.split("\n").filter((line) => line.includes("<img") || line.startsWith("!["))
+        const readme_url = supabase.storage
+            .from(SUPABASE_REPOSITORY_BUCKET)
+            .getPublicUrl(`${userId}/${repoName}/README.md`).data.publicUrl;
+        const res = await fetch(readme_url);
 
-        let readme_with_urls
-        if (linesMatches.length == 0) {
-            readme_with_urls = content
+        if (res.ok) {
+            const content = await res.text();
+            const linesMatches = content
+                .split("\n")
+                .filter(
+                    (line) => line.includes("<img") || line.startsWith("!["),
+                );
+
+            let readme_with_urls;
+            if (linesMatches.length == 0) {
+                readme_with_urls = content;
+            } else {
+                readme_with_urls = content
+                    .split("\n")
+                    .map((line) => {
+                        if (line.includes("<img") || line.startsWith("![")) {
+                            let path;
+                            if (line.startsWith("![")) {
+                                path = line.slice(
+                                    line.indexOf("(") + 1,
+                                    line.lastIndexOf(")"),
+                                );
+                            } else {
+                                path = line.slice(
+                                    line.indexOf("=") + 2,
+                                    line.lastIndexOf('"'),
+                                );
+                            }
+                            const url = supabase.storage
+                                .from(SUPABASE_REPOSITORY_BUCKET)
+                                .getPublicUrl(
+                                    join(`${userId}/${repoName}`, path),
+                                ).data.publicUrl;
+                            return line.replace(path, url);
+                        } else {
+                            return line;
+                        }
+                    })
+                    .join("\n");
+            }
+
+            info.readme = readme_with_urls;
         } else {
-            readme_with_urls = content.split("\n").map(line => {
-                if (line.includes("<img") || line.startsWith("![")) {
-                    let path
-                    if (line.startsWith("![")) {
-                        path = line.slice(line.indexOf("(") + 1,line.lastIndexOf(")"))
-                    } else {
-                        path = line.slice(line.indexOf("=") + 2, line.lastIndexOf("\""))
-                    }
-                    const url = supabase.storage.from(SUPABASE_REPOSITORY_BUCKET).getPublicUrl(join(`${userId}/${repoName}`,path)).data.publicUrl
-                    return line.replace(path,url)
-                } else {
-                    return line
-                }
-            }).join("\n")
+            info.readme = null
         }
-
-        info.readme = readme_with_urls
 
         return info;
     }
