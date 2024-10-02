@@ -89,11 +89,9 @@ SELECT
     commits.created_at as created_at,
     commits.hash as hash
 FROM commits
-    LEFT OUTER JOIN repositories 
-        ON (
-            SELECT id FROM repositories WHERE name = $1 AND user_owner = $2) = commits.repo
     LEFT OUTER JOIN contributors 
         ON contributors.id = commits.author
+WHERE commits.repo = (SELECT id FROM repositories WHERE name = $1 AND user_owner = $2)
 `;
 
 export const REPOSITORIES_CONTRIBUTORS = `
