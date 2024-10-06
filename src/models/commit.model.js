@@ -75,11 +75,13 @@ export default class Commit {
     /**
      * Get full information of commit by hash
      * @param {string} hash - Commit hash
+     * @param {string} repoName - Repository name
+     * @param {string} userId - User ID
      * @return {Promise<CommitInfo>} Commit information object
      * @async
      * */
-    static async getFullInfo(hash) {
-        const info_result = await db.query(COMMIT_INFO,[hash])
+    static async getFullInfo(hash,repoName,userId) {
+        const info_result = await db.query(COMMIT_INFO,[hash,repoName,userId])
         const info = info_result.rows[0]
         if (!info.files[0].name) {
             info.files = []

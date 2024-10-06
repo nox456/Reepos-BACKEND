@@ -63,16 +63,26 @@ export default class CommitService {
      * @return {Promise<ServiceResult>} Service result object
      * @async
      * */
-    static async getInfo(hash) {
+    static async getInfo(hash,repoName,username) {
         const validation = validationHandler([
-            await Commit.validateHash(hash)
+            await Commit.validateHash(hash),
+            await Repository.validateRepoName(repoName),
+            await User.validateUsername(username)
         ])
         if (validation.error) return new ServiceError(validation.error,BAD_REQUEST)
 
         const exists = await Commit.checkIfExists(hash)
         if (!exists) return new ServiceError("Commit no existe!", NOT_FOUND)
 
-        const info = await Commit.getFullInfo(hash)
+        const user_exists = await User.checkIfExistsByUsername(username)
+        if (!user_exists) return new ServiceError("Usuario no existe!", NOT_FOUND)
+
+        const repo_exists = await Repository.checkIfExistsInDb(repoName)
+        if (!repo_exists) return new ServiceError("Repositorio no existe!", NOT_FOUND)
+
+        const user = await User.getByUsername(username)
+
+        const info = await Commit.getFullInfo(hash,repoName,user.id)
         return {
             success: true,
             error: null,

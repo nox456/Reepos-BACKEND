@@ -60,7 +60,8 @@ SELECT
     file.size,
     file.path,
     last_commit.last_commit_title,
-    last_commit.last_commit_created_at
+    last_commit.last_commit_created_at,
+    last_commit.last_commit_hash
 FROM (
     SELECT
         f.name, f.size,f.id, f.path
@@ -72,7 +73,8 @@ FROM (
     LATERAL (
     SELECT 
         c.title as last_commit_title,
-        c.created_at as last_commit_created_at 
+        c.created_at as last_commit_created_at,
+        c.hash as last_commit_hash
     FROM modifications 
         LEFT OUTER JOIN commits c 
             ON c.id = modifications.commit 
@@ -168,7 +170,8 @@ SELECT
         json_build_object(
             'title',commits.title,
             'created_at',commits.created_at,
-            'author',contributors.name
+            'author',contributors.name,
+            'hash', commits.hash
         ) as last_commit 
     FROM repositories 
         LEFT OUTER JOIN commits 
@@ -213,14 +216,14 @@ SELECT
     SELECT 
         hash as prev_commit_hash 
     FROM commits c 
-    WHERE c.created_at < commits.created_at 
+    WHERE c.created_at < commits.created_at AND c.repo = (SELECT id FROM repositories WHERE name = $2 AND user_owner = $3)
     LIMIT 1
     ), 
     (
     SELECT 
         hash as next_commit_hash 
     FROM commits c 
-    WHERE c.created_at > commits.created_at 
+    WHERE c.created_at > commits.created_at AND c.repo = (SELECT id FROM repositories WHERE name = $2 AND user_owner = $3)
     ORDER BY c.created_at ASC 
     LIMIT 1
     )
@@ -244,7 +247,8 @@ SELECT
     SELECT 
         json_build_object(
             'title',commits.title,
-            'created_at',commits.created_at
+            'created_at',commits.created_at,
+            'hash', commits.hash
         ) as last_commit
     FROM files 
     LEFT OUTER JOIN modifications

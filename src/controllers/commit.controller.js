@@ -36,10 +36,10 @@ export default class CommitController {
      * Get full information of commit by hash
      * */
     static async getInfo(req,res) {
-        const {hash} = req.query
+        const {hash,repoName,username} = req.query
         let result
         try {
-            result = await CommitService.getInfo(hash)
+            result = await CommitService.getInfo(hash,repoName,username)
         } catch(e) {
             console.error(e)
             return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Error del servidor!",res)
