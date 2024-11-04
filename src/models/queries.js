@@ -99,12 +99,15 @@ WHERE commits.repo = (SELECT id FROM repositories WHERE name = $1 AND user_owner
 export const REPOSITORIES_CONTRIBUTORS = `
 SELECT
     contributors.name as name,
-    last_commit.title as last_commit_title, 
+    json_build_object(
+        'title', last_commit.title,
+        'hash', last_commit.hash
+    ) as last_commit,
     commits_created.count as commits_created
 FROM 
     contributors, 
     LATERAL (
-        SELECT title FROM commits WHERE commits.author = contributors.id ORDER BY created_at DESC LIMIT 1
+        SELECT title,hash FROM commits WHERE commits.author = contributors.id ORDER BY created_at DESC LIMIT 1
     ) as last_commit,
     LATERAL (
         SELECT count(*) FROM commits WHERE commits.author = contributors.id
