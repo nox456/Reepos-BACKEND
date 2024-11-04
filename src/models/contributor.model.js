@@ -1,5 +1,5 @@
 import db from "../connections/database.js";
-import {REPOSITORIES_CONTRIBUTORS} from "./queries.js"
+import { REPOSITORIES_CONTRIBUTORS } from "./queries.js";
 
 /**
  * Git Contributor class
@@ -17,15 +17,18 @@ export default class Contributor {
      * */
     /**
      * Save a contributor in database
-     * @param {ContributorData} contributorData - Contributor Data 
+     * @param {ContributorData} contributorData - Contributor Data
      * @return {Promise<ContributorType>} Contributor saved
      * @async
      * */
     static async save(contributorData) {
-        const { name, repo } = contributorData
-        const result = await db.query("INSERT INTO contributors VALUES (DEFAULT,$1,$2) RETURNING *", [name, repo])
-        const contributorSaved = result.rows[0]
-        return contributorSaved
+        const { name, repo } = contributorData;
+        const result = await db.query(
+            "INSERT INTO contributors VALUES (DEFAULT,$1,$2) RETURNING *",
+            [name, repo],
+        );
+        const contributorSaved = result.rows[0];
+        return contributorSaved;
     }
     /**
      * @typedef {Object} Contributor
@@ -41,8 +44,11 @@ export default class Contributor {
      * @async
      * */
     static async getAll(repoName, userId) {
-        const result = await db.query(REPOSITORIES_CONTRIBUTORS, [repoName, userId])
-        const contributors = result.rows
-        return contributors
+        const result = await db.query(REPOSITORIES_CONTRIBUTORS, [
+            repoName,
+            userId,
+        ]);
+        const contributors = result.rows;
+        return contributors;
     }
 }

@@ -8,7 +8,7 @@ import { INTERNAL_SERVER_ERROR } from "../lib/constants/errors.js";
  * */
 export default class FileController {
     /**
-     * Get public URL of a file to download it
+     * Get public URL of a file by ID
      * */
     static async download(req, res) {
         const { id, repoName } = req.query;
@@ -35,7 +35,7 @@ export default class FileController {
         }
     }
     /**
-     * Get info
+     * Get info of a file by ID
      * */
     static async getInfo(req, res) {
         const { repoName, fileId, username } = req.query;
@@ -57,7 +57,11 @@ export default class FileController {
                 res,
             );
         } else {
-            return ResponseHandler.ok("Información del archivo!", result.data, res);
+            return ResponseHandler.ok(
+                "Información del archivo!",
+                result.data,
+                res,
+            );
         }
     }
 }

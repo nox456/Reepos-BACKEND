@@ -11,8 +11,14 @@ export default class Repository_Language {
      * @async
      * */
     static async save(repository, language) {
-        const language_result = await db.query("SELECT id FROM languages WHERE name = $1", [language])
-        const languageId = language_result.rows[0].id
-        await db.query("INSERT INTO repositories_languages VALUES (DEFAULT,$1,$2)", [repository, languageId])
+        const language_result = await db.query(
+            "SELECT id FROM languages WHERE name = $1",
+            [language],
+        );
+        const languageId = language_result.rows[0].id;
+        await db.query(
+            "INSERT INTO repositories_languages VALUES (DEFAULT,$1,$2)",
+            [repository, languageId],
+        );
     }
 }

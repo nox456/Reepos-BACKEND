@@ -9,7 +9,7 @@ export default class ResponseHandler {
      * @param {Function} res - Response function
      * */
     static ok(message, data, res) {
-        return res.status(200).json({ message, data })
+        return res.status(200).json({ message, data });
     }
     /**
      * Send ERROR (404, 400, 500, etc) responses with message and status code
@@ -18,6 +18,6 @@ export default class ResponseHandler {
      * @param {Function} res - Response function
      * */
     static error(code, message, res) {
-        return res.status(code).json({ message })
+        return res.status(code).json({ message });
     }
 }

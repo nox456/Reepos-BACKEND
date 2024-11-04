@@ -390,7 +390,7 @@ export default class Repository {
 
             info.readme = readme_with_urls;
         } else {
-            info.readme = null
+            info.readme = null;
         }
 
         return info;

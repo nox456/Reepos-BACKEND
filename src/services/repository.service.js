@@ -11,9 +11,9 @@ import Language from "../models/language.model.js";
 import User from "../models/user.model.js";
 import repoInfo from "../lib/getReposInfo.js";
 import downloadFiles from "../lib/downloadFiles.js";
-import validationHandler from "../lib/validationHandler.js"
+import validationHandler from "../lib/validationHandler.js";
 import { BAD_REQUEST, FORBIDDEN, NOT_FOUND } from "../lib/constants/errors.js";
-import ServiceError from "../lib/serviceError.js"
+import ServiceError from "../lib/serviceError.js";
 
 /**
  * Service to handle repositories proccesses
@@ -44,27 +44,39 @@ export default class RepositoryService {
     static async createRepository(repoData, token) {
         const { name, description, languages } = repoData;
 
-
         const validation = validationHandler([
             await Repository.validateRepoName(name),
             Auth.validateToken(token),
             await Repository.validateDescription(description),
-            await Repository.validateLanguages(languages)
-        ])
-        if (validation.error) return new ServiceError(validation.error,BAD_REQUEST)
+            await Repository.validateLanguages(languages),
+        ]);
+        if (validation.error)
+            return new ServiceError(validation.error, BAD_REQUEST);
 
         const existsBackend = await Repository.checkIfExistsInBackend(name);
-        if (!existsBackend) return new ServiceError("Repositorio no existe en el servidor!",NOT_FOUND)
+        if (!existsBackend)
+            return new ServiceError(
+                "Repositorio no existe en el servidor!",
+                NOT_FOUND,
+            );
 
         const userHasRepo = await Repository.checkIfUserHasRepo(
             name,
             validation.data,
         );
-        if (userHasRepo) return new ServiceError("Usuario ya tiene el repositorio!", BAD_REQUEST)
+        if (userHasRepo)
+            return new ServiceError(
+                "Usuario ya tiene el repositorio!",
+                BAD_REQUEST,
+            );
 
         for (const lang of languages) {
             const lang_exists = await Language.checkIfExists(lang);
-            if (!lang_exists) return new ServiceError(`Lenguaje ${lang} no existe en la base de datos!`, NOT_FOUND)
+            if (!lang_exists)
+                return new ServiceError(
+                    `Lenguaje ${lang} no existe en la base de datos!`,
+                    NOT_FOUND,
+                );
         }
 
         const { commits, files, branches, contributors, modifications } =
@@ -137,15 +149,15 @@ export default class RepositoryService {
         const modificationsSaved = [];
         for (const file of files) {
             // Relate with languages
-            const ext = file.name.slice(file.name.lastIndexOf(".") + 1)
-            const language_id = await Language.getByExt(ext)
+            const ext = file.name.slice(file.name.lastIndexOf(".") + 1);
+            const language_id = await Language.getByExt(ext);
 
             const fileSaved = await File.save({
                 name: file.name,
                 size: file.size,
                 path: file.path,
                 repo: repoSaved.id,
-                language: language_id
+                language: language_id,
             });
             filesSaved.push(fileSaved);
 
@@ -166,7 +178,6 @@ export default class RepositoryService {
                     }),
                 );
             }
-
         }
         // Save files deleted previously in database
         const deletedFilesModifications = modifications.filter(
@@ -211,12 +222,17 @@ export default class RepositoryService {
     static async uploadRepository(repoName, token) {
         const validation = validationHandler([
             await Repository.validateRepoName(repoName),
-            Auth.validateToken(token)
-        ])
-        if (validation.error) return new ServiceError(validation.error,BAD_REQUEST)
+            Auth.validateToken(token),
+        ]);
+        if (validation.error)
+            return new ServiceError(validation.error, BAD_REQUEST);
 
         const repoExists = await Repository.checkIfExistsInBackend(repoName);
-        if (!repoExists) return new ServiceError("Repositorio no existe en el servidor!",NOT_FOUND)
+        if (!repoExists)
+            return new ServiceError(
+                "Repositorio no existe en el servidor!",
+                NOT_FOUND,
+            );
 
         await Repository.upload(repoName, validation.data);
         return {
@@ -234,27 +250,47 @@ export default class RepositoryService {
     static async download(repoName, username) {
         const validation = validationHandler([
             await Repository.validateRepoName(repoName),
-            await User.validateUsername(username)
-        ])
-        if (validation.error) return new ServiceError(validation.error,BAD_REQUEST)
+            await User.validateUsername(username),
+        ]);
+        if (validation.error)
+            return new ServiceError(validation.error, BAD_REQUEST);
 
         const existsDb = await Repository.checkIfExistsInDb(repoName);
 
-        if (!existsDb) return new ServiceError("Repositorio no existe en la base de datos!", NOT_FOUND)
+        if (!existsDb)
+            return new ServiceError(
+                "Repositorio no existe en la base de datos!",
+                NOT_FOUND,
+            );
 
-        const user_exists = await User.checkIfExistsByUsername(username)
-        if (!user_exists) return new ServiceError("Usuario no existe!",NOT_FOUND)
+        const user_exists = await User.checkIfExistsByUsername(username);
+        if (!user_exists)
+            return new ServiceError("Usuario no existe!", NOT_FOUND);
 
-        const user = await User.getByUsername(username)
+        const user = await User.getByUsername(username);
 
-        const userHasRepo = await Repository.checkIfUserHasRepo(repoName,user.id)
-        if (!userHasRepo) return new ServiceError("Usuario no tiene el repositorio!",FORBIDDEN)
+        const userHasRepo = await Repository.checkIfUserHasRepo(
+            repoName,
+            user.id,
+        );
+        if (!userHasRepo)
+            return new ServiceError(
+                "Usuario no tiene el repositorio!",
+                FORBIDDEN,
+            );
 
-        const existsCloud = await Repository.checkIfExistsInCloud(repoName, user.id);
+        const existsCloud = await Repository.checkIfExistsInCloud(
+            repoName,
+            user.id,
+        );
 
-        if (!existsCloud) return new ServiceError("Repositorio no existe en el cloud!", NOT_FOUND)
+        if (!existsCloud)
+            return new ServiceError(
+                "Repositorio no existe en el cloud!",
+                NOT_FOUND,
+            );
 
-        const files = await Repository.getFiles(repoName,user.id);
+        const files = await Repository.getFiles(repoName, user.id);
 
         const zip_file = await downloadFiles(files, repoName);
         return {
@@ -274,14 +310,19 @@ export default class RepositoryService {
         const validation = validationHandler([
             await Repository.validateRepoName(repoName),
             Auth.validateToken(token),
-            await User.validatePassword(password)
-        ])
-        if (validation.error) return new ServiceError(validation.error,BAD_REQUEST)
+            await User.validatePassword(password),
+        ]);
+        if (validation.error)
+            return new ServiceError(validation.error, BAD_REQUEST);
 
-        const user = await User.getById(validation.data)
+        const user = await User.getById(validation.data);
 
-        const match_password = await Auth.comparePassword(password,user.password)
-        if (!match_password) return new ServiceError("Contraseña invalida!",FORBIDDEN)
+        const match_password = await Auth.comparePassword(
+            password,
+            user.password,
+        );
+        if (!match_password)
+            return new ServiceError("Contraseña invalida!", FORBIDDEN);
 
         await Repository.deleteCloud(repoName, validation.data);
         await Repository.deleteDb(repoName, validation.data);
@@ -298,36 +339,59 @@ export default class RepositoryService {
      * @return {Promise<ServiceResult>} Service result object
      * @async
      * */
-    static async like(username,repoName, userOwnerName) {
+    static async like(username, repoName, userOwnerName) {
         const validation = validationHandler([
             await Repository.validateRepoName(repoName),
             await User.validateUsername(username),
-            await User.validateUsername(userOwnerName)
-        ])
-        if (validation.error) return new ServiceError(validation.error, BAD_REQUEST)
+            await User.validateUsername(userOwnerName),
+        ]);
+        if (validation.error)
+            return new ServiceError(validation.error, BAD_REQUEST);
 
         const existsDb = await Repository.checkIfExistsInDb(repoName);
-        if (!existsDb) return new ServiceError("Repositorio no existe en la base de datos!", NOT_FOUND)
+        if (!existsDb)
+            return new ServiceError(
+                "Repositorio no existe en la base de datos!",
+                NOT_FOUND,
+            );
 
-        const user_exists = await User.checkIfExistsByUsername(username)
-        if (!user_exists) return new ServiceError("Usuario no existe!", NOT_FOUND)
+        const user_exists = await User.checkIfExistsByUsername(username);
+        if (!user_exists)
+            return new ServiceError("Usuario no existe!", NOT_FOUND);
 
-        const userOwner_exists = await User.checkIfExistsByUsername(userOwnerName)
-        if (!userOwner_exists) return new ServiceError("Usuario dueño del repositorio no existe!", NOT_FOUND)
+        const userOwner_exists =
+            await User.checkIfExistsByUsername(userOwnerName);
+        if (!userOwner_exists)
+            return new ServiceError(
+                "Usuario dueño del repositorio no existe!",
+                NOT_FOUND,
+            );
 
-        const userOwner = await User.getByUsername(userOwnerName)
+        const userOwner = await User.getByUsername(userOwnerName);
 
         const userHasRepo = await Repository.checkIfUserHasRepo(
             repoName,
             userOwner.id,
         );
-        if (!userHasRepo) return new ServiceError("Usuario dueño no tiene el repositorio!",FORBIDDEN)
+        if (!userHasRepo)
+            return new ServiceError(
+                "Usuario dueño no tiene el repositorio!",
+                FORBIDDEN,
+            );
 
-        const hasUserLike = await Repository.checkIfLike(username,repoName,userOwner.id)
-        if (hasUserLike) return new ServiceError("Usuario ya dió like al repositorio!", BAD_REQUEST)
+        const hasUserLike = await Repository.checkIfLike(
+            username,
+            repoName,
+            userOwner.id,
+        );
+        if (hasUserLike)
+            return new ServiceError(
+                "Usuario ya dió like al repositorio!",
+                BAD_REQUEST,
+            );
 
-        const user = await User.getByUsername(username)
-        await Repository.like(user.id,repoName, userOwner.id);
+        const user = await User.getByUsername(username);
+        await Repository.like(user.id, repoName, userOwner.id);
         return {
             success: true,
             error: null,
@@ -340,13 +404,18 @@ export default class RepositoryService {
      * */
     static async search(repoName) {
         const validation = validationHandler([
-            await Repository.validateRepoName(repoName)
-        ])
-        if (validation.error) return new ServiceError(validation.error,BAD_REQUEST)
+            await Repository.validateRepoName(repoName),
+        ]);
+        if (validation.error)
+            return new ServiceError(validation.error, BAD_REQUEST);
 
         const repos = await Repository.search(repoName);
 
-        if (repos.length == 0) return new ServiceError("No hay repositorios que coincidan con la búsqueda!",NOT_FOUND)
+        if (repos.length == 0)
+            return new ServiceError(
+                "No hay repositorios que coincidan con la búsqueda!",
+                NOT_FOUND,
+            );
 
         return {
             success: true,
@@ -365,27 +434,33 @@ export default class RepositoryService {
         const validation = validationHandler([
             await Repository.validateRepoName(newRepoName),
             await Repository.validateRepoName(repoName),
-            Auth.validateToken(token)
-        ])
-        if (validation.error) return new ServiceError(validation.error,BAD_REQUEST)
+            Auth.validateToken(token),
+        ]);
+        if (validation.error)
+            return new ServiceError(validation.error, BAD_REQUEST);
 
         const existsDb = await Repository.checkIfExistsInDb(repoName);
-        if (!existsDb) return new ServiceError("Repositorio no existe en la base de datos!",NOT_FOUND)
+        if (!existsDb)
+            return new ServiceError(
+                "Repositorio no existe en la base de datos!",
+                NOT_FOUND,
+            );
 
         const user_exists = await User.checkIfExistsById(validation.data);
-        if (!user_exists) return new ServiceError("Usuario no existe!",NOT_FOUND)
+        if (!user_exists)
+            return new ServiceError("Usuario no existe!", NOT_FOUND);
 
         const userHasRepo = await Repository.checkIfUserHasRepo(
             repoName,
             validation.data,
         );
-        if (!userHasRepo) return new ServiceError("Usuario no tiene el repositorio!", FORBIDDEN)
+        if (!userHasRepo)
+            return new ServiceError(
+                "Usuario no tiene el repositorio!",
+                FORBIDDEN,
+            );
 
-        await Repository.changeName(
-            newRepoName,
-            repoName,
-            validation.data,
-        );
+        await Repository.changeName(newRepoName, repoName, validation.data);
         return {
             success: true,
             error: null,
@@ -404,25 +479,42 @@ export default class RepositoryService {
         const validation = validationHandler([
             await Repository.validateDescription(newDescription),
             await Repository.validateRepoName(repoName),
-            Auth.validateToken(token)
-        ])
-        if (validation.error) return new ServiceError(validation.error,BAD_REQUEST)
+            Auth.validateToken(token),
+        ]);
+        if (validation.error)
+            return new ServiceError(validation.error, BAD_REQUEST);
 
-        const existsDb = await Repository.checkIfExistsInDb(repoName)
-        if (!existsDb) return new ServiceError("Repositorio no existe en la base de datos!", NOT_FOUND)
+        const existsDb = await Repository.checkIfExistsInDb(repoName);
+        if (!existsDb)
+            return new ServiceError(
+                "Repositorio no existe en la base de datos!",
+                NOT_FOUND,
+            );
 
-        const user_exists = await User.checkIfExistsById(validation.data)
-        if (!user_exists) return new ServiceError("Usuario no existe!", NOT_FOUND)
+        const user_exists = await User.checkIfExistsById(validation.data);
+        if (!user_exists)
+            return new ServiceError("Usuario no existe!", NOT_FOUND);
 
-        const userHasRepo = await Repository.checkIfUserHasRepo(repoName,validation.data)
-        if (!userHasRepo) return new ServiceError("Usuario no tiene el repositorio!", FORBIDDEN)
+        const userHasRepo = await Repository.checkIfUserHasRepo(
+            repoName,
+            validation.data,
+        );
+        if (!userHasRepo)
+            return new ServiceError(
+                "Usuario no tiene el repositorio!",
+                FORBIDDEN,
+            );
 
-        await Repository.changeDescription(newDescription,repoName,validation.data)
+        await Repository.changeDescription(
+            newDescription,
+            repoName,
+            validation.data,
+        );
         return {
             success: true,
             error: null,
-            data: null
-        }
+            data: null,
+        };
     }
     /**
      * Get full information of repository
@@ -434,31 +526,44 @@ export default class RepositoryService {
     static async getInfo(repoName, username) {
         const validation = validationHandler([
             await Repository.validateRepoName(repoName),
-            await User.validateUsername(username)
-        ])
-        if (validation.error) return new ServiceError(validation.error, BAD_REQUEST)
+            await User.validateUsername(username),
+        ]);
+        if (validation.error)
+            return new ServiceError(validation.error, BAD_REQUEST);
 
-        const existsDb = await Repository.checkIfExistsInDb(repoName)
-        if (!existsDb) return new ServiceError("Repositorio no eixste en la base de datos!", NOT_FOUND)
+        const existsDb = await Repository.checkIfExistsInDb(repoName);
+        if (!existsDb)
+            return new ServiceError(
+                "Repositorio no eixste en la base de datos!",
+                NOT_FOUND,
+            );
 
-        const user_exists = await User.checkIfExistsByUsername(username)
-        if (!user_exists) return new ServiceError("Usuario no existe!", NOT_FOUND)
+        const user_exists = await User.checkIfExistsByUsername(username);
+        if (!user_exists)
+            return new ServiceError("Usuario no existe!", NOT_FOUND);
 
-        const user = await User.getByUsername(username)
+        const user = await User.getByUsername(username);
 
-        const userHasRepo = await Repository.checkIfUserHasRepo(repoName,user.id)
-        if (!userHasRepo) return new ServiceError("Usuario no tiene el repositorio!", FORBIDDEN)
+        const userHasRepo = await Repository.checkIfUserHasRepo(
+            repoName,
+            user.id,
+        );
+        if (!userHasRepo)
+            return new ServiceError(
+                "Usuario no tiene el repositorio!",
+                FORBIDDEN,
+            );
 
-        const info = await Repository.getFullInfo(repoName,user.id)
-        const files = await Repository.getFiles(repoName, user.id)
+        const info = await Repository.getFullInfo(repoName, user.id);
+        const files = await Repository.getFiles(repoName, user.id);
         return {
             success: true,
             error: null,
             data: {
                 ...info,
-                files
-            }
-        }
+                files,
+            },
+        };
     }
     /**
      * Get repositories from an user by ID
@@ -468,16 +573,22 @@ export default class RepositoryService {
      * */
     static async getFromUser(username) {
         const validation = validationHandler([
-            await User.validateUsername(username)
-        ])
-        if (validation.error) return new ServiceError(validation.error,BAD_REQUEST)
+            await User.validateUsername(username),
+        ]);
+        if (validation.error)
+            return new ServiceError(validation.error, BAD_REQUEST);
 
         const user_exists = await User.checkIfExistsByUsername(username);
-        if (!user_exists) return new ServiceError("Usuario no existe!", NOT_FOUND)
+        if (!user_exists)
+            return new ServiceError("Usuario no existe!", NOT_FOUND);
 
         const repos = await Repository.getFromUser(username);
 
-        if (repos.length == 0) return new ServiceError("Usuario no tiene el repositorios!", NOT_FOUND)
+        if (repos.length == 0)
+            return new ServiceError(
+                "Usuario no tiene el repositorios!",
+                NOT_FOUND,
+            );
 
         return {
             success: true,
@@ -492,12 +603,12 @@ export default class RepositoryService {
      * @async
      * */
     static async deleteZip(fileName) {
-        await Repository.deleteZip(fileName)
+        await Repository.deleteZip(fileName);
         return {
             success: true,
             error: null,
-            data: null
-        }
+            data: null,
+        };
     }
     /**
      * Remove like from a repo
@@ -507,38 +618,55 @@ export default class RepositoryService {
      * @return {Promise<ServiceResult>} Service result object
      * @async
      * */
-    static async removeLike(repoName,userOwnerName,username) {
+    static async removeLike(repoName, userOwnerName, username) {
         const validation = validationHandler([
             await Repository.validateRepoName(repoName),
             await User.validateUsername(userOwnerName),
-            await User.validateUsername(username)
-        ])
-        if (validation.error) return new ServiceError(validation.error,BAD_REQUEST)
+            await User.validateUsername(username),
+        ]);
+        if (validation.error)
+            return new ServiceError(validation.error, BAD_REQUEST);
 
-        const user_exists = await User.checkIfExistsByUsername(username)
-        if (!user_exists) return new ServiceError("Usuario no existe!", NOT_FOUND)
+        const user_exists = await User.checkIfExistsByUsername(username);
+        if (!user_exists)
+            return new ServiceError("Usuario no existe!", NOT_FOUND);
 
-        const userOwner_exists = await User.checkIfExistsByUsername(userOwnerName)
-        if (!userOwner_exists) return new ServiceError("Usuario dueño no existe!", NOT_FOUND)
+        const userOwner_exists =
+            await User.checkIfExistsByUsername(userOwnerName);
+        if (!userOwner_exists)
+            return new ServiceError("Usuario dueño no existe!", NOT_FOUND);
 
-        const repo_exists = await Repository.checkIfExistsInDb(repoName)
-        if (!repo_exists) return new ServiceError("Repositorio no existe!", NOT_FOUND)
+        const repo_exists = await Repository.checkIfExistsInDb(repoName);
+        if (!repo_exists)
+            return new ServiceError("Repositorio no existe!", NOT_FOUND);
 
-        const userOwner = await User.getByUsername(userOwnerName)
-        const userHasRepo = await Repository.checkIfUserHasRepo(repoName,userOwner.id)
-        if (!userHasRepo) return new ServiceError("Usuario no tiene el repositorio!", FORBIDDEN)
+        const userOwner = await User.getByUsername(userOwnerName);
+        const userHasRepo = await Repository.checkIfUserHasRepo(
+            repoName,
+            userOwner.id,
+        );
+        if (!userHasRepo)
+            return new ServiceError(
+                "Usuario no tiene el repositorio!",
+                FORBIDDEN,
+            );
 
-        const userHasLike = await Repository.checkIfLike(username,repoName,userOwner.id)
-        if (!userHasLike) return new ServiceError("Usuario no ha dado me gusta!", FORBIDDEN)
+        const userHasLike = await Repository.checkIfLike(
+            username,
+            repoName,
+            userOwner.id,
+        );
+        if (!userHasLike)
+            return new ServiceError("Usuario no ha dado me gusta!", FORBIDDEN);
 
-        const user = await User.getByUsername(username)
+        const user = await User.getByUsername(username);
 
-        await Repository.removeLike(repoName,userOwner.id,user.id)
+        await Repository.removeLike(repoName, userOwner.id, user.id);
         return {
             success: true,
             error: null,
-            data: null
-        }
+            data: null,
+        };
     }
     /**
      * Remove repo from temp directory
@@ -547,15 +675,19 @@ export default class RepositoryService {
      * @async
      * */
     static async removeTemp(repoName) {
-        const exists = await Repository.checkIfExistsInBackend(repoName)
-        if (!exists) return new ServiceError("Repositorio no existe en el servidor!", NOT_FOUND)
+        const exists = await Repository.checkIfExistsInBackend(repoName);
+        if (!exists)
+            return new ServiceError(
+                "Repositorio no existe en el servidor!",
+                NOT_FOUND,
+            );
 
-        await Repository.removeTemp(repoName)
+        await Repository.removeTemp(repoName);
         return {
             success: true,
             error: null,
-            data: null
-        }
+            data: null,
+        };
     }
     /**
      * Delete from database without password
@@ -564,16 +696,17 @@ export default class RepositoryService {
      * @return {Promise<ServiceResult>} Service result object
      * @async
      * */
-    static async deleteDb(repoName,token) {
-        const validation = Auth.validateToken(token)
-        if (validation.error) return new ServiceError(validation.error,BAD_REQUEST)
+    static async deleteDb(repoName, token) {
+        const validation = Auth.validateToken(token);
+        if (validation.error)
+            return new ServiceError(validation.error, BAD_REQUEST);
 
-        await Repository.deleteDb(repoName,validation.data)
+        await Repository.deleteDb(repoName, validation.data);
         return {
             success: true,
             error: null,
-            data: null
-        }
+            data: null,
+        };
     }
     /**
      * Check if an user already liked a repository
@@ -586,27 +719,36 @@ export default class RepositoryService {
         const validation = validationHandler([
             Auth.validateToken(token),
             await Repository.validateRepoName(repoName),
-            await User.validateUsername(userOwnerName)
-        ])
-        if (validation.error) return new ServiceError(validation.error, BAD_REQUEST)
+            await User.validateUsername(userOwnerName),
+        ]);
+        if (validation.error)
+            return new ServiceError(validation.error, BAD_REQUEST);
 
-        const repoExists = await Repository.checkIfExistsInDb(repoName)
-        if (!repoExists) return new ServiceError("Repositorio no existe!", NOT_FOUND)
+        const repoExists = await Repository.checkIfExistsInDb(repoName);
+        if (!repoExists)
+            return new ServiceError("Repositorio no existe!", NOT_FOUND);
 
-        const userExists = await User.checkIfExistsById(validation.data)
-        if (!userExists) return new ServiceError("Usuario no existe!", NOT_FOUND)
+        const userExists = await User.checkIfExistsById(validation.data);
+        if (!userExists)
+            return new ServiceError("Usuario no existe!", NOT_FOUND);
 
-        const userOwnerExists = await User.checkIfExistsByUsername(userOwnerName)
-        if (!userOwnerExists) return new ServiceError("Usuario dueño no existe!", NOT_FOUND)
+        const userOwnerExists =
+            await User.checkIfExistsByUsername(userOwnerName);
+        if (!userOwnerExists)
+            return new ServiceError("Usuario dueño no existe!", NOT_FOUND);
 
-        const user = await User.getById(validation.data)
-        const userOwner = await User.getByUsername(userOwnerName)
-        const alreadyLike = await Repository.checkIfLike(user.username,repoName,userOwner.id)
+        const user = await User.getById(validation.data);
+        const userOwner = await User.getByUsername(userOwnerName);
+        const alreadyLike = await Repository.checkIfLike(
+            user.username,
+            repoName,
+            userOwner.id,
+        );
 
         return {
             success: true,
             error: null,
-            data: alreadyLike
-        }
+            data: alreadyLike,
+        };
     }
 }

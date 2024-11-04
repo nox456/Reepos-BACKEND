@@ -40,7 +40,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
  * @async
  * */
 export default async function repoInfo(repoName) {
-    const repoPath = join(__dirname, "../temp", repoName)
+    const repoPath = join(__dirname, "../temp", repoName);
     const git = simpleGit(repoPath);
     const commits = await git.log({
         format: {
@@ -89,7 +89,7 @@ export default async function repoInfo(repoName) {
         files.push({
             name: path.slice(path.lastIndexOf("/") + 1),
             size,
-            path
+            path,
         });
     }
     const modifications = [];

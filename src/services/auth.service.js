@@ -35,11 +35,13 @@ export default class AuthService {
             await User.validateUsername(username),
             await User.validatePassword(password),
         ]);
-        if (validation.error) return new ServiceError(validation.error,BAD_REQUEST)
+        if (validation.error)
+            return new ServiceError(validation.error, BAD_REQUEST);
 
         const userExists = await User.checkIfExistsByUsername(username);
 
-        if (userExists) return new ServiceError("Usuario ya existe!", BAD_REQUEST);
+        if (userExists)
+            return new ServiceError("Usuario ya existe!", BAD_REQUEST);
 
         const passwordEncrypted = await Auth.encryptPassword(password);
 
@@ -66,11 +68,13 @@ export default class AuthService {
             await User.validateUsername(username),
             await User.validatePassword(password),
         ]);
-        if (validation.error) return new ServiceError(validation.error,BAD_REQUEST)
+        if (validation.error)
+            return new ServiceError(validation.error, BAD_REQUEST);
 
         const userExists = await User.checkIfExistsByUsername(username);
 
-        if (!userExists) return new ServiceError("Usuario no existe!",NOT_FOUND)
+        if (!userExists)
+            return new ServiceError("Usuario no existe!", NOT_FOUND);
 
         const user = await User.getByUsername(username);
 
@@ -79,7 +83,8 @@ export default class AuthService {
             user.password,
         );
 
-        if (!matchPassword) return new ServiceError("Contraseña invalida!", FORBIDDEN)
+        if (!matchPassword)
+            return new ServiceError("Contraseña invalida!", FORBIDDEN);
 
         const token = Auth.generateToken(user.id);
 
@@ -97,7 +102,8 @@ export default class AuthService {
      * */
     static async isAuthenticated(token) {
         const token_validation = Auth.validateToken(token);
-        if (token_validation.error) return new ServiceError(token_validation.error,BAD_REQUEST)
+        if (token_validation.error)
+            return new ServiceError(token_validation.error, BAD_REQUEST);
 
         const user = await User.getById(token_validation.data);
 

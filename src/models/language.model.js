@@ -25,7 +25,10 @@ export default class Language {
      * @async
      * */
     static async getByExt(ext) {
-        const result = await db.query("SELECT id FROM languages WHERE ext = $1", [ext])
-        return result.rows[0]?.id
+        const result = await db.query(
+            "SELECT id FROM languages WHERE ext = $1",
+            [ext],
+        );
+        return result.rows[0]?.id;
     }
 }

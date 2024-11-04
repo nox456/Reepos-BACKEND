@@ -133,7 +133,7 @@ FROM repositories
     LEFT OUTER JOIN languages
         ON repositories_languages.language_id = languages.id
 WHERE repositories.name ILIKE $1
-GROUP BY repositories.name, repositories.description, repositories.likes, users.username, repositories.created_at`
+GROUP BY repositories.name, repositories.description, repositories.likes, users.username, repositories.created_at`;
 
 export const REPOSITORY_INFO = `
 SELECT
@@ -191,7 +191,7 @@ FROM repositories
         ON repositories_languages.language_id = languages.id
 WHERE repositories.user_owner = $1 AND repositories.name = $2
 GROUP BY repositories.name, repositories.description, repositories.likes
-`
+`;
 
 export const COMMIT_INFO = `
 SELECT
@@ -238,7 +238,7 @@ FROM commits
     LEFT OUTER JOIN branches 
         ON commits_branches.branch = branches.id 
 WHERE commits.hash = $1
-`
+`;
 
 export const FILE_INFO = `
 SELECT
@@ -265,7 +265,7 @@ FROM
         LEFT OUTER JOIN languages
             ON languages.id = files.language
 WHERE files.id = $1
-`
+`;
 export const USER_REPOSITORIES = `
 SELECT
     repositories.name as name,
@@ -280,7 +280,7 @@ FROM repositories
         ON repositories_languages.language_id = languages.id
 WHERE repositories.user_owner = $1
 GROUP BY repositories.name, repositories.description, repositories.likes, repositories.created_at
-`
+`;
 export const REPOSITORIES_LIKES = `
 SELECT 
     users.username
@@ -294,4 +294,4 @@ FROM
             WHERE name = $1 AND user_owner = $2
         ) as likes 
         ON likes.id = users.id
-`
+`;

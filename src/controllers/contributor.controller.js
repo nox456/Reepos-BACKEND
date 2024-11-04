@@ -7,6 +7,9 @@ import { INTERNAL_SERVER_ERROR } from "../lib/constants/errors.js";
  * Controller to handle contributors requests
  * */
 export default class ContributorController {
+    /**
+     * Gett all contributors of a repository
+     * */
     static async getAll(req, res) {
         const { repoName, username } = req.query;
         let result;

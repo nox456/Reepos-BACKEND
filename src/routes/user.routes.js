@@ -1,28 +1,32 @@
-import UserController from "../controllers/user.controller.js"
-import MulterController from "../controllers/multer.controller.js"
-import { Router } from "express"
+import UserController from "../controllers/user.controller.js";
+import MulterController from "../controllers/multer.controller.js";
+import { Router } from "express";
 
-const router = Router()
+const router = Router();
 
 // Search users by username field
-router.get("/search", UserController.search)
+router.get("/search", UserController.search);
 // Delete user by id and password
-router.delete("/delete", UserController.deleteUser)
+router.delete("/delete", UserController.deleteUser);
 // Update username field of a user by id and password
-router.put("/change-username", UserController.changeUsername)
+router.put("/change-username", UserController.changeUsername);
 // Update password field of a user by id and password
-router.put("/change-password", UserController.changePassword)
+router.put("/change-password", UserController.changePassword);
 // Update description field of a user by id
-router.put("/change-description", UserController.changeDescription)
+router.put("/change-description", UserController.changeDescription);
 // Update image field of a user by id
-router.post("/upload-image", MulterController.uploadImage, UserController.storeImage)
+router.post(
+    "/upload-image",
+    MulterController.uploadImage,
+    UserController.storeImage,
+);
 // Follow a user by id
-router.post("/follow-user", UserController.followUser)
+router.post("/follow-user", UserController.followUser);
 // Search followers of a user by id field
-router.get("/followers", UserController.getFollowers)
+router.get("/followers", UserController.getFollowers);
 // Get profile info of a user by id field
-router.get("/profile", UserController.getProfileInfo)
+router.get("/profile", UserController.getProfileInfo);
 // Unfollow an user
-router.put("/unfollow", UserController.unfollow)
+router.put("/unfollow", UserController.unfollow);
 
-export default router
+export default router;

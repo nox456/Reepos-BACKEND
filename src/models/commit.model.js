@@ -1,5 +1,5 @@
 import db from "../connections/database.js";
-import {z} from "zod"
+import { z } from "zod";
 import { COMMIT_INFO, REPOSITORIES_COMMITS } from "./queries.js";
 
 /**
@@ -31,10 +31,13 @@ export default class Commit {
      * @async
      * */
     static async save(commitData) {
-        const { title, content, hash, author, created_at, repo } = commitData
-        const result = await db.query("INSERT INTO commits VALUES (DEFAULT,$1,$2,$3,$4,$5,$6) RETURNING *", [title, content, hash, author, created_at, repo])
-        const commitSaved = result.rows[0]
-        return commitSaved
+        const { title, content, hash, author, created_at, repo } = commitData;
+        const result = await db.query(
+            "INSERT INTO commits VALUES (DEFAULT,$1,$2,$3,$4,$5,$6) RETURNING *",
+            [title, content, hash, author, created_at, repo],
+        );
+        const commitSaved = result.rows[0];
+        return commitSaved;
     }
     /**
      * @typedef {Object} Commit
@@ -51,9 +54,9 @@ export default class Commit {
      * @async
      * */
     static async getAll(repoName, userId) {
-        const result = await db.query(REPOSITORIES_COMMITS, [repoName, userId])
-        const commits = result.rows
-        return commits
+        const result = await db.query(REPOSITORIES_COMMITS, [repoName, userId]);
+        const commits = result.rows;
+        return commits;
     }
     /**
      * @typedef {Object} CommitFile
@@ -80,32 +83,39 @@ export default class Commit {
      * @return {Promise<CommitInfo>} Commit information object
      * @async
      * */
-    static async getFullInfo(hash,repoName,userId) {
-        const info_result = await db.query(COMMIT_INFO,[hash,repoName,userId])
-        const info = info_result.rows[0]
+    static async getFullInfo(hash, repoName, userId) {
+        const info_result = await db.query(COMMIT_INFO, [
+            hash,
+            repoName,
+            userId,
+        ]);
+        const info = info_result.rows[0];
         if (!info.files[0].name) {
-            info.files = []
+            info.files = [];
         }
-        return info
+        return info;
     }
     /**
      * @typedef {Object} Result
-     * @property {?string} error - Error message 
+     * @property {?string} error - Error message
      * */
     /**
      * Validate hash
-     * @param {string} hash 
+     * @param {string} hash
      * @return {Promise<Result>} Result Data
      * @async
      * */
     static async validateHash(hash) {
-        const schema = z.string({required_error: "Hash requerido!", invalid_type_error: "Hash debe ser un string!"})
-        const validation = await schema.safeParseAsync(hash)
-        let error = null
+        const schema = z.string({
+            required_error: "Hash requerido!",
+            invalid_type_error: "Hash debe ser un string!",
+        });
+        const validation = await schema.safeParseAsync(hash);
+        let error = null;
         if (!validation.success) {
-            error = validation.error.issues[0].message
+            error = validation.error.issues[0].message;
         }
-        return {error}
+        return { error };
     }
     /**
      * Check if commit exists by hash
@@ -114,8 +124,11 @@ export default class Commit {
      * @async
      * */
     static async checkIfExists(hash) {
-        const result = await db.query("SELECT count(*) FROM commits WHERE hash = $1",[hash])
-        const exists = result.rows[0].count > 0
-        return exists
+        const result = await db.query(
+            "SELECT count(*) FROM commits WHERE hash = $1",
+            [hash],
+        );
+        const exists = result.rows[0].count > 0;
+        return exists;
     }
 }

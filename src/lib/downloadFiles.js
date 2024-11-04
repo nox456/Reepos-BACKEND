@@ -27,12 +27,14 @@ const downloadsDir = join(
  * @async
  * */
 export default async function downloadFiles(files, repoName) {
-    const tempDir = await readdir(join(dirname(fileURLToPath(import.meta.url)),"../temp"))
+    const tempDir = await readdir(
+        join(dirname(fileURLToPath(import.meta.url)), "../temp"),
+    );
     if (!tempDir.includes("downloads")) {
-        await mkdir(downloadsDir)
+        await mkdir(downloadsDir);
     }
-    const downloads = await readdir(downloadsDir)
-    if (downloads.includes(`${repoName}.zip`)) return `${repoName}.zip`
+    const downloads = await readdir(downloadsDir);
+    if (downloads.includes(`${repoName}.zip`)) return `${repoName}.zip`;
 
     const zip = createWriteStream(join(downloadsDir, `${repoName}.zip`));
     const archive = archiver("zip", { zlib: { level: 5 } });
@@ -41,11 +43,14 @@ export default async function downloadFiles(files, repoName) {
 
     for (const file of files) {
         const res = await fetch(file.url);
-        const res_blob = await res.blob()
-        const res_buffer = await res_blob.arrayBuffer()
-        const content = Buffer.from(res_buffer)
+        const res_blob = await res.blob();
+        const res_buffer = await res_blob.arrayBuffer();
+        const content = Buffer.from(res_buffer);
 
-        archive.append(content, { name: file.name, prefix: `${repoName}/${file.path.slice(0,file.path.indexOf(file.name))}` });
+        archive.append(content, {
+            name: file.name,
+            prefix: `${repoName}/${file.path.slice(0, file.path.indexOf(file.name))}`,
+        });
     }
     await archive.finalize();
     return `${repoName}.zip`;

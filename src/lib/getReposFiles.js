@@ -1,5 +1,5 @@
-import { join } from "path"
-import { readdir, readFile } from "fs/promises"
+import { join } from "path";
+import { readdir, readFile } from "fs/promises";
 
 /**
  * @typedef {Object} File
@@ -13,17 +13,19 @@ import { readdir, readFile } from "fs/promises"
  * @async
  * */
 export default async function getReposFiles(repoName) {
-    const allFiles = await readdir(repoName, { recursive: true })
+    const allFiles = await readdir(repoName, { recursive: true });
 
-    const filesFiltered = allFiles.filter((f) => f != ".git" && !f.startsWith(".git/") && f.includes("."))
+    const filesFiltered = allFiles.filter(
+        (f) => f != ".git" && !f.startsWith(".git/") && f.includes("."),
+    );
 
-    const files = []
+    const files = [];
     for (const file of filesFiltered) {
-        const buffer = await readFile(join(repoName, file))
+        const buffer = await readFile(join(repoName, file));
         files.push({
             path: file,
-            buffer
-        })
+            buffer,
+        });
     }
-    return files
+    return files;
 }

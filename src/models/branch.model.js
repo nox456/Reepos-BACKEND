@@ -9,7 +9,7 @@ export default class Branch {
      * @property {string} name - Branch name
      * @property {string} repo - Repository ID
      * @property {string} type - Branch type
-     * 
+     *
      * The branch saved data
      * @typedef {Object} BranchType
      * @property {string} id - Branch ID
@@ -24,9 +24,12 @@ export default class Branch {
      * @async
      * */
     static async save(branchData) {
-        const { name, repo, type } = branchData
-        const result = await db.query("INSERT INTO branches VALUES (DEFAULT,$1,$2,$3) RETURNING *", [name, repo, type])
-        const branchSaved = result.rows[0]
-        return branchSaved
+        const { name, repo, type } = branchData;
+        const result = await db.query(
+            "INSERT INTO branches VALUES (DEFAULT,$1,$2,$3) RETURNING *",
+            [name, repo, type],
+        );
+        const branchSaved = result.rows[0];
+        return branchSaved;
     }
 }

@@ -10,7 +10,7 @@ const reposPath = join(dirname(fileURLToPath(import.meta.url)), "../temp");
 
 const imageStorage = multer.memoryStorage();
 const fileStorage = multer.diskStorage({
-    destination: async (req, file, cb) => {
+    destination: async (req, _, cb) => {
         const { path, repoName } = req.body;
 
         if (!path) return cb("Path requerido!");
@@ -19,7 +19,7 @@ const fileStorage = multer.diskStorage({
         await mkdir(join(reposPath, repoName, path), { recursive: true });
         return cb(null, join(reposPath, repoName, path));
     },
-    filename: (req, file, cb) => cb(null, file.originalname),
+    filename: (_, file, cb) => cb(null, file.originalname),
 });
 
 /**
@@ -31,7 +31,7 @@ export default class MulterController {
      * */
     static uploadImage = multer({
         storage: imageStorage,
-        fileFilter: (req, file, cb) => {
+        fileFilter: (_, file, cb) => {
             // Only upload images with these extensions
             const exts_available = [".png", ".webp", ".jpg"];
             const ext = extname(file.originalname);
@@ -43,7 +43,7 @@ export default class MulterController {
         },
     }).single("user_image");
     /**
-     * Upload a repository file
+     * Upload a file
      * */
     static uploadFile(req, res) {
         multer({

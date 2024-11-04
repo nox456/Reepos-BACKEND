@@ -10,7 +10,10 @@ export default class Commit_Branch {
      * @param {string} branch - Branch ID
      * @async
      * */
-    static async save(commit,branch) {
-        await db.query("INSERT INTO commits_branches VALUES (DEFAULT,$1,$2)", [commit, branch])
+    static async save(commit, branch) {
+        await db.query("INSERT INTO commits_branches VALUES (DEFAULT,$1,$2)", [
+            commit,
+            branch,
+        ]);
     }
 }

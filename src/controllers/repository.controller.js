@@ -122,6 +122,9 @@ export default class RepositoryController {
             return ResponseHandler.ok("Repositorio eliminado!", null, res);
         }
     }
+    /**
+     * Add like to repository
+     * */
     static async like(req, res) {
         const { repoName, username, userOwnerName } = req.body;
         let result;
@@ -253,6 +256,9 @@ export default class RepositoryController {
             );
         }
     }
+    /**
+     * Get full information object of a repository
+     * */
     static async getInfo(req, res) {
         const { repoName, username } = req.query;
         let result;
@@ -388,7 +394,7 @@ export default class RepositoryController {
         }
     }
     /**
-     * Delete from database without password
+     * Delete repository from database without password
      * */
     static async deleteDb(req, res) {
         const { repoName } = req.body;

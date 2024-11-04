@@ -1,8 +1,8 @@
 import AuthService from "../services/auth.service.js";
 import ResponseHandler from "../lib/responseHandler.js";
 import { COOKIES_SAMESITE, COOKIES_SECURE } from "../config/env.js";
-import errorCodes from "../lib/constants/errorCodes.js"
-import {INTERNAL_SERVER_ERROR} from "../lib/constants/errors.js"
+import errorCodes from "../lib/constants/errorCodes.js";
+import { INTERNAL_SERVER_ERROR } from "../lib/constants/errors.js";
 
 /**
  * Controller to handle auth requests
@@ -21,10 +21,18 @@ export default class AuthController {
             });
         } catch (e) {
             console.error(e);
-            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Error del servidor!", res);
+            return ResponseHandler.error(
+                errorCodes[INTERNAL_SERVER_ERROR],
+                "Error del servidor!",
+                res,
+            );
         }
         if (!result.success) {
-            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res);
+            return ResponseHandler.error(
+                errorCodes[result.error.type],
+                result.error.message,
+                res,
+            );
         } else {
             res.cookie("token", result.data, {
                 httpOnly: true,
@@ -35,7 +43,7 @@ export default class AuthController {
         }
     }
     /**
-     * Signin a user validating username and password and set cookie with token 
+     * Signin a user validating username and password and set cookie with token
      * */
     static async signin(req, res) {
         const { username, password } = req.body;
@@ -47,11 +55,18 @@ export default class AuthController {
             });
         } catch (e) {
             console.error(e);
-            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Error del servidor!", res);
+            return ResponseHandler.error(
+                errorCodes[INTERNAL_SERVER_ERROR],
+                "Error del servidor!",
+                res,
+            );
         }
-        // Send response depending on validations
         if (!result.success) {
-            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res);
+            return ResponseHandler.error(
+                errorCodes[result.error.type],
+                result.error.message,
+                res,
+            );
         } else {
             res.cookie("token", result.data, {
                 httpOnly: true,
@@ -71,10 +86,18 @@ export default class AuthController {
             result = await AuthService.isAuthenticated(token);
         } catch (e) {
             console.error(e);
-            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Error del servidor!", res);
+            return ResponseHandler.error(
+                errorCodes[INTERNAL_SERVER_ERROR],
+                "Error del servidor!",
+                res,
+            );
         }
         if (!result.success) {
-            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res);
+            return ResponseHandler.error(
+                errorCodes[result.error.type],
+                result.error.message,
+                res,
+            );
         } else {
             return ResponseHandler.ok("Usuario autorizado!", result.data, res);
         }

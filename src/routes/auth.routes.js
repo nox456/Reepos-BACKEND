@@ -11,7 +11,7 @@ router.post("/signin", AuthController.signin);
 // Check if user is authenticated with JWT Token
 router.get("/is-authenticated", AuthController.isAuthenticated);
 // Logout an user
-router.get("/logout", (req, res) => {
+router.get("/logout", (_, res) => {
     res.clearCookie("token", {
         httpOnly: true,
         secure: COOKIES_SECURE === "true",

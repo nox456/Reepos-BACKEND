@@ -1,6 +1,6 @@
 import UserService from "../services/user.service.js";
 import ResponseHandler from "../lib/responseHandler.js";
-import errorCodes from "../lib/constants/errorCodes.js"
+import errorCodes from "../lib/constants/errorCodes.js";
 import { INTERNAL_SERVER_ERROR } from "../lib/constants/errors.js";
 
 /**
@@ -18,11 +18,18 @@ export default class UserController {
             result = await UserService.deleteUser(token, password);
         } catch (e) {
             console.error(e);
-            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Error del servidor!", res)
+            return ResponseHandler.error(
+                errorCodes[INTERNAL_SERVER_ERROR],
+                "Error del servidor!",
+                res,
+            );
         }
-        // Send response depending on validations
         if (!result.success) {
-            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
+            return ResponseHandler.error(
+                errorCodes[result.error.type],
+                result.error.message,
+                res,
+            );
         } else {
             return ResponseHandler.ok("Usuario eliminado!", null, res);
         }
@@ -42,11 +49,18 @@ export default class UserController {
             );
         } catch (e) {
             console.error(e);
-            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Error del servidor!", res)
+            return ResponseHandler.error(
+                errorCodes[INTERNAL_SERVER_ERROR],
+                "Error del servidor!",
+                res,
+            );
         }
-        // Send response depending on validations
         if (!result.success) {
-            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
+            return ResponseHandler.error(
+                errorCodes[result.error.type],
+                result.error.message,
+                res,
+            );
         } else {
             return ResponseHandler.ok("Nombre de usuario cambiado!", null, res);
         }
@@ -66,11 +80,18 @@ export default class UserController {
             );
         } catch (e) {
             console.error(e);
-            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Error del servidor!", res)
+            return ResponseHandler.error(
+                errorCodes[INTERNAL_SERVER_ERROR],
+                "Error del servidor!",
+                res,
+            );
         }
-        // Send response depending on validations
         if (!result.success) {
-            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
+            return ResponseHandler.error(
+                errorCodes[result.error.type],
+                result.error.message,
+                res,
+            );
         } else {
             return ResponseHandler.ok("Contraseña cambiada!", newPassword, res);
         }
@@ -86,11 +107,18 @@ export default class UserController {
             result = await UserService.changeDescription(newDescription, token);
         } catch (e) {
             console.error(e);
-            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Error del servidor!", res)
+            return ResponseHandler.error(
+                errorCodes[INTERNAL_SERVER_ERROR],
+                "Error del servidor!",
+                res,
+            );
         }
-        // Send response depending on validations
         if (!result.success) {
-            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
+            return ResponseHandler.error(
+                errorCodes[result.error.type],
+                result.error.message,
+                res,
+            );
         } else {
             return ResponseHandler.ok(
                 "Descripción cambiada!",
@@ -110,11 +138,18 @@ export default class UserController {
             result = await UserService.changeImage(file, token);
         } catch (e) {
             console.error(e);
-            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Error del servidor!", res)
+            return ResponseHandler.error(
+                errorCodes[INTERNAL_SERVER_ERROR],
+                "Error del servidor!",
+                res,
+            );
         }
-        // Send response depending on validations
         if (!result.success) {
-            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
+            return ResponseHandler.error(
+                errorCodes[result.error.type],
+                result.error.message,
+                res,
+            );
         } else {
             return ResponseHandler.ok("Imagen cambiada!", result.imageUrl, res);
         }
@@ -130,11 +165,18 @@ export default class UserController {
             result = await UserService.followUser(username, token);
         } catch (e) {
             console.error(e);
-            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Error del servidor!", res)
+            return ResponseHandler.error(
+                errorCodes[INTERNAL_SERVER_ERROR],
+                "Error del servidor!",
+                res,
+            );
         }
-        // Send response depending on validations
         if (!result.success) {
-            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
+            return ResponseHandler.error(
+                errorCodes[result.error.type],
+                result.error.message,
+                res,
+            );
         } else {
             return ResponseHandler.ok("Usuario seguido!", null, res);
         }
@@ -149,13 +191,24 @@ export default class UserController {
             result = await UserService.search(username);
         } catch (e) {
             console.error(e);
-            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Error del servidor!", res)
+            return ResponseHandler.error(
+                errorCodes[INTERNAL_SERVER_ERROR],
+                "Error del servidor!",
+                res,
+            );
         }
-        // Send response depending on validations
         if (!result.success) {
-            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
+            return ResponseHandler.error(
+                errorCodes[result.error.type],
+                result.error.message,
+                res,
+            );
         } else {
-            return ResponseHandler.ok("Usuarios encontrados!", result.data, res);
+            return ResponseHandler.ok(
+                "Usuarios encontrados!",
+                result.data,
+                res,
+            );
         }
     }
     /**
@@ -168,13 +221,24 @@ export default class UserController {
             result = await UserService.getFollowers(username);
         } catch (e) {
             console.error(e);
-            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Error del servidor!", res)
+            return ResponseHandler.error(
+                errorCodes[INTERNAL_SERVER_ERROR],
+                "Error del servidor!",
+                res,
+            );
         }
-        // Send response depending on validations
         if (!result.success) {
-            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
+            return ResponseHandler.error(
+                errorCodes[result.error.type],
+                result.error.message,
+                res,
+            );
         } else {
-            return ResponseHandler.ok("Seguidores encontrados!", result.data, res);
+            return ResponseHandler.ok(
+                "Seguidores encontrados!",
+                result.data,
+                res,
+            );
         }
     }
     /**
@@ -187,32 +251,51 @@ export default class UserController {
             result = await UserService.getProfileInfo(username);
         } catch (e) {
             console.error(e);
-            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Error del servidor!", res)
+            return ResponseHandler.error(
+                errorCodes[INTERNAL_SERVER_ERROR],
+                "Error del servidor!",
+                res,
+            );
         }
-        // Send response depending on validations
         if (!result.success) {
-            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
+            return ResponseHandler.error(
+                errorCodes[result.error.type],
+                result.error.message,
+                res,
+            );
         } else {
-            return ResponseHandler.ok("Información del perfil!", result.data, res);
+            return ResponseHandler.ok(
+                "Información del perfil!",
+                result.data,
+                res,
+            );
         }
     }
     /**
      * Unfollow an user
      * */
-    static async unfollow(req,res) {
-        const { username } = req.body
-        const { token } = req.cookies
-        let result
+    static async unfollow(req, res) {
+        const { username } = req.body;
+        const { token } = req.cookies;
+        let result;
         try {
-            result = await UserService.unfollow(username,token)
-        } catch(e) {
-            console.error(e)
-            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR],"Error del servidor!", res)
+            result = await UserService.unfollow(username, token);
+        } catch (e) {
+            console.error(e);
+            return ResponseHandler.error(
+                errorCodes[INTERNAL_SERVER_ERROR],
+                "Error del servidor!",
+                res,
+            );
         }
         if (!result.success) {
-            return ResponseHandler.error(errorCodes[result.error.type],result.error.message,res)
+            return ResponseHandler.error(
+                errorCodes[result.error.type],
+                result.error.message,
+                res,
+            );
         } else {
-            return ResponseHandler.ok("Usuario dejado de seguir",null,res)
+            return ResponseHandler.ok("Usuario dejado de seguir", null, res);
         }
     }
 }

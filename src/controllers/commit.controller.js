@@ -35,19 +35,31 @@ export default class CommitController {
     /**
      * Get full information of commit by hash
      * */
-    static async getInfo(req,res) {
-        const {hash,repoName,username} = req.query
-        let result
+    static async getInfo(req, res) {
+        const { hash, repoName, username } = req.query;
+        let result;
         try {
-            result = await CommitService.getInfo(hash,repoName,username)
-        } catch(e) {
-            console.error(e)
-            return ResponseHandler.error(errorCodes[INTERNAL_SERVER_ERROR], "Error del servidor!",res)
+            result = await CommitService.getInfo(hash, repoName, username);
+        } catch (e) {
+            console.error(e);
+            return ResponseHandler.error(
+                errorCodes[INTERNAL_SERVER_ERROR],
+                "Error del servidor!",
+                res,
+            );
         }
         if (!result.success) {
-            return ResponseHandler.error(errorCodes[result.error.type], result.error.message, res)
+            return ResponseHandler.error(
+                errorCodes[result.error.type],
+                result.error.message,
+                res,
+            );
         } else {
-            return ResponseHandler.ok("Información del Commit!",result.data, res)
+            return ResponseHandler.ok(
+                "Información del Commit!",
+                result.data,
+                res,
+            );
         }
     }
 }

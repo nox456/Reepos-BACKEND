@@ -1,10 +1,10 @@
 import express from "express";
-import authRoutes from "./auth.routes.js"
-import userRoutes from "./user.routes.js"
-import repositoryRoutes from "./repository.routes.js"
-import fileRoutes from "./file.routes.js"
-import commitRoutes from "./commit.routes.js"
-import contributorRoutes from "./contributor.routes.js"
+import authRoutes from "./auth.routes.js";
+import userRoutes from "./user.routes.js";
+import repositoryRoutes from "./repository.routes.js";
+import fileRoutes from "./file.routes.js";
+import commitRoutes from "./commit.routes.js";
+import contributorRoutes from "./contributor.routes.js";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -20,13 +20,13 @@ router.use("/auth", authRoutes);
 // Base URL of users service
 router.use("/users", userRoutes);
 // Base URL of repositories routes
-router.use("/repositories", repositoryRoutes)
+router.use("/repositories", repositoryRoutes);
 // Base URL of files routes
-router.use("/files", fileRoutes)
+router.use("/files", fileRoutes);
 // Base URL of commits routes
-router.use("/commits", commitRoutes)
+router.use("/commits", commitRoutes);
 // Base URL of contributors routes
-router.use("/contributors", contributorRoutes)
+router.use("/contributors", contributorRoutes);
 // Serve downloads directory
 router.use(express.static(downloadsDir));
 
