@@ -372,19 +372,19 @@ export default class RepositoryService {
         const existsDb = await Repository.checkIfExistsInDb(repoName);
         if (!existsDb) return new ServiceError("Repositorio no existe en la base de datos!",NOT_FOUND)
 
-        const user_exists = await User.checkIfExistsById(token_validation.data);
+        const user_exists = await User.checkIfExistsById(validation.data);
         if (!user_exists) return new ServiceError("Usuario no existe!",NOT_FOUND)
 
         const userHasRepo = await Repository.checkIfUserHasRepo(
             repoName,
-            token_validation.data,
+            validation.data,
         );
         if (!userHasRepo) return new ServiceError("Usuario no tiene el repositorio!", FORBIDDEN)
 
         await Repository.changeName(
             newRepoName,
             repoName,
-            token_validation.data,
+            validation.data,
         );
         return {
             success: true,
@@ -409,15 +409,15 @@ export default class RepositoryService {
         if (validation.error) return new ServiceError(validation.error,BAD_REQUEST)
 
         const existsDb = await Repository.checkIfExistsInDb(repoName)
-        if (!existsDb) return new ServceError("Repositorio no existe en la base de datos!", NOT_FOUND)
+        if (!existsDb) return new ServiceError("Repositorio no existe en la base de datos!", NOT_FOUND)
 
-        const user_exists = await User.checkIfExistsById(token_validation.data)
+        const user_exists = await User.checkIfExistsById(validation.data)
         if (!user_exists) return new ServiceError("Usuario no existe!", NOT_FOUND)
 
-        const userHasRepo = await Repository.checkIfUserHasRepo(repoName,token_validation.data)
+        const userHasRepo = await Repository.checkIfUserHasRepo(repoName,validation.data)
         if (!userHasRepo) return new ServiceError("Usuario no tiene el repositorio!", FORBIDDEN)
 
-        await Repository.changeDescription(newDescription,repoName,token_validation.data)
+        await Repository.changeDescription(newDescription,repoName,validation.data)
         return {
             success: true,
             error: null,
