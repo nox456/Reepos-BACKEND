@@ -4,16 +4,12 @@ import supabase from "../connections/supabase.js";
 import { extname } from "path";
 import { z } from "zod";
 import { PROFILE_INFO, SEARCH_USERS, USER_FOLLOWERS } from "./queries.js";
+import {UserData,UserType,Validation,UserSearched,Follower,ProfileInfo} from "../lib/types.js"
 
 /**
  * User class
  * */
 export default class User {
-    /**
-     * @typedef {Object} UserData
-     * @property {string} username - User name
-     * @property {string} password - User password
-     * */
     /**
      * Save a user in database
      * @param {UserData} data - User data
@@ -29,15 +25,6 @@ export default class User {
         const user = user_response.rows[0];
         return user;
     }
-    /**
-     * @typedef {Object} UserType
-     * @property {string} id - User ID
-     * @property {string} username - User name
-     * @property {string} password - User password
-     * @property {string} description - User description
-     * @property {string} created_at - Date of creation
-     * @property {string} img - URL of user image
-     * */
     /**
      * Get a user by username
      * @param {string} username - User name
@@ -185,13 +172,9 @@ export default class User {
         ]);
     }
     /**
-     * @typedef {Object} Result
-     * @property {?string} error - Error message
-     * */
-    /**
      * Validate ID
      * @param {string} id - User ID
-     * @return {Promise<Result>} Result Data
+     * @return {Promise<Validation>} Result Data
      * @async
      * */
     static async validateId(id) {
@@ -213,7 +196,7 @@ export default class User {
     /**
      * Validate username
      * @param {string} username - User name
-     * @return {Promise<Result>} Result Data
+     * @return {Promise<Validation>} Result Data
      * @async
      * */
     static async validateUsername(username) {
@@ -240,7 +223,7 @@ export default class User {
     /**
      * Validate password
      * @param {string} password - User password
-     * @return {Promise<Result>} Result Data
+     * @return {Promise<Validation>} Result Data
      * @async
      * */
     static async validatePassword(password) {
@@ -262,7 +245,7 @@ export default class User {
     /**
      * Validate description
      * @param {string} description - User description
-     * @return {Promise<Result>} Result Data
+     * @return {Promise<Validation>} Result Data
      * @async
      * */
     static async validateDescription(description) {
@@ -284,13 +267,6 @@ export default class User {
         };
     }
     /**
-     * @typedef {Object} UserSearched
-     * @property {string} usename - User name
-     * @property {string} img - User image URL
-     * @property {int} followers_count - Followers count
-     * @property {int} repos_count - Repositories count
-     * */
-    /**
      * Search user by username
      * @param {string} username - User name
      * @return {Promise<UserSearched[]>} User founded
@@ -302,13 +278,6 @@ export default class User {
         return usersFounded;
     }
     /**
-     * @typedef {Object} Follower
-     * @property {string} username - Follower name
-     * @property {string} img - Follower image URL
-     * @property {int} followers_count - Followers count of the follower
-     * @property {int} repos_count - Repositories count of the follower
-     * */
-    /**
      * Get followers
      * @param {string} username - User name
      * @return {Promise<Follower[]>} Followers founded
@@ -319,15 +288,6 @@ export default class User {
         const followers = followers_response.rows.map((f) => f.followers);
         return followers[0].username ? followers : [];
     }
-    /**
-     * @typedef {Object} ProfileInfo
-     * @property {string} user_name - User name
-     * @property {string} user_description - User description
-     * @property {string} user_img - User image URL
-     * @property {int} repos_count - Repositories count
-     * @property {int} followers_count - Followers count
-     * @property {int} followed_count - Followed count
-     * */
     /**
      * Get user's profile info
      * @param {string} username - User name

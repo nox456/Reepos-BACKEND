@@ -1,12 +1,9 @@
-/**
- * @typedef {Object} Validation
- * @property {string} error - Error message
- * @property {*} data - Data
- * */
+import { Validation } from "./types.js";
+
 /**
  * Validate a group of validations and return error
  * @param {Validation[]} validations
- * @return {{error: string, data: *}} Error message
+ * @return {Validation} Error message
  * @async
  * */
 export default function validationHandler(validations) {

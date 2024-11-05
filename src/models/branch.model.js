@@ -1,22 +1,10 @@
 import db from "../connections/database.js";
+import { BranchData, BranchType } from "../lib/types.js";
 
 /**
  * Git Branch class
  * */
 export default class Branch {
-    /**
-     * @typedef {Object} BranchData
-     * @property {string} name - Branch name
-     * @property {string} repo - Repository ID
-     * @property {string} type - Branch type
-     *
-     * The branch saved data
-     * @typedef {Object} BranchType
-     * @property {string} id - Branch ID
-     * @property {string} name - Branch name
-     * @property {string} repo - Repository ID
-     * @property {string} type - Branch Type
-     * */
     /**
      * Save a branch in database
      * @param {BranchData} branchData - Branch data

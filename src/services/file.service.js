@@ -5,21 +5,12 @@ import User from "../models/user.model.js";
 import validationHandler from "../lib/validationHandler.js";
 import { BAD_REQUEST, FORBIDDEN, NOT_FOUND } from "../lib/constants/errors.js";
 import ServiceError from "../lib/serviceError.js";
+import {ServiceResult} from "../lib/types.js"
 
 /**
  * Service to handle files proccesses
  * */
 export default class FileService {
-    /**
-     * @typedef {Object} ErrorType
-     * @property {string} message - Error message
-     * @property {string} type - Error Type
-     *
-     * @typedef {Object} ServiceResult
-     * @property {boolean} success
-     * @property {?ErrorType} error - Error object
-     * @property {*} data - Result Data
-     * */
     /**
      * Get public URL of a file to download
      * @param {string} id - File ID

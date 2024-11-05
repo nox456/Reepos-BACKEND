@@ -3,25 +3,12 @@ import Auth from "../models/auth.model.js";
 import validationHandler from "../lib/validationHandler.js";
 import { BAD_REQUEST, FORBIDDEN, NOT_FOUND } from "../lib/constants/errors.js";
 import ServiceError from "../lib/serviceError.js";
+import {UserData,ServiceResult} from "../lib/types.js"
 
 /**
  * Service to handle auth proccesses
  * */
 export default class AuthService {
-    /**
-     * @typedef {Object} UserData
-     * @property {string} username - User name
-     * @property {string} password - User password
-     *
-     * @typedef {Object} ErrorType
-     * @property {string} message - Error message
-     * @property {string} type - Error Type
-     *
-     * @typedef {Object} ServiceResult
-     * @property {boolean} success
-     * @property {?ErrorType} error - Error object
-     * @property {*} data - Result Data
-     * */
     /**
      * Signup process to register a user in database and authenticate it
      * @param {UserData} userData - User Data

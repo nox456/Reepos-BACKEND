@@ -4,27 +4,12 @@ import User from "../models/user.model.js";
 import validationHandler from "../lib/validationHandler.js";
 import { BAD_REQUEST, NOT_FOUND } from "../lib/constants/errors.js";
 import ServiceError from "../lib/serviceError.js";
+import {ServiceResult,Commit} from "../lib/types.js"
 
 /**
  * Service to handle commits proccesses
  * */
 export default class CommitService {
-    /**
-     * @typedef {Object} ErrorType
-     * @property {string} message - Error message
-     * @property {string} type - Error Type
-     *
-     * @typedef {Object} Commit
-     * @property {string} title - Commit title
-     * @property {string} author - Commit author
-     * @property {string} created_at - Date of creation
-     * @property {string} hash - Commit hash
-     *
-     * @typedef {Object} ServiceResult
-     * @property {boolean} success
-     * @property {?ErrorType} error - Error object
-     * @property {*} data - Result Data
-     * */
     /**
      * Get all commits from a repository
      * @param {string} repoName - Repository name

@@ -1,21 +1,10 @@
 import db from "../connections/database.js";
+import { ModificationData, ModificationType } from "../lib/types.js";
 
 /**
  * Commit modification class
  * */
 export default class Modification {
-    /**
-     * @typedef {Object} ModificationData
-     * @property {string} type - Modification type ("A", "M", "D")
-     * @property {string} commit - Commit ID
-     * @property {string} file - File ID
-     *
-     * @typedef {Object} ModificationType
-     * @property {string} id - Modification ID
-     * @property {string} type - Modification type ("A", "M", "D")
-     * @property {string} commit - Commit ID
-     * @property {string} file - File ID
-     * */
     /**
      * Save a modification in database
      * @param {ModificationData} modificationData - Modification Data

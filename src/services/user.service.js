@@ -3,21 +3,12 @@ import Auth from "../models/auth.model.js";
 import validationHandler from "../lib/validationHandler.js";
 import { BAD_REQUEST, NOT_FOUND, FORBIDDEN } from "../lib/constants/errors.js";
 import ServiceError from "../lib/serviceError.js";
+import {ServiceResult} from "../lib/types.js"
 
 /**
  * Service to handle user proccesses
  * */
 export default class UserService {
-    /**
-     * @typedef {Object} ErrorType
-     * @property {string} message - Error message
-     * @property {string} type - Error Type
-     *
-     * @typedef {Object} ServiceResult
-     * @property {boolean} success
-     * @property {?ErrorType} error - Error object
-     * @property {*} data - Result Data
-     * */
     /**
      * Delete a user from database
      * @param {string} token - JWT Token

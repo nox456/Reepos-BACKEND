@@ -14,29 +14,15 @@ import downloadFiles from "../lib/downloadFiles.js";
 import validationHandler from "../lib/validationHandler.js";
 import { BAD_REQUEST, FORBIDDEN, NOT_FOUND } from "../lib/constants/errors.js";
 import ServiceError from "../lib/serviceError.js";
+import {ServiceResult,Repository} from "../lib/types.js"
 
 /**
  * Service to handle repositories proccesses
  * */
 export default class RepositoryService {
     /**
-     * @typedef {Object} RepoData
-     * @property {string} name - Repository name
-     * @property {string} description - Repository description
-     * @property {string[]} languages - Repository languages
-     *
-     * @typedef {Object} ErrorType
-     * @property {string} message - Error message
-     * @property {string} type - Error Type
-     *
-     * @typedef {Object} ServiceResult
-     * @property {boolean} success
-     * @property {?ErrorType} error - Error object
-     * @property {*} data - Result Data
-     * */
-    /**
      * Save a repository in database
-     * @param {RepoData} repoData - Repository data
+     * @param {Repository} repoData - Repository data
      * @param {string} token - JWT Token
      * @return {Promise<ServiceResult>} Service result object
      * @async

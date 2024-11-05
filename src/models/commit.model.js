@@ -1,29 +1,12 @@
 import db from "../connections/database.js";
 import { z } from "zod";
 import { COMMIT_INFO, REPOSITORIES_COMMITS } from "./queries.js";
+import { CommitData, CommitType, Commit, Validation } from "../lib/types.js";
 
 /**
  * Git Commit class
  * */
 export default class Commit {
-    /**
-     * @typedef {Object} CommitData
-     * @property {string} title - Commit title
-     * @property {string} content - Commit content
-     * @property {string} hash - Commit hash
-     * @property {string} author - Author ID
-     * @property {string} created_at - Date of creation
-     * @property {string} repo - Repository ID
-     *
-     * @typedef {Object} CommitType
-     * @property {string} id - Commit ID
-     * @property {string} title - Commit title
-     * @property {string} content - Commit content
-     * @property {string} hash - Commit hash
-     * @property {string} author - Author ID
-     * @property {string} created_at - Date of creation
-     * @property {string} repo - Repository ID
-     * */
     /**
      * Save a commit in database
      * @param {CommitData} commitData - Commit data
@@ -39,13 +22,6 @@ export default class Commit {
         const commitSaved = result.rows[0];
         return commitSaved;
     }
-    /**
-     * @typedef {Object} Commit
-     * @property {string} title - Commit title
-     * @property {string} author - Commit author
-     * @property {string} created_at - Date of creation
-     * @property {string} hash - Commit hash
-     * */
     /**
      * Get all commits from a repository by name and user owner ID
      * @param {string} repoName - Repository name
@@ -102,7 +78,7 @@ export default class Commit {
     /**
      * Validate hash
      * @param {string} hash
-     * @return {Promise<Result>} Result Data
+     * @return {Promise<Validation>} Result Data
      * @async
      * */
     static async validateHash(hash) {

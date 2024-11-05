@@ -4,26 +4,12 @@ import User from "../models/user.model.js";
 import validationHandler from "../lib/validationHandler.js";
 import { BAD_REQUEST, NOT_FOUND } from "../lib/constants/errors.js";
 import ServiceError from "../lib/serviceError.js";
+import {ServiceResult,Contributor} from "../lib/types.js"
 
 /**
  * Service to handle contributors proccesses
  * */
 export default class ContributorService {
-    /**
-     * @typedef {Object} ErrorType
-     * @property {string} message - Error message
-     * @property {string} type - Error Type
-     *
-     * @typedef {Object} Contributor
-     * @property {string} name - Contributor name
-     * @property {string} last_commit_title - Last commit of contributor
-     * @property {string} commits_created - Commits created by contributor
-     *
-     * @typedef {Object} ServiceResult
-     * @property {boolean} success
-     * @property {?ErrorType} error - Error object
-     * @property {*} data - Result Data
-     * */
     /**
      * Get all contributors from a repository
      * @param {string} repoName - Repository name

@@ -3,25 +3,12 @@ import supabase from "../connections/supabase.js";
 import { SUPABASE_REPOSITORY_BUCKET } from "../config/env.js";
 import { z } from "zod";
 import { FILE_INFO } from "./queries.js";
+import {FileData,FileType, Validation, FileInfo} from "../lib/types.js"
 
 /**
  * Repository File class
  * */
 export default class File {
-    /**
-     * @typedef {Object} FileData
-     * @property {string} name - File name
-     * @property {string} size - File size
-     * @property {string} path - File path
-     * @property {string} repo - Repository ID
-     *
-     * @typedef {Object} FileType
-     * @property {string} id - File ID
-     * @property {string} name - File name
-     * @property {string} size - File size
-     * @property {string} path - File path
-     * @property {string} repo - Repository ID
-     * */
     /**
      * Save a file in database
      * @param {FileData} fileData
@@ -57,13 +44,9 @@ export default class File {
         return fileUrl;
     }
     /**
-     * @typedef {Object} Result
-     * @property {?string} error - Error message
-     * */
-    /**
      * Validate File ID
      * @param {string} id - File ID
-     * @return {Promise<Result>} Result Data
+     * @return {Promise<Validation>} Result Data
      * @async
      * */
     static async validateId(id) {
@@ -120,19 +103,6 @@ export default class File {
         const exists = data.length > 0;
         return exists;
     }
-    /**
-     * @typedef {Object} LastCommit
-     * @property {string} title - Last commit title
-     * @property {string} created_at - Date of creation
-     *
-     * @typedef {Object} FileInfo
-     * @property {string} name - File name
-     * @property {string} size - File size
-     * @property {string} path - File path
-     * @property {string} content - File content
-     * @property {string} language - Language name
-     * @property {LastCommit} last_commit - Last commit
-     * */
     /**
      * Get info of file
      * @param {string} id - File ID

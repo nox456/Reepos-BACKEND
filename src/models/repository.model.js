@@ -13,6 +13,7 @@ import {
     SEARCH_REPOSITORIES,
     USER_REPOSITORIES,
 } from "./queries.js";
+import {RepoData,RepoType, Validation, File, RepositoryFounded,RepoInfo,Repository} from "../lib/types.js"
 
 const reposPath = join(dirname(fileURLToPath(import.meta.url)), "../temp");
 
@@ -20,20 +21,6 @@ const reposPath = join(dirname(fileURLToPath(import.meta.url)), "../temp");
  * Repository class
  * */
 export default class Repository {
-    /**
-     * @typedef {Object} RepoData
-     * @property {string} name - Repository Name
-     * @property {string} description - Repository Description
-     * @property {string} user_owner - User owner ID
-     *
-     * @typedef {Object} RepoType
-     * @property {string} id - Repository ID
-     * @property {string} name - Repository name
-     * @property {string} description - Repository Description
-     * @property {string} user_owner - User owner ID
-     * @property {string} created_at - Date of creation
-     * @property {int} likes - Count of likes
-     * */
     /**
      * Save a repository in database
      * @param {RepoData} repoData - Repository Data
@@ -66,13 +53,9 @@ export default class Repository {
         }
     }
     /**
-     * @typedef {Object} Result
-     * @property {?string} error - Error message
-     * */
-    /**
      * Validate Repository name
      * @param {string} repoName - Repository name
-     * @return {Promise<Result>} Result Data
+     * @return {Promise<Validation>} Result Data
      * @async
      * */
     static async validateRepoName(repoName) {
@@ -114,16 +97,6 @@ export default class Repository {
         return exists;
     }
     /**
-     * @typedef {Object} File
-     * @property {string} id - File ID
-     * @property {string} name - File name
-     * @property {string} size - File size
-     * @property {string} path - File path
-     * @property {string} last_commit_title - Title of the last commit
-     * @property {string} last_commit_created_at - Date of creation of the last commit
-     * @property {string} url - Public url of the file
-     * */
-    /**
      * Get files from a repository
      * @param {string} repoName - Repository name
      * @param {string} userId - User owner ID
@@ -163,7 +136,7 @@ export default class Repository {
     /**
      * Validate Repository description
      * @param {string} description - Repository description
-     * @return {Promise<Result>} Result Data
+     * @return {Promise<Validation>} Result Data
      * @async
      * */
     static async validateDescription(description) {
@@ -183,7 +156,7 @@ export default class Repository {
     /**
      * Validate languages
      * @param {string[]} languages - Repository languages
-     * @return {Promise<Result>} Result Data
+     * @return {Promise<Validation>} Result Data
      * @async
      * */
     static async validateLanguages(languages) {
@@ -266,14 +239,6 @@ export default class Repository {
         );
     }
     /**
-     * @typedef {Object} RepositoryFounded
-     * @property {string} user - User owner name
-     * @property {string} name - Repository name
-     * @property {string} description - Repository description
-     * @property {int} likes - Repository likes
-     * @property {string[]} languages - Repository languages
-     * */
-    /**
      * Search repositories by name
      * @param {string} repoName - Repository name
      * @return {Promise<RepositoryFounded[]>} Repositories founded
@@ -312,30 +277,10 @@ export default class Repository {
         );
     }
     /**
-     * @typedef {Object} Branch
-     * @property {string} name - Branch name
-     * @property {string} type - Branch type
-     *
-     * @typedef {Object} LastCommit
-     * @property {string} title - Last commit title
-     * @property {string} created_at - Date of creation
-     * @property {string} author - Author name
-     *
-     * @typedef {Object} Info
-     * @property {string} name - Repository name
-     * @property {string} description - Repository description
-     * @property {int} likes - Repository likes
-     * @property {string[]} languages - Repository languages
-     * @property {int} commits_count - Repository commits
-     * @property {int} contributors_count - Repository contributors
-     * @property {Branch[]} branches - Repository branches
-     * @property {LastCommit} last_commit - Last commit of repository
-     * */
-    /**
      * Get full information of repository by name and user owner ID
      * @param {string} repoName - Repository name
      * @param {string} userId - User owner ID
-     * @return {Promise<Info>} Info object of repository
+     * @return {Promise<RepoInfo>} Info object of repository
      * @async
      * */
     static async getFullInfo(repoName, userId) {
@@ -395,13 +340,6 @@ export default class Repository {
 
         return info;
     }
-    /**
-     * @typedef {Object} Repository
-     * @property {string} name - Repository name
-     * @property {string} description- Repository description
-     * @property {int} likes - Repository likes
-     * @property {string[]} languages - Repository languages
-     * */
     /**
      * Get repositories from an user by ID
      * @param {string} username - User owner name

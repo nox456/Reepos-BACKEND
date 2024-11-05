@@ -1,6 +1,7 @@
 import bcryptjs from "bcryptjs";
 import { SECRET } from "../config/env.js";
 import jwt from "jsonwebtoken";
+import {Validation} from "../lib/types.js"
 
 /**
  * Authentication class
@@ -36,14 +37,9 @@ export default class Auth {
         return await bcryptjs.compare(rawPassword, encryptedPassword);
     }
     /**
-     * @typedef {Object} Result
-     * @property {?string} error
-     * @property {?string} data
-     * */
-    /**
      * Verify a JWT Token
      * @param {string} token - JWT Token
-     * @return {Result} Result data
+     * @return {Validation} Result data
      * */
     static validateToken(token) {
         let error = null;
