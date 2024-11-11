@@ -3,7 +3,7 @@ import supabase from "../connections/supabase.js";
 import { SUPABASE_REPOSITORY_BUCKET } from "../config/env.js";
 import { z } from "zod";
 import { FILE_INFO } from "./queries.js";
-import Types from "../lib/types.js"
+import * as Types from "../lib/types.js"
 
 /**
  * Repository File class

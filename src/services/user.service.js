@@ -3,7 +3,7 @@ import Auth from "../models/auth.model.js";
 import validationHandler from "../lib/validationHandler.js";
 import { BAD_REQUEST, NOT_FOUND, FORBIDDEN } from "../lib/constants/errors.js";
 import ServiceError from "../lib/serviceError.js";
-import Types from "../lib/types.js"
+import * as Types from "../lib/types.js"
 
 /**
  * Service to handle user proccesses

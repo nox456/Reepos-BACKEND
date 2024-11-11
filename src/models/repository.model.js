@@ -13,7 +13,7 @@ import {
     SEARCH_REPOSITORIES,
     USER_REPOSITORIES,
 } from "./queries.js";
-import Types from "../lib/types.js"
+import * as Types from "../lib/types.js"
 
 const reposPath = join(dirname(fileURLToPath(import.meta.url)), "../temp");
 

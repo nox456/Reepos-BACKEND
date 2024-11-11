@@ -1,5 +1,5 @@
 import db from "../connections/database.js";
-import Types from "../lib/types.js";
+import * as Types from "../lib/types.js";
 
 /**
  * Commit modification class
