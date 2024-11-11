@@ -3,7 +3,7 @@ import Auth from "../models/auth.model.js";
 import validationHandler from "../lib/validationHandler.js";
 import { BAD_REQUEST, FORBIDDEN, NOT_FOUND } from "../lib/constants/errors.js";
 import ServiceError from "../lib/serviceError.js";
-import {UserData,ServiceResult} from "../lib/types.js"
+import Types from "../lib/types.js"
 
 /**
  * Service to handle auth proccesses
@@ -11,8 +11,8 @@ import {UserData,ServiceResult} from "../lib/types.js"
 export default class AuthService {
     /**
      * Signup process to register a user in database and authenticate it
-     * @param {UserData} userData - User Data
-     * @return {Promise<ServiceResult>} Service result object
+     * @param {Types.UserData} userData - User Data
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async signupUser(userData) {
@@ -44,8 +44,8 @@ export default class AuthService {
     }
     /**
      * Signin a user validating username and password
-     * @param {UserData} userData
-     * @return {Promise<ServiceResult>} Service result object
+     * @param {Types.UserData} userData
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async signinUser(userData) {
@@ -84,7 +84,7 @@ export default class AuthService {
     /**
      * Validate a JWT token and get user info
      * @param {string} token - JWT Token
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async isAuthenticated(token) {

@@ -4,7 +4,7 @@ import supabase from "../connections/supabase.js";
 import { extname } from "path";
 import { z } from "zod";
 import { PROFILE_INFO, SEARCH_USERS, USER_FOLLOWERS } from "./queries.js";
-import {UserData,UserType,Validation,UserSearched,Follower,ProfileInfo} from "../lib/types.js"
+import * as Types from "../lib/types.js";
 
 /**
  * User class
@@ -12,7 +12,7 @@ import {UserData,UserType,Validation,UserSearched,Follower,ProfileInfo} from "..
 export default class User {
     /**
      * Save a user in database
-     * @param {UserData} data - User data
+     * @param {Types.UserData} data - User data
      * @return {Promise<string>} User saved ID
      * @async
      * */
@@ -28,7 +28,7 @@ export default class User {
     /**
      * Get a user by username
      * @param {string} username - User name
-     * @return {Promise<UserType>} User
+     * @return {Promise<Types.UserType>} User
      * @async
      * */
     static async getByUsername(username) {
@@ -42,7 +42,7 @@ export default class User {
     /**
      * Get a user by ID
      * @param {string} id - User ID
-     * @return {Promise<UserType>} User
+     * @return {Promise<Types.UserType>} User
      * @async
      * */
     static async getById(id) {
@@ -174,7 +174,7 @@ export default class User {
     /**
      * Validate ID
      * @param {string} id - User ID
-     * @return {Promise<Validation>} Result Data
+     * @return {Promise<Types.Validation>} Result Data
      * @async
      * */
     static async validateId(id) {
@@ -196,7 +196,7 @@ export default class User {
     /**
      * Validate username
      * @param {string} username - User name
-     * @return {Promise<Validation>} Result Data
+     * @return {Promise<Types.Validation>} Result Data
      * @async
      * */
     static async validateUsername(username) {
@@ -223,7 +223,7 @@ export default class User {
     /**
      * Validate password
      * @param {string} password - User password
-     * @return {Promise<Validation>} Result Data
+     * @return {Promise<Types.Validation>} Result Data
      * @async
      * */
     static async validatePassword(password) {
@@ -245,7 +245,7 @@ export default class User {
     /**
      * Validate description
      * @param {string} description - User description
-     * @return {Promise<Validation>} Result Data
+     * @return {Promise<Types.Validation>} Result Data
      * @async
      * */
     static async validateDescription(description) {
@@ -269,7 +269,7 @@ export default class User {
     /**
      * Search user by username
      * @param {string} username - User name
-     * @return {Promise<UserSearched[]>} User founded
+     * @return {Promise<Types.UserSearched[]>} User founded
      * @async
      * */
     static async search(username) {
@@ -280,7 +280,7 @@ export default class User {
     /**
      * Get followers
      * @param {string} username - User name
-     * @return {Promise<Follower[]>} Followers founded
+     * @return {Promise<Types.UserFollower[]>} Followers founded
      * @async
      * */
     static async getFollowers(username) {
@@ -291,7 +291,7 @@ export default class User {
     /**
      * Get user's profile info
      * @param {string} username - User name
-     * @return {Promise<ProfileInfo>} Profile info
+     * @return {Promise<Types.UserProfileInfo>} Profile info
      * @async
      * */
     static async getProfileInfo(username) {

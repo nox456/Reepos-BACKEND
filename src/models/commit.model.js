@@ -1,7 +1,7 @@
 import db from "../connections/database.js";
 import { z } from "zod";
 import { COMMIT_INFO, REPOSITORIES_COMMITS } from "./queries.js";
-import { CommitData, CommitType, Commit, Validation } from "../lib/types.js";
+import * as Types from "../lib/types.js";
 
 /**
  * Git Commit class
@@ -9,8 +9,8 @@ import { CommitData, CommitType, Commit, Validation } from "../lib/types.js";
 export default class Commit {
     /**
      * Save a commit in database
-     * @param {CommitData} commitData - Commit data
-     * @return {Promise<CommitType>} Commit saved
+     * @param {Types.CommitData} commitData - Commit data
+     * @return {Promise<Types.CommitType>} Commit saved
      * @async
      * */
     static async save(commitData) {
@@ -26,7 +26,7 @@ export default class Commit {
      * Get all commits from a repository by name and user owner ID
      * @param {string} repoName - Repository name
      * @param {string} userId - User ID
-     * @return {Promise<Commit[]>} Commits
+     * @return {Promise<Types.Types.Commit[]>} Commits
      * @async
      * */
     static async getAll(repoName, userId) {
@@ -35,28 +35,11 @@ export default class Commit {
         return commits;
     }
     /**
-     * @typedef {Object} CommitFile
-     * @property {string} name - File name
-     * @property {string} size - File size
-     * @property {string} type - Modification type
-     *
-     * @typedef {Object} CommitInfo
-     * @property {string} hash - Hash
-     * @property {string} title - Title
-     * @property {string} content - Content
-     * @property {string} created_at - Date and Time of creation
-     * @property {string} author - Author name
-     * @property {string} branch - Branch name
-     * @property {CommitFile[]} files - Commit files
-     * @property {string} prev_commit_hash - Hash of the previous commit
-     * @property {string} next_commit_hash - Hash of the next commit
-     * */
-    /**
      * Get full information of commit by hash
      * @param {string} hash - Commit hash
      * @param {string} repoName - Repository name
      * @param {string} userId - User ID
-     * @return {Promise<CommitInfo>} Commit information object
+     * @return {Promise<Types.CommitInfo>} Commit information object
      * @async
      * */
     static async getFullInfo(hash, repoName, userId) {
@@ -72,13 +55,9 @@ export default class Commit {
         return info;
     }
     /**
-     * @typedef {Object} Result
-     * @property {?string} error - Error message
-     * */
-    /**
      * Validate hash
      * @param {string} hash
-     * @return {Promise<Validation>} Result Data
+     * @return {Promise<Types.Validation>} Result Data
      * @async
      * */
     static async validateHash(hash) {

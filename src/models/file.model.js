@@ -3,7 +3,7 @@ import supabase from "../connections/supabase.js";
 import { SUPABASE_REPOSITORY_BUCKET } from "../config/env.js";
 import { z } from "zod";
 import { FILE_INFO } from "./queries.js";
-import {FileData,FileType, Validation, FileInfo} from "../lib/types.js"
+import Types from "../lib/types.js"
 
 /**
  * Repository File class
@@ -11,8 +11,8 @@ import {FileData,FileType, Validation, FileInfo} from "../lib/types.js"
 export default class File {
     /**
      * Save a file in database
-     * @param {FileData} fileData
-     * @return {Promise<FileType>} File saved
+     * @param {Types.FileData} fileData
+     * @return {Promise<Types.FileType>} File saved
      * @async
      * */
     static async save(fileData) {
@@ -46,7 +46,7 @@ export default class File {
     /**
      * Validate File ID
      * @param {string} id - File ID
-     * @return {Promise<Validation>} Result Data
+     * @return {Promise<Types.Validation} Result Data
      * @async
      * */
     static async validateId(id) {
@@ -106,7 +106,7 @@ export default class File {
     /**
      * Get info of file
      * @param {string} id - File ID
-     * @return {Promise<FileInfo>}
+     * @return {Promise<Types.FileInfo>}
      * @async
      * */
     static async getInfo(id, repoName, userId) {

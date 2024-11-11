@@ -13,7 +13,7 @@ import {
     SEARCH_REPOSITORIES,
     USER_REPOSITORIES,
 } from "./queries.js";
-import {RepoData,RepoType, Validation, File, RepositoryFounded,RepoInfo,Repository} from "../lib/types.js"
+import Types from "../lib/types.js"
 
 const reposPath = join(dirname(fileURLToPath(import.meta.url)), "../temp");
 
@@ -23,8 +23,8 @@ const reposPath = join(dirname(fileURLToPath(import.meta.url)), "../temp");
 export default class Repository {
     /**
      * Save a repository in database
-     * @param {RepoData} repoData - Repository Data
-     * @return {Promise<RepoType>} Repository saved
+     * @param {Types.RepoData} repoData - Repository Data
+     * @return {Promise<Types.RepoType>} Repository saved
      * @async
      * */
     static async save(repoData) {
@@ -55,7 +55,7 @@ export default class Repository {
     /**
      * Validate Repository name
      * @param {string} repoName - Repository name
-     * @return {Promise<Validation>} Result Data
+     * @return {Promise<Types.Validation>} Result Data
      * @async
      * */
     static async validateRepoName(repoName) {
@@ -100,7 +100,7 @@ export default class Repository {
      * Get files from a repository
      * @param {string} repoName - Repository name
      * @param {string} userId - User owner ID
-     * @return {Promise<File[]>} Files
+     * @return {Promise<Types.File[]>} Files
      * @async
      * */
     static async getFiles(repoName, userId) {
@@ -136,7 +136,7 @@ export default class Repository {
     /**
      * Validate Repository description
      * @param {string} description - Repository description
-     * @return {Promise<Validation>} Result Data
+     * @return {Promise<Types.Validation>} Result Data
      * @async
      * */
     static async validateDescription(description) {
@@ -156,7 +156,7 @@ export default class Repository {
     /**
      * Validate languages
      * @param {string[]} languages - Repository languages
-     * @return {Promise<Validation>} Result Data
+     * @return {Promise<Types.Validation>} Result Data
      * @async
      * */
     static async validateLanguages(languages) {
@@ -241,7 +241,7 @@ export default class Repository {
     /**
      * Search repositories by name
      * @param {string} repoName - Repository name
-     * @return {Promise<RepositoryFounded[]>} Repositories founded
+     * @return {Promise<Types.RepositoryFounded[]>} Repositories founded
      * @async
      * */
     static async search(repoName) {
@@ -280,7 +280,7 @@ export default class Repository {
      * Get full information of repository by name and user owner ID
      * @param {string} repoName - Repository name
      * @param {string} userId - User owner ID
-     * @return {Promise<RepoInfo>} Info object of repository
+     * @return {Promise<Types.RepoInfo>} Info object of repository
      * @async
      * */
     static async getFullInfo(repoName, userId) {
@@ -343,7 +343,7 @@ export default class Repository {
     /**
      * Get repositories from an user by ID
      * @param {string} username - User owner name
-     * @return {Promise<Repository[]>} User's repositories
+     * @return {Promise<Types.Repo[]>} User's repositories
      * @async
      * */
     static async getFromUser(username) {

@@ -14,7 +14,7 @@ import downloadFiles from "../lib/downloadFiles.js";
 import validationHandler from "../lib/validationHandler.js";
 import { BAD_REQUEST, FORBIDDEN, NOT_FOUND } from "../lib/constants/errors.js";
 import ServiceError from "../lib/serviceError.js";
-import {ServiceResult,Repository} from "../lib/types.js"
+import * as Types from "../lib/types.js"
 
 /**
  * Service to handle repositories proccesses
@@ -22,9 +22,9 @@ import {ServiceResult,Repository} from "../lib/types.js"
 export default class RepositoryService {
     /**
      * Save a repository in database
-     * @param {Repository} repoData - Repository data
+     * @param {Types.Repository} repoData - Repository data
      * @param {string} token - JWT Token
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async createRepository(repoData, token) {
@@ -202,7 +202,7 @@ export default class RepositoryService {
     /**
      * Upload a repository stored in backend to cloud storage
      * @param {string} repoName - Repository name
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async uploadRepository(repoName, token) {
@@ -230,7 +230,7 @@ export default class RepositoryService {
     /**
      * Generate a zip file with the repository content
      * @param {string} repoName - Repository name
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async download(repoName, username) {
@@ -289,7 +289,7 @@ export default class RepositoryService {
      * Delete a repository from database and clout storage
      * @param {string} repoName - Repository name
      * @param {string} token - JWT Token
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async delete(repoName, token, password) {
@@ -322,7 +322,7 @@ export default class RepositoryService {
      * Like a repository by name and user token
      * @param {string} repoName - Repository name
      * @param {string} username - User owner name
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async like(username, repoName, userOwnerName) {
@@ -386,7 +386,7 @@ export default class RepositoryService {
     }
     /**
      * Search repositories by name
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * */
     static async search(repoName) {
         const validation = validationHandler([
@@ -413,7 +413,7 @@ export default class RepositoryService {
      * Change name of repository
      * @param {string} newRepoName - New repository name
      * @param {string} repoName - Repository name
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async changeName(newRepoName, repoName, token) {
@@ -458,7 +458,7 @@ export default class RepositoryService {
      * @param {string} newDescription - New repository description
      * @param {string} repoName - Repository name
      * @param {string} token - JWT Token
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async changeDescription(newDescription, repoName, token) {
@@ -506,7 +506,7 @@ export default class RepositoryService {
      * Get full information of repository
      * @param {string} repoName - Repository name
      * @param {string} username - User owner name
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async getInfo(repoName, username) {
@@ -554,7 +554,7 @@ export default class RepositoryService {
     /**
      * Get repositories from an user by ID
      * @param {string} username - User owner name
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async getFromUser(username) {
@@ -585,7 +585,7 @@ export default class RepositoryService {
     /**
      * Delete a temp zip file of repository
      * @param {string} fileName - Zip file name
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async deleteZip(fileName) {
@@ -601,7 +601,7 @@ export default class RepositoryService {
      * @param {string} repoName - Repository name
      * @param {string} userOwnerName - User owner name
      * @param {string} username - User name
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async removeLike(repoName, userOwnerName, username) {
@@ -657,7 +657,7 @@ export default class RepositoryService {
     /**
      * Remove repo from temp directory
      * @param {string} repoName - Repository name
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async removeTemp(repoName) {
@@ -679,7 +679,7 @@ export default class RepositoryService {
      * Delete from database without password
      * @param {string} repoName - Repository name
      * @param {string} token - JWT Token
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async deleteDb(repoName, token) {
@@ -698,7 +698,7 @@ export default class RepositoryService {
      * Check if an user already liked a repository
      * @param {string} token - JWT Token
      * @param {string} repoName - Repository name
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async checkIfLike(token, repoName, userOwnerName) {

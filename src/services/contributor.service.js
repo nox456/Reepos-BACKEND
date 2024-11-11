@@ -4,7 +4,7 @@ import User from "../models/user.model.js";
 import validationHandler from "../lib/validationHandler.js";
 import { BAD_REQUEST, NOT_FOUND } from "../lib/constants/errors.js";
 import ServiceError from "../lib/serviceError.js";
-import {ServiceResult,Contributor} from "../lib/types.js"
+import Types from "../lib/types.js";
 
 /**
  * Service to handle contributors proccesses
@@ -14,7 +14,7 @@ export default class ContributorService {
      * Get all contributors from a repository
      * @param {string} repoName - Repository name
      * @param {string} username - User name
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async getAll(repoName, username) {

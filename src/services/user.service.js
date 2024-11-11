@@ -3,7 +3,7 @@ import Auth from "../models/auth.model.js";
 import validationHandler from "../lib/validationHandler.js";
 import { BAD_REQUEST, NOT_FOUND, FORBIDDEN } from "../lib/constants/errors.js";
 import ServiceError from "../lib/serviceError.js";
-import {ServiceResult} from "../lib/types.js"
+import Types from "../lib/types.js"
 
 /**
  * Service to handle user proccesses
@@ -13,7 +13,7 @@ export default class UserService {
      * Delete a user from database
      * @param {string} token - JWT Token
      * @param {string} password - User password
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async deleteUser(token, password) {
@@ -53,7 +53,7 @@ export default class UserService {
      * @param {string} newUsername - New username
      * @param {string} token - JWT Token
      * @param {string} password - User password
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async changeUsername(newUsername, token, password) {
@@ -92,7 +92,7 @@ export default class UserService {
      * @param {string} newPassword - New user password
      * @param {string} token - JWT Token
      * @param {string} password - User password
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async changePassword(newPassword, token, password) {
@@ -130,7 +130,7 @@ export default class UserService {
      * Change description validating token
      * @param {string} newDescription - New description
      * @param {string} token - JWT Token
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async changeDescription(newDescription, token) {
@@ -156,7 +156,7 @@ export default class UserService {
      * Change image validating token
      * @param {string} image - User image URL
      * @param {string} token - JWT Token
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async changeImage(image, token) {
@@ -179,7 +179,7 @@ export default class UserService {
      * Add a user has follower
      * @param {string} userFollowedId - User followed ID
      * @param {string} token - JWT Token
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async followUser(username, token) {
@@ -219,7 +219,7 @@ export default class UserService {
     /**
      * Search a user by username
      * @param {string} username - User name
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async search(username) {
@@ -236,7 +236,7 @@ export default class UserService {
     /**
      * Get followers of a user by username
      * @param {string} username - User name
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async getFollowers(username) {
@@ -260,7 +260,7 @@ export default class UserService {
     /**
      * Get user profile information
      * @param {string} username - User name
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async getProfileInfo(username) {
@@ -285,7 +285,7 @@ export default class UserService {
      * Unfollow an user
      * @param {string} username - User name
      * @param {string} token - JWT Token
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async unfollow(username, token) {

@@ -4,7 +4,7 @@ import User from "../models/user.model.js";
 import validationHandler from "../lib/validationHandler.js";
 import { BAD_REQUEST, NOT_FOUND } from "../lib/constants/errors.js";
 import ServiceError from "../lib/serviceError.js";
-import {ServiceResult,Commit} from "../lib/types.js"
+import Types from "../lib/types.js";
 
 /**
  * Service to handle commits proccesses
@@ -14,7 +14,7 @@ export default class CommitService {
      * Get all commits from a repository
      * @param {string} repoName - Repository name
      * @param {string} token - JWT Token
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async getAll(repoName, username) {
@@ -55,7 +55,7 @@ export default class CommitService {
     /**
      * Get full information of commit by hash
      * @param {string} hash - Commit hash
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async getInfo(hash, repoName, username) {

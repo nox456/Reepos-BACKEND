@@ -202,4 +202,33 @@
  * @property {?ErrorType} error - Error object
  * @property {*} data - Result Data
  * */
-export {};
+/**
+ * @typedef {Object} CommitGit
+ * @property {string} hash - Commit hash
+ * @property {string} title - Commit title
+ * @property {string} author - Commit author
+ * @property {string} content - Commit content
+ * @property {string} created_at - Date of creation
+ *
+ * @typedef {Object} BranchGit
+ * @property {string} name - Branch name
+ * @property {string} type - Branch type
+ *
+ * @typedef {Object} FileGit
+ * @property {string} name - File name
+ * @property {string} size - File size
+ * @property {string} path - File path
+ *
+ * @typedef {Object} ModificationGit
+ * @property {string} commit - Commit ID
+ * @property {string} type - Modification type
+ * @property {string} file - File ID
+ *
+ * @typedef {Object} RepoGitInfo
+ * @property {CommitGit[]} commits - Repository commits
+ * @property {string[]} contributors - Repository contributors
+ * @property {BranchGit[]} branches - Repository branches
+ * @property {FileGit[]} files - Repository files
+ * @property {ModificationGit[]} modifications - Repository modifications
+ * */
+export {}

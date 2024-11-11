@@ -1,5 +1,5 @@
 import db from "../connections/database.js";
-import { ModificationData, ModificationType } from "../lib/types.js";
+import Types from "../lib/types.js";
 
 /**
  * Commit modification class
@@ -7,8 +7,8 @@ import { ModificationData, ModificationType } from "../lib/types.js";
 export default class Modification {
     /**
      * Save a modification in database
-     * @param {ModificationData} modificationData - Modification Data
-     * @return {Promise<ModificationType>} Modification saved
+     * @param {Types.ModificationData} modificationData - Modification Data
+     * @return {Promise<Types.ModificationType>} Modification saved
      * @async
      * */
     static async save(modificationData) {

@@ -5,7 +5,7 @@ import User from "../models/user.model.js";
 import validationHandler from "../lib/validationHandler.js";
 import { BAD_REQUEST, FORBIDDEN, NOT_FOUND } from "../lib/constants/errors.js";
 import ServiceError from "../lib/serviceError.js";
-import {ServiceResult} from "../lib/types.js"
+import Types from "../lib/types.js"
 
 /**
  * Service to handle files proccesses
@@ -16,7 +16,7 @@ export default class FileService {
      * @param {string} id - File ID
      * @param {string} repoName - Repository Name
      * @param {string} token - JWT Token
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async download(id, repoName, token) {
@@ -72,7 +72,7 @@ export default class FileService {
      * @param {string} id - File ID
      * @param {string} repoName - Repository name
      * @param {string} username - User name
-     * @return {Promise<ServiceResult>} Service result object
+     * @return {Promise<Types.ServiceResult>} Service result object
      * @async
      * */
     static async getInfo(id, repoName, username) {

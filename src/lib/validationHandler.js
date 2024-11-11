@@ -1,9 +1,9 @@
-import { Validation } from "./types.js";
+import * as Types from "./types.js";
 
 /**
  * Validate a group of validations and return error
- * @param {Validation[]} validations
- * @return {Validation} Error message
+ * @param {Types.Validation[]} validations
+ * @return {Types.Validation} Error message
  * @async
  * */
 export default function validationHandler(validations) {

@@ -1,6 +1,6 @@
 import db from "../connections/database.js";
 import { REPOSITORIES_CONTRIBUTORS } from "./queries.js";
-import {ContributorData,ContributorType,Contributor} from "../lib/types.js"
+import * as Types from "../lib/types.js"
 
 /**
  * Git Contributor class
@@ -8,8 +8,8 @@ import {ContributorData,ContributorType,Contributor} from "../lib/types.js"
 export default class Contributor {
     /**
      * Save a contributor in database
-     * @param {ContributorData} contributorData - Contributor Data
-     * @return {Promise<ContributorType>} Contributor saved
+     * @param {Types.ContributorData} contributorData - Contributor Data
+     * @return {Promise<Types.ContributorType>} Contributor saved
      * @async
      * */
     static async save(contributorData) {
@@ -25,7 +25,7 @@ export default class Contributor {
      * Get all contributors from a repository by name and user owner ID
      * @param {string} repoName - Repository name
      * @param {string} userId - User ID
-     * @return {Promise<Contributor[]>} Contributors
+     * @return {Promise<Types.ContributorInfo[]>} Contributors
      * @async
      * */
     static async getAll(repoName, userId) {

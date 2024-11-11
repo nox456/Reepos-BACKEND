@@ -1,5 +1,5 @@
 import db from "../connections/database.js";
-import { BranchData, BranchType } from "../lib/types.js";
+import * as Types from "../lib/types.js";
 
 /**
  * Git Branch class
@@ -7,8 +7,8 @@ import { BranchData, BranchType } from "../lib/types.js";
 export default class Branch {
     /**
      * Save a branch in database
-     * @param {BranchData} branchData - Branch data
-     * @return {Promise<BranchType>} Branch saved
+     * @param {Types.BranchData} branchData - Branch data
+     * @return {Promise<Types.BranchType>} Branch saved
      * @async
      * */
     static async save(branchData) {
