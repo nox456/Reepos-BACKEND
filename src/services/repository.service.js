@@ -1,20 +1,22 @@
-import Repository from "../models/repository.model.js";
-import Commit from "../models/commit.model.js";
-import Branch from "../models/branch.model.js";
-import File from "../models/file.model.js";
-import Contributor from "../models/contributor.model.js";
-import Modification from "../models/modification.model.js";
-import Commit_Branch from "../models/commit_branch.model.js";
-import Repository_Language from "../models/repository_language.model.js";
-import Auth from "../models/auth.model.js";
-import Language from "../models/language.model.js";
-import User from "../models/user.model.js";
+import {
+    Repository,
+    Commit,
+    Branch,
+    File,
+    Contributor,
+    Modification,
+    Commit_Branch,
+    Repository_Language,
+    Language,
+    Auth,
+    User,
+} from "../models/index.model.js";
 import repoInfo from "../lib/getReposInfo.js";
 import downloadFiles from "../lib/downloadFiles.js";
 import validationHandler from "../lib/validationHandler.js";
 import { BAD_REQUEST, FORBIDDEN, NOT_FOUND } from "../lib/constants/errors.js";
 import ServiceError from "../lib/serviceError.js";
-import * as Types from "../lib/types.js"
+import * as Types from "../lib/types.js";
 
 /**
  * Service to handle repositories proccesses

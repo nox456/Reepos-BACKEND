@@ -1,6 +1,4 @@
-import Contributor from "../models/contributor.model.js";
-import Repository from "../models/repository.model.js";
-import User from "../models/user.model.js";
+import { Contributor, Repository, User } from "../models/index.model.js";
 import validationHandler from "../lib/validationHandler.js";
 import { BAD_REQUEST, NOT_FOUND } from "../lib/constants/errors.js";
 import ServiceError from "../lib/serviceError.js";

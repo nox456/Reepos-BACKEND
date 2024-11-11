@@ -1,11 +1,8 @@
-import File from "../models/file.model.js";
-import Auth from "../models/auth.model.js";
-import Repository from "../models/repository.model.js";
-import User from "../models/user.model.js";
+import { File, Auth, Repository, User } from "../models/index.model.js";
 import validationHandler from "../lib/validationHandler.js";
 import { BAD_REQUEST, FORBIDDEN, NOT_FOUND } from "../lib/constants/errors.js";
 import ServiceError from "../lib/serviceError.js";
-import * as Types from "../lib/types.js"
+import * as Types from "../lib/types.js";
 
 /**
  * Service to handle files proccesses
