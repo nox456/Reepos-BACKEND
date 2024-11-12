@@ -33,7 +33,6 @@ export default class Contributor {
             repoName,
             userId,
         ]);
-        const contributors = result.rows;
-        return contributors[0];
+        return result.rows;
     }
 }
