@@ -43,12 +43,19 @@ export default class Repository {
      * @async
      * */
     static async upload(repoName, userId) {
+        const repo_result = await db.query(
+            "SELECT id FROM repositories WHERE user_owner = $1 AND name = $2",
+            [userId, repoName],
+        );
         const path = join(reposPath, repoName);
         const files = await getReposFiles(path);
         for (const file of files) {
             const { error } = await supabase.storage
                 .from(SUPABASE_REPOSITORY_BUCKET)
-                .upload(`${userId}/${repoName}/${file.path}`, file.buffer);
+                .upload(
+                    `${userId}/${repo_result.rows[0].id}/${file.path}`,
+                    file.buffer,
+                );
             if (error) throw error;
         }
     }
@@ -108,12 +115,17 @@ export default class Repository {
             userId,
             repoName,
         ]);
+        const repo_result = await db.query(
+            "SELECT id FROM repositories WHERE user_owner = $1 AND name = $2",
+            [userId, repoName],
+        );
         const files = result_files.rows;
         for (const file of files) {
             const url = supabase.storage
                 .from(SUPABASE_REPOSITORY_BUCKET)
-                .getPublicUrl(`${userId}/${repoName}/${file.path}`)
-                .data.publicUrl;
+                .getPublicUrl(
+                    `${userId}/${repo_result.rows[0].id}/${file.path}`,
+                ).data.publicUrl;
             file.url = url;
         }
         return files;
@@ -129,9 +141,13 @@ export default class Repository {
         const { data, error } = await supabase.storage
             .from(SUPABASE_REPOSITORY_BUCKET)
             .list(userId);
+        const repo_result = await db.query(
+            "SELECT id FROM repositories WHERE user_owner = $1 AND name = $2",
+            [userId, repoName],
+        );
         if (error) throw error;
         const repos = data.map((p) => p.name);
-        return repos.includes(repoName);
+        return repos.includes(repo_result.rows[0].id);
     }
     /**
      * Validate Repository description
@@ -217,7 +233,7 @@ export default class Repository {
             [repo_result.rows[0].id],
         );
         const files = files_result.rows.map(
-            (f) => `${userId}/${repoName}/${f.path}`,
+            (f) => `${userId}/${repo_result.rows[0].id}/${f.path}`,
         );
         const { error } = await supabase.storage
             .from(SUPABASE_REPOSITORY_BUCKET)
@@ -290,10 +306,15 @@ export default class Repository {
     static async getFullInfo(repoName, userId) {
         const info_result = await db.query(REPOSITORY_INFO, [userId, repoName]);
         const info = info_result.rows[0];
+        const repo_result = await db.query(
+            "SELECT id FROM repositories WHERE user_owner = $1 AND name = $2",
+            [userId, repoName],
+        );
 
         const readme_url = supabase.storage
             .from(SUPABASE_REPOSITORY_BUCKET)
-            .getPublicUrl(`${userId}/${repoName}/README.md`).data.publicUrl;
+            .getPublicUrl(`${userId}/${repo_result.rows[0].id}/README.md`)
+            .data.publicUrl;
         const res = await fetch(readme_url);
 
         if (res.ok) {
@@ -327,7 +348,10 @@ export default class Repository {
                             const url = supabase.storage
                                 .from(SUPABASE_REPOSITORY_BUCKET)
                                 .getPublicUrl(
-                                    join(`${userId}/${repoName}`, path),
+                                    join(
+                                        `${userId}/${repo_result.rows[0].id}`,
+                                        path,
+                                    ),
                                 ).data.publicUrl;
                             return line.replace(path, url);
                         } else {

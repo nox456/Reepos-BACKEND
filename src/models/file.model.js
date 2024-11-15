@@ -3,7 +3,7 @@ import supabase from "../connections/supabase.js";
 import { SUPABASE_REPOSITORY_BUCKET } from "../config/env.js";
 import { z } from "zod";
 import { FILE_INFO } from "./queries.js";
-import * as Types from "../lib/types.js"
+import * as Types from "../lib/types.js";
 
 /**
  * Repository File class
@@ -36,11 +36,16 @@ export default class File {
             "SELECT path, name FROM files WHERE id = $1",
             [id],
         );
+        const repo_result = await db.query(
+            "SELECT id FROM repositories WHERE user_owner = $1 AND name = $2",
+            [userId, repoName],
+        );
         const { path, name } = path_result.rows[0];
         const fileUrl = supabase.storage
             .from(SUPABASE_REPOSITORY_BUCKET)
-            .getPublicUrl(`${userId}/${repoName}/${path}`, { download: name })
-            .data.publicUrl;
+            .getPublicUrl(`${userId}/${repo_result.rows[0].id}/${path}`, {
+                download: name,
+            }).data.publicUrl;
         return fileUrl;
     }
     /**
@@ -90,11 +95,15 @@ export default class File {
             "SELECT name,path FROM files WHERE id = $1",
             [file_id],
         );
+        const repo_result = await db.query(
+            "SELECT id FROM repositories WHERE user_owner = $1 AND name = $2",
+            [userId, repoName],
+        );
         const { name, path } = result_file.rows[0];
         const { data, error } = await supabase.storage
             .from(SUPABASE_REPOSITORY_BUCKET)
             .list(
-                `${userId}/${repoName}/${path.includes("/") ? path.slice(0, path.lastIndexOf("/")) : ""}`,
+                `${userId}/${repo_result.rows[0]}/${path.includes("/") ? path.slice(0, path.lastIndexOf("/")) : ""}`,
                 {
                     search: name,
                 },
@@ -127,17 +136,26 @@ export default class File {
             "svg",
         ];
 
+        const repo_result = await db.query(
+            "SELECT id FROM repositories WHERE user_owner = $1 AND name = $2",
+            [userId, repoName],
+        );
         const fileDownloadUrl = supabase.storage
             .from(SUPABASE_REPOSITORY_BUCKET)
-            .getPublicUrl(`${userId}/${repoName}/${fileInfo.path}`, {
-                download: fileInfo.name,
-            });
+            .getPublicUrl(
+                `${userId}/${repo_result.rows[0].id}/${fileInfo.path}`,
+                {
+                    download: fileInfo.name,
+                },
+            );
         fileInfo.url = fileDownloadUrl.data.publicUrl;
 
         if (!binExts.includes(ext)) {
             const fileUrl = supabase.storage
                 .from(SUPABASE_REPOSITORY_BUCKET)
-                .getPublicUrl(`${userId}/${repoName}/${fileInfo.path}`);
+                .getPublicUrl(
+                    `${userId}/${repo_result.rows[0].id}/${fileInfo.path}`,
+                );
             const file_result = await fetch(fileUrl.data.publicUrl);
 
             fileInfo.content = await file_result.text();
