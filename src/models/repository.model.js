@@ -13,7 +13,7 @@ import {
     SEARCH_REPOSITORIES,
     USER_REPOSITORIES,
 } from "./queries.js";
-import * as Types from "../lib/types.js"
+import * as Types from "../lib/types.js";
 
 const reposPath = join(dirname(fileURLToPath(import.meta.url)), "../temp");
 
@@ -208,10 +208,14 @@ export default class Repository {
      * @aync
      * */
     static async deleteCloud(repoName, userId) {
-        const files_result = await db.query(REPOSITORIES_FILES, [
-            userId,
-            repoName,
-        ]);
+        const repo_result = await db.query(
+            "SELECT id FROM repositories WHERE user_owner = $1 AND name = $2",
+            [userId, repoName],
+        );
+        const files_result = await db.query(
+            "SELECT path FROM files WHERE repo = $1",
+            [repo_result.rows[0].id],
+        );
         const files = files_result.rows.map(
             (f) => `${userId}/${repoName}/${f.path}`,
         );
