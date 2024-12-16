@@ -1,4 +1,5 @@
 import db from "../connections/database.js";
+import format from "pg-format"
 import { z } from "zod";
 import { COMMIT_INFO, REPOSITORIES_COMMITS } from "./queries.js";
 import * as Types from "../lib/types.js";
@@ -9,17 +10,14 @@ import * as Types from "../lib/types.js";
 export default class Commit {
     /**
      * Save a commit in database
-     * @param {Types.CommitData} commitData - Commit data
+     * @param {Types.CommitData[]} commitData - Commit data
      * @return {Promise<Types.CommitType>} Commit saved
      * @async
      * */
-    static async save(commitData) {
-        const { title, content, hash, author, created_at, repo } = commitData;
-        const result = await db.query(
-            "INSERT INTO commits VALUES (DEFAULT,$1,$2,$3,$4,$5,$6) RETURNING *",
-            [title, content, hash, author, created_at, repo],
-        );
-        const commitSaved = result.rows[0];
+    static async save(commits) {
+        const q = format("INSERT INTO commits (title,content,hash,author,created_at,repo) VALUES %L RETURNING *", commits)
+        const result = await db.query(q);
+        const commitSaved = result.rows;
         return commitSaved;
     }
     /**

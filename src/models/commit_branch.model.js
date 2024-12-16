@@ -1,4 +1,5 @@
 import db from "../connections/database.js";
+import format from "pg-format"
 
 /**
  * Relationship Commit and Branch class
@@ -10,10 +11,8 @@ export default class Commit_Branch {
      * @param {string} branch - Branch ID
      * @async
      * */
-    static async save(commit, branch) {
-        await db.query("INSERT INTO commits_branches VALUES (DEFAULT,$1,$2)", [
-            commit,
-            branch,
-        ]);
+    static async save(commits_branches) {
+        const q = format("INSERT INTO commits_branches (commit,branch) VALUES %L RETURNING *", commits_branches)
+        await db.query(q);
     }
 }

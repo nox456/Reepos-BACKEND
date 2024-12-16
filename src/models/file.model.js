@@ -3,6 +3,7 @@ import supabase from "../connections/supabase.js";
 import { SUPABASE_REPOSITORY_BUCKET } from "../config/env.js";
 import { z } from "zod";
 import { FILE_INFO } from "./queries.js";
+import format from "pg-format"
 import * as Types from "../lib/types.js";
 
 /**
@@ -11,18 +12,14 @@ import * as Types from "../lib/types.js";
 export default class File {
     /**
      * Save a file in database
-     * @param {Types.FileData} fileData
+     * @param {Types.FileData[]} fileData
      * @return {Promise<Types.FileType>} File saved
      * @async
      * */
-    static async save(fileData) {
-        const { name, size, path, repo, language } = fileData;
-        const result = await db.query(
-            "INSERT INTO files VALUES (DEFAULT,$1,$2,$3,$4,$5) RETURNING *",
-            [name, size, path, repo, language],
-        );
-        const fileSaved = result.rows[0];
-        return fileSaved;
+    static async save(files) {
+        const q = format("INSERT INTO files (name, size, path, repo, language) VALUES %L RETURNING *", files)
+        const result = await db.query(q);
+        return result.rows;
     }
     /**
      * Get file URL to download

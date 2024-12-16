@@ -1,4 +1,4 @@
-import { dirname, join, resolve } from "path";
+import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 import * as Types from "../lib/types.js";
 import { Worker } from "worker_threads";

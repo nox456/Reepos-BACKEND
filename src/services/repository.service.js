@@ -78,80 +78,60 @@ export default class RepositoryService {
         });
 
         // Relate languages with repository
-        for (const language of languages) {
-            await Repository_Language.save(repoSaved.id, language);
-        }
+        await Repository_Language.save(repoSaved.id, languages);
 
         // Save the contributors of the repository in database
-        const contributorsSaved = [];
-        for (const contributor of contributors) {
-            contributorsSaved.push(
-                await Contributor.save({
-                    name: contributor,
-                    repo: repoSaved.id,
-                }),
-            );
-        }
+        const contributorsSaved = await Contributor.save(
+            contributors.map((c) => [c, repoSaved.id]),
+        );
 
         // Save branches of the repository in database
-        const branchesSaved = [];
-        for (const branch of branches) {
-            branchesSaved.push(
-                await Branch.save({
-                    name: branch.name,
-                    type: branch.type,
-                    repo: repoSaved.id,
-                }),
-            );
-        }
+        const branchesSaved = await Branch.save(
+            branches.map((b) => [b.name, b.type, repoSaved.id]),
+        );
 
         // Save commits of the repository in database
-        const commitsSaved = [];
+        const commitsSaved = await Commit.save(
+            commits.map((c) => [
+                c.title,
+                c.content,
+                c.hash,
+                contributorsSaved.find((cont) => cont.name == c.author).id,
+                c.created_at,
+                repoSaved.id,
+            ]),
+        );
         for (const commit of commits) {
-            const contributor = contributorsSaved.find(
-                (c) => c.name == commit.author,
-            ).id;
-            const commitSaved = await Commit.save({
-                title: commit.title,
-                content: commit.content,
-                hash: commit.hash,
-                author: contributor,
-                created_at: commit.created_at,
-                repo: repoSaved.id,
-            });
-
-            commitsSaved.push(commitSaved);
-
             const commitBranchesSaved = branchesSaved.filter((b) =>
                 commit.branches.includes(b.name),
             );
-
-            // Relate commits with branches
-            for (const branchSaved of commitBranchesSaved) {
-                await Commit_Branch.save(commitSaved.id, branchSaved.id);
-            }
+            await Commit_Branch.save(
+                commitBranchesSaved.map((b) => [
+                    commitsSaved.find((c) => c.hash == commit.hash).id,
+                    b.id,
+                ]),
+            );
         }
 
+        const filesToSave = []
+        for (const f of files) {
+            filesToSave.push([
+                f.name,
+                f.size,
+                f.path,
+                repoSaved.id,
+                await Language.getByExt(
+                    f.name.slice(f.name.lastIndexOf(".") + 1),
+                ),
+            ])
+        }
         // Save files of the repository in database
-        const filesSaved = [];
+        const filesSaved = await File.save(filesToSave);
         const modificationsSaved = [];
-        for (const file of files) {
-            // Relate with languages
-            const ext = file.name.slice(file.name.lastIndexOf(".") + 1);
-            const language_id = await Language.getByExt(ext);
-
-            const fileSaved = await File.save({
-                name: file.name,
-                size: file.size,
-                path: file.path,
-                repo: repoSaved.id,
-                language: language_id,
-            });
-            filesSaved.push(fileSaved);
-
+        for (const fileSaved of filesSaved) {
             // Save modifications in database
             const fileModifications = modifications.filter(
-                (m) => m.file == file.path,
+                (m) => m.file == fileSaved.path,
             );
 
             for (const fileModification of fileModifications) {
@@ -180,18 +160,19 @@ export default class RepositoryService {
                 modification.file.lastIndexOf("/") + 1,
             );
 
-            const fileSaved = await File.save({
-                name: file_name,
-                size: "N/A",
-                path: modification.file,
-                repo: repoSaved.id,
-            });
+            const fileSaved = await File.save([[
+                file_name,
+                "N/A",
+                modification.file,
+                repoSaved.id,
+                null
+            ]]);
 
             modificationsSaved.push(
                 await Modification.save({
                     type: modification.type,
                     commit,
-                    file: fileSaved.id,
+                    file: fileSaved[0].id,
                 }),
             );
         }

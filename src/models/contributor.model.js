@@ -1,6 +1,7 @@
 import db from "../connections/database.js";
 import { REPOSITORIES_CONTRIBUTORS } from "./queries.js";
 import * as Types from "../lib/types.js"
+import format from "pg-format";
 
 /**
  * Git Contributor class
@@ -12,14 +13,10 @@ export default class Contributor {
      * @return {Promise<Types.ContributorType>} Contributor saved
      * @async
      * */
-    static async save(contributorData) {
-        const { name, repo } = contributorData;
-        const result = await db.query(
-            "INSERT INTO contributors VALUES (DEFAULT,$1,$2) RETURNING *",
-            [name, repo],
-        );
-        const contributorSaved = result.rows[0];
-        return contributorSaved;
+    static async save(contributors) {
+        const q = format("INSERT INTO contributors (name, repo) VALUES %L RETURNING *", contributors)
+        const result = await db.query(q);
+        return result.rows
     }
     /**
      * Get all contributors from a repository by name and user owner ID

@@ -1,5 +1,6 @@
 import db from "../connections/database.js";
 import * as Types from "../lib/types.js";
+import format from "pg-format"
 
 /**
  * Git Branch class
@@ -7,17 +8,13 @@ import * as Types from "../lib/types.js";
 export default class Branch {
     /**
      * Save a branch in database
-     * @param {Types.BranchData} branchData - Branch data
+     * @param {Types.BranchData[]} branchData - Branch data
      * @return {Promise<Types.BranchType>} Branch saved
      * @async
      * */
-    static async save(branchData) {
-        const { name, repo, type } = branchData;
-        const result = await db.query(
-            "INSERT INTO branches VALUES (DEFAULT,$1,$2,$3) RETURNING *",
-            [name, repo, type],
-        );
-        const branchSaved = result.rows[0];
-        return branchSaved;
+    static async save(branches) {
+        const q = format("INSERT INTO branches (name, type, repo) VALUES %L RETURNING *", branches)
+        const result = await db.query(q);
+        return result.rows;
     }
 }
