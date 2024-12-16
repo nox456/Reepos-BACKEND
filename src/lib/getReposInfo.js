@@ -1,4 +1,4 @@
-import { dirname, join } from "path";
+import { dirname, join, resolve } from "path";
 import { fileURLToPath } from "url";
 import * as Types from "../lib/types.js";
 import { Worker } from "worker_threads";
@@ -16,9 +16,9 @@ export default async function repoInfo(repoName) {
     const worker = new Worker(join(__dirname, "worker.js"), {
         workerData: { repoPath },
     });
-    let data;
-    worker.on("message", (msg) => {
-        data = msg;
-    });
-    return data;
+    return new Promise(resolve => {
+        worker.on("message", (msg) => {
+            resolve(msg)
+        });
+    })
 }
