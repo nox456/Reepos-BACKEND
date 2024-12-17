@@ -555,7 +555,7 @@ export default class RepositoryService {
 
         if (repos.length == 0)
             return new ServiceError(
-                "Usuario no tiene el repositorios!",
+                "No hay repositorios!",
                 NOT_FOUND,
             );
 
