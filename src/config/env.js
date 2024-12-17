@@ -31,7 +31,7 @@ const {
     COOKIES_SAMESITE,
     COOKIES_SECURE,
     NODE_ENV,
-    RENDER_EXTERNAL_HOST,
+    RENDER_EXTERNAL_URL,
 } = process.env
 
 export {
@@ -47,5 +47,5 @@ export {
     COOKIES_SAMESITE,
     COOKIES_SECURE,
     NODE_ENV,
-    RENDER_EXTERNAL_HOST,
+    RENDER_EXTERNAL_URL,
 }
