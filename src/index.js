@@ -1,5 +1,5 @@
 import express from "express";
-import { HOST, PORT, NODE_ENV, RENDER_EXTERNAL_HOST  } from "./config/env.js";
+import { HOST, PORT, NODE_ENV, RENDER_EXTERNAL_URL  } from "./config/env.js";
 import morgan from "./middlewares/morgan.js";
 import cookie_parser from "./middlewares/cookie-parser.js";
 import routes from "./routes/index.routes.js";
@@ -21,7 +21,7 @@ app.use(routes);
 // Start Server
 app.listen(PORT, HOST, () => {
     if (NODE_ENV == 'production') {
-        console.log(`Server on ${RENDER_EXTERNAL_HOST}`);
+        console.log(`Server on ${RENDER_EXTERNAL_URL}`);
     } else {
         console.log(`Server on http://${HOST}:${PORT}`)
     }
